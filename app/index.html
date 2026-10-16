@@ -83,7 +83,7 @@ svg { display: block; }
 .screen { height: 100%; display: flex; flex-direction: column; gap: var(--gap); min-height: 0; }
 
 /* ---------- Logga och rubriker ---------- */
-.setup-head { position: relative; padding-right: 50px; }
+.setup-head { position: relative; padding-right: 100px; }
 .logo {
   display: inline-block;
   margin: 4px 0 0 4px;
@@ -227,7 +227,16 @@ svg { display: block; }
 .cat:active { transform: rotate(var(--tilt, 0deg)) scale(.96); }
 .cat[aria-pressed="true"] { opacity: 1; box-shadow: var(--sticker-edge), 0 16px 32px -12px color-mix(in srgb, var(--c) 70%, transparent); transform: rotate(var(--tilt, 0deg)) scale(1.04); }
 .cat-name { font-weight: 800; font-size: clamp(17px, 2.8vh, 22px); letter-spacing: -0.01em; color: inherit; }
-.cat-sub { font-size: 12px; font-weight: 600; opacity: .7; }
+/* "Gratis" är en liten etikett som sitter snett i hörnet på Warm up */
+.cat .free {
+  position: absolute; top: -10px; right: -8px;
+  font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase;
+  background: var(--ink); color: var(--plum);
+  padding: 4px 9px 5px; border-radius: 999px;
+  transform: rotate(9deg);
+  box-shadow: 0 6px 14px -6px rgba(20, 6, 18, .7);
+}
+.cats-note { grid-column: 1 / -1; margin: -4px 0 0; text-align: center; font-size: 12px; font-weight: 600; color: var(--muted); display: flex; align-items: center; justify-content: center; gap: 5px; }
 .cat .lock { position: absolute; top: 9px; right: 11px; opacity: .55; }
 .cat[data-cat="warmup"] { --c: var(--c-warm); --tilt: -3deg; }
 .cat[data-cat="juicy"]  { --c: var(--c-juicy); --tilt: 2.5deg; }
@@ -386,8 +395,32 @@ svg { display: block; }
 .cat-option[data-cat="juicy"]  { --c: var(--c-juicy); }
 .cat-option[data-cat="crazy"]  { --c: var(--c-crazy); }
 .cat-option[aria-pressed="true"] { background: color-mix(in srgb, var(--c) 18%, transparent); }
-.sound-btn { position: absolute; top: 4px; right: 0; width: 42px; height: 42px; border-radius: 50%; display: grid; place-items: center; color: var(--muted); background: var(--surface); }
+.menu-btn { position: absolute; top: 4px; right: 0; width: 42px; height: 42px; border-radius: 50%; display: grid; place-items: center; color: var(--ink); background: var(--surface); }
+.menu-btn:active, .sound-btn:active { background: var(--surface-2); }
+.sound-btn { position: absolute; top: 4px; right: 50px; width: 42px; height: 42px; border-radius: 50%; display: grid; place-items: center; color: var(--muted); background: var(--surface); }
 .sound-btn[aria-pressed="true"] { color: var(--apricot); }
+/* ---------- Meny ---------- */
+.menu-list { display: grid; gap: 6px; }
+.menu-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 54px; padding: 0 18px; border-radius: 18px; background: var(--surface); font-weight: 600; font-size: 16px; text-align: left; width: 100%; }
+.menu-row:active { background: var(--surface-2); }
+.menu-row .val { color: var(--muted); font-weight: 600; font-size: 14px; display: flex; align-items: center; gap: 6px; }
+.menu-foot { text-align: center; color: var(--muted); font-size: 12px; margin-top: 2px; }
+.sheet .back { align-self: flex-start; height: 34px; padding: 0 12px 0 8px; border-radius: 999px; background: var(--surface); color: var(--muted); font-weight: 600; font-size: 14px; display: flex; align-items: center; gap: 4px; margin-bottom: -4px; }
+.rules { margin: 0; padding: 0; list-style: none; display: grid; gap: 10px; counter-reset: r; }
+.rules li { display: grid; grid-template-columns: 30px 1fr; gap: 10px; align-items: start; color: var(--ink); font-weight: 500; line-height: 1.4; font-size: 15px; }
+.rules li::before { counter-increment: r; content: counter(r); width: 30px; height: 30px; border-radius: 50%; background: var(--apricot); color: var(--plum); display: grid; place-items: center; font-weight: 800; font-size: 14px; transform: rotate(-6deg); }
+.rules b { color: var(--apricot); font-weight: 700; }
+.faq { display: grid; gap: 6px; }
+.faq details { background: var(--surface); border-radius: 16px; padding: 0 16px; }
+.faq summary { list-style: none; min-height: 48px; display: flex; align-items: center; justify-content: space-between; gap: 10px; font-weight: 600; font-size: 15px; cursor: pointer; }
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::after { content: "+"; font-weight: 700; font-size: 20px; color: var(--muted); transition: transform .2s; }
+.faq details[open] summary::after { transform: rotate(45deg); }
+.faq details p { padding: 0 0 14px; font-size: 14px; }
+.policy { display: grid; gap: 8px; }
+.policy p { font-size: 14px; }
+.policy b { color: var(--ink); }
+.sheet .scroll { overflow-y: auto; min-height: 0; margin: 0 -4px; padding: 0 4px; }
 .sound-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 0 0; border-top: 1px solid var(--line); font-weight: 600; }
 .sound-row .top-btn { color: var(--ink); }
 
@@ -435,6 +468,7 @@ svg { display: block; }
       <h1 class="logo">Synk</h1>
       <p class="tagline">Två spelare per runda. Säg samma namn så får ni poäng.</p>
       <button class="sound-btn" id="sound-btn" aria-label="Ljud"></button>
+      <button class="menu-btn" id="menu-btn" aria-label="Meny"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h10"/></svg></button>
     </header>
 
     <form class="add-row" id="add-form" autocomplete="off">
@@ -880,8 +914,11 @@ svg { display: block; }
       var locked = !isOpen(k);
       return '<button class="cat' + (animate && state.cat === k ? " just" : "") + '" data-cat="' + k + '" aria-pressed="' + (state.cat === k) + '" aria-label="' + c.name + (locked ? ", låst" : "") + '">' +
         (locked ? '<span class="lock">' + ICON.lock + "</span>" : "") +
-        '<span class="cat-name">' + c.name + '</span><span class="cat-sub">' + (locked ? (priceText() || "Lås upp") : c.sub) + "</span>" + heatHTML(k) + "</button>";
-    }).join("");
+        (k === "warmup" && !state.unlocked ? '<span class="free">Gratis</span>' : "") +
+        '<span class="cat-name">' + c.name + "</span>" + heatHTML(k) + "</button>";
+    }).join("") +
+      // Ett pris för båda, så att ingen tror att varje nivå kostar för sig
+      (state.unlocked ? "" : '<p class="cats-note">' + ICON.lock + "Juicy och Crazy låses upp tillsammans" + (priceText() ? " för " + esc(priceText()) : "") + "</p>");
     setAmbient(state.cat);
     if (animate) {
       var tile = $("cats").querySelector('[data-cat="' + state.cat + '"]');
@@ -1156,7 +1193,7 @@ svg { display: block; }
   $("cat-pill").addEventListener("click", function () {
     sheet("<h2>Byt nivå</h2><p>Gäller från nästa fråga.</p><div class=\"sheet-list\">" + CAT_KEYS.map(function (k) {
       return '<button class="cat-option" data-cat="' + k + '" aria-pressed="' + (state.cat === k) + '"><span class="cat-name" style="font-size:20px">' + CATS[k].name + "</span>" +
-        '<span style="color:var(--muted);font-weight:700;font-size:13px;display:flex;gap:6px;align-items:center">' + (isOpen(k) ? CATS[k].sub : ICON.lock + (priceText() || "Lås upp")) + "</span></button>";
+        '<span style="color:var(--muted);font-weight:700;font-size:13px;display:flex;gap:6px;align-items:center">' + (k === "warmup" && !state.unlocked ? "Gratis" : isOpen(k) ? "" : ICON.lock) + "</span></button>";
     }).join("") + "</div>");
     $("layer").querySelectorAll(".cat-option").forEach(function (b) {
       b.onclick = function () {
@@ -1281,6 +1318,19 @@ svg { display: block; }
     return Promise.all([price, owned]);
   }
 
+  function restorePurchase(btn, onDone) {
+    if (!NIAP) { toast("Återställning fungerar i appen"); return; }
+    var label = btn.innerHTML;
+    btn.disabled = true; btn.textContent = "Letar …";
+    function reset() { btn.disabled = false; btn.innerHTML = label; }
+    NIAP.restorePurchases().catch(function () {}).then(function () {
+      return NIAP.getPurchases({ productType: "inapp" });
+    }).then(function (r) {
+      if (ownsUnlock(r && r.purchases)) { setUnlocked(true); closeSheet(); toast("Ditt köp är återställt"); onDone && onDone(); }
+      else { reset(); toast("Hittade inget köp på det här Apple-ID:t"); }
+    }).catch(function () { reset(); toast("Kunde inte nå App Store just nu"); });
+  }
+
   function openUnlock(onDone) {
     var price = priceText();
     sheet('<h2>Lås upp Juicy och Crazy</h2>' +
@@ -1303,22 +1353,72 @@ svg { display: block; }
         if (!/cancel/i.test(msg)) toast("Köpet gick inte igenom. Försök igen.");
       });
     };
-    $("restore").onclick = function () {
-      var btn = this;
-      if (!NIAP) { toast("Återställning fungerar i appen"); return; }
-      btn.disabled = true; btn.textContent = "Letar …";
-      NIAP.restorePurchases().catch(function () {}).then(function () {
-        return NIAP.getPurchases({ productType: "inapp" });
-      }).then(function (r) {
-        if (ownsUnlock(r && r.purchases)) { setUnlocked(true); closeSheet(); toast("Ditt köp är återställt"); onDone && onDone(); }
-        else { btn.disabled = false; btn.textContent = "Återställ köp"; toast("Hittade inget köp på det här Apple-ID:t"); }
-      }).catch(function () { btn.disabled = false; btn.textContent = "Återställ köp"; toast("Kunde inte nå App Store just nu"); });
-    };
+    $("restore").onclick = function () { restorePurchase(this, onDone); };
     if (IS_NATIVE && !storePrice) syncStore().then(function () {
       var p = $("price"), bb = $("buy");
       if (storePrice && bb && !bb.disabled) { bb.textContent = "Lås upp för " + storePrice; price = storePrice; if (!p) bb.insertAdjacentHTML("beforebegin", '<div class="price" id="price">' + esc(storePrice) + "<small>engångsköp</small></div>"); }
     });
   }
+
+  // ---------- Meny: regler, vanliga frågor, integritet, ljud, köp ----------
+  var CONTACT_EMAIL = "[E-POST]"; // fyll i din supportadress innan appen skickas in
+  var APP_VERSION = "1.0";
+  var CHEV = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>';
+  var BACK = '<button class="back" data-back><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>Meny</button>';
+  function wireBack() { var b = $("layer").querySelector("[data-back]"); if (b) b.onclick = openMenu; }
+
+  function openMenu() {
+    sheet("<h2>Meny</h2><div class=\"menu-list\">" +
+      '<button class="menu-row" data-go="rules">Så spelar ni' + CHEV + "</button>" +
+      '<button class="menu-row" data-go="faq">Vanliga frågor' + CHEV + "</button>" +
+      '<button class="menu-row" data-go="policy">Integritetspolicy' + CHEV + "</button>" +
+      '<button class="menu-row" id="menu-sound">Ljud<span class="val">' + (Sound.isOn() ? "På" : "Av") + "</span></button>" +
+      (state.unlocked ? "" : '<button class="menu-row" id="menu-restore">Återställ köp<span class="val">' + ICON.lock + "</span></button>") +
+      '<div class="menu-row" style="cursor:default">Kontakt<span class="val" style="user-select:text;-webkit-user-select:text">' + esc(CONTACT_EMAIL) + "</span></div>" +
+      '</div><p class="menu-foot">Synk ' + APP_VERSION + "</p>");
+    $("layer").querySelectorAll("[data-go]").forEach(function (b) {
+      b.onclick = function () { ({ rules: openRules, faq: openFaq, policy: openPolicy })[b.dataset.go](); };
+    });
+    $("menu-sound").onclick = function () { var v = Sound.toggle(); this.querySelector(".val").textContent = v ? "På" : "Av"; renderSound(); };
+    if ($("menu-restore")) $("menu-restore").onclick = function () { restorePurchase(this); };
+  }
+
+  function openRules() {
+    sheet(BACK + "<h2>Så spelar ni</h2><ol class=\"rules\">" +
+      "<li><span>Skriv in 2–10 spelare och välj nivå.</span></li>" +
+      "<li><span>Varje runda möts <b>två spelare</b> och får en fråga, till exempel <i>Vem av er är smartast?</i></span></li>" +
+      "<li><span>Tryck på <b>Räkna ner</b>. På noll säger ni båda ett namn högt: ditt eget eller den andras.</span></li>" +
+      "<li><span><b>Samma namn:</b> en poäng var. <b>Olika:</b> förklara er, resten av gänget röstar och den som hade rätt får poängen.</span></li>" +
+      "<li><span>Flest poäng efter sista rundan vinner. Är ni bara två spelar ni som ett lag och ser hur många matcher ni klarar.</span></li>" +
+      "</ol>");
+    wireBack();
+  }
+
+  function openFaq() {
+    var qa = [
+      ["Kostar det något?", "Warm up med 100 frågor är gratis. Juicy och Crazy låser du upp tillsammans med ett enda köp. Det finns ingen prenumeration."],
+      ["Jag har köpt, men nivåerna är låsta", "Öppna menyn och tryck på Återställ köp. Du måste vara inloggad med samma Apple-ID som när du köpte."],
+      ["Kommer samma fråga tillbaka?", "Inte förrän ni har spelat alla 100 frågor på nivån. Sedan blandas de om, och samma fråga dyker inte upp igen inom 50 frågor."],
+      ["Hur lång tid tar ett spel?", "7 till 10 rundor, ungefär tio minuter. Alla spelar lika många gånger."],
+      ["Var sparas namn och bilder?", "Bara på din telefon. Inget skickas till oss eller någon annan."]
+    ];
+    sheet(BACK + "<h2>Vanliga frågor</h2><div class=\"faq scroll\">" + qa.map(function (x) {
+      return "<details><summary>" + esc(x[0]) + "</summary><p>" + esc(x[1]) + "</p></details>";
+    }).join("") + "</div>");
+    wireBack();
+  }
+
+  function openPolicy() {
+    sheet(BACK + "<h2>Integritetspolicy</h2><div class=\"policy scroll\">" +
+      "<p><b>Vi samlar inte in några uppgifter om dig.</b> Det finns ingen inloggning, ingen reklam, ingen spårning och ingen analys.</p>" +
+      "<p><b>Namn och bilder</b> på spelare sparas bara i appen på din telefon och försvinner när du tar bort dem eller appen.</p>" +
+      "<p><b>Kamera och bilder</b> används bara när du själv lägger till en profilbild.</p>" +
+      "<p><b>Köp</b> görs via Apple. Vi ser aldrig dina betalningsuppgifter.</p>" +
+      "<p><b>Juicy och Crazy</b> är för dig som är 18 år eller äldre.</p>" +
+      "<p>Frågor? Mejla " + esc(CONTACT_EMAIL) + ".</p></div>");
+    wireBack();
+  }
+  $("menu-btn").addEventListener("click", openMenu);
 
   // ---------- Sheets, toast, skärmar ----------
   function sheet(html) {

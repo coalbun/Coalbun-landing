@@ -34,6 +34,7 @@ Det här kräver en Mac med **Xcode 26 eller senare** (Apples krav sedan april 2
 
 ## Innan du skickar in
 - Fyll i `[NAMN ELLER BOLAG]` och `[E-POST]` i `site/synk/integritetspolicy.html` och `site/synk/support.html`.
+- Fyll i din supportadress i `CONTACT_EMAIL` i `app/index.html`. Den visas under Kontakt och i integritetspolicyn i appens meny.
 - Publicera de två sidorna så att de har en riktig adress, och klistra in adresserna i App Store Connect.
   - GitHub Pages: **Settings → Pages → Deploy from a branch**, välj `main` och `/ (root)`. Sidorna hamnar då under `.../site/synk/`. På ett privat repo kräver GitHub Pages ett betalkonto. Annars kan du lägga filerna på din vanliga hemsida.
 
