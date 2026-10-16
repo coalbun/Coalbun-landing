@@ -431,6 +431,13 @@ svg { display: block; }
   box-shadow: 0 14px 30px -10px rgba(0, 0, 0, .7);
 }
 
+/* ---------- Intro: Coalbun Studios, litet i mitten på helt svart ---------- */
+.intro { position: fixed; inset: 0; z-index: 60; background: #000; display: grid; place-items: center; animation: introOut .5s ease 1.7s forwards; }
+.intro img { width: min(36vw, 160px); height: auto; opacity: 0; animation: introLogo 1.4s ease .15s forwards; }
+@keyframes introLogo { 0% { opacity: 0; transform: scale(.96); filter: blur(4px); } 35% { opacity: 1; transform: none; filter: none; } 80% { opacity: 1; } 100% { opacity: .9; } }
+@keyframes introOut { to { opacity: 0; visibility: hidden; } }
+@media (prefers-reduced-motion: reduce) { .intro { display: none; } }
+
 /* ---------- Effekter ---------- */
 .confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 36; }
 .wave { position: fixed; z-index: 34; pointer-events: none; border-radius: 22px; border: 3px solid var(--col); animation: wave .6s ease-out forwards; }
@@ -459,6 +466,7 @@ svg { display: block; }
 </style>
 </head>
 <body>
+<div class="intro" id="intro" aria-hidden="true"><img src="brand/coalbun-studios.png" alt=""></div>
 <div class="ambient" id="ambient"></div>
 <div class="app">
 
@@ -1361,7 +1369,8 @@ svg { display: block; }
   }
 
   // ---------- Meny: regler, vanliga frågor, integritet, ljud, köp ----------
-  var CONTACT_EMAIL = "[E-POST]"; // fyll i din supportadress innan appen skickas in
+  var CONTACT_EMAIL = "support@coalbun.com";
+  var WEBSITE = "coalbun.com";
   var APP_VERSION = "1.0";
   var CHEV = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>';
   var BACK = '<button class="back" data-back><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>Meny</button>';
@@ -1374,8 +1383,9 @@ svg { display: block; }
       '<button class="menu-row" data-go="policy">Integritetspolicy' + CHEV + "</button>" +
       '<button class="menu-row" id="menu-sound">Ljud<span class="val">' + (Sound.isOn() ? "På" : "Av") + "</span></button>" +
       (state.unlocked ? "" : '<button class="menu-row" id="menu-restore">Återställ köp<span class="val">' + ICON.lock + "</span></button>") +
-      '<div class="menu-row" style="cursor:default">Kontakt<span class="val" style="user-select:text;-webkit-user-select:text">' + esc(CONTACT_EMAIL) + "</span></div>" +
-      '</div><p class="menu-foot">Synk ' + APP_VERSION + "</p>");
+      '<a class="menu-row" href="mailto:' + CONTACT_EMAIL + '" style="text-decoration:none;color:inherit">Kontakt<span class="val" style="user-select:text;-webkit-user-select:text">' + esc(CONTACT_EMAIL) + "</span></a>" +
+      '<a class="menu-row" href="https://' + WEBSITE + '" target="_blank" rel="noopener" style="text-decoration:none;color:inherit">Webbplats<span class="val">' + esc(WEBSITE) + CHEV + "</span></a>" +
+      '</div><p class="menu-foot">Synk ' + APP_VERSION + " · Coalbun Studios</p>");
     $("layer").querySelectorAll("[data-go]").forEach(function (b) {
       b.onclick = function () { ({ rules: openRules, faq: openFaq, policy: openPolicy })[b.dataset.go](); };
     });
@@ -1419,6 +1429,16 @@ svg { display: block; }
     wireBack();
   }
   $("menu-btn").addEventListener("click", openMenu);
+
+  // Introt försvinner av sig självt, eller direkt om man trycker
+  (function () {
+    var intro = $("intro");
+    if (!intro) return;
+    function done() { if (intro.parentNode) intro.parentNode.removeChild(intro); }
+    intro.addEventListener("animationend", function (e) { if (e.animationName === "introOut") done(); });
+    intro.addEventListener("pointerdown", done);
+    setTimeout(done, 2600);
+  })();
 
   // ---------- Sheets, toast, skärmar ----------
   function sheet(html) {
