@@ -410,6 +410,19 @@ svg { display: block; }
   box-shadow: 0 14px 30px -10px rgba(0, 0, 0, .8);
 }
 
+/* Figurerna: blinkar hela tiden, gungar när de är stora */
+.avatar .face { width: 100%; height: 100%; color: var(--on-bright); overflow: visible; }
+.f-eyes { transform-box: fill-box; transform-origin: center; animation: blink 4.6s infinite; animation-delay: var(--d, 0s); }
+.fighter .face, .winner-faces .face { animation: bob 2.8s ease-in-out infinite; animation-delay: var(--d, 0s); transform-origin: 50% 80%; }
+.fighter.win .face { animation: jump .7s cubic-bezier(.3, 1.6, .5, 1) 2; }
+.ranking.dots { grid-template-columns: repeat(5, minmax(0, 54px)); grid-auto-rows: auto; justify-content: center; align-content: center; gap: 10px; padding: 14px; }
+.dot { aspect-ratio: 1; border-radius: 50%; display: grid; place-items: center; min-height: 0; font-family: var(--font-display); font-weight: 600; font-size: clamp(14px, 2.2vh, 18px); border: 1px solid var(--line); background: var(--surface); color: var(--muted); }
+.dot.hit { background: color-mix(in srgb, var(--green) 22%, var(--surface)); border-color: color-mix(in srgb, var(--green) 50%, transparent); color: var(--green); }
+.dot.miss { background: color-mix(in srgb, var(--pink) 14%, var(--surface)); border-color: color-mix(in srgb, var(--pink) 35%, transparent); color: var(--pink); }
+@keyframes blink { 0%, 93%, 100% { transform: scaleY(1); } 96% { transform: scaleY(.1); } }
+@keyframes bob { 0%, 100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-3px) rotate(-4deg); } }
+@keyframes jump { 0%, 100% { transform: translateY(0) scale(1); } 40% { transform: translateY(-10px) scale(1.06, .94); } }
+
 @media (max-width: 360px) {
   .top-btn { padding: 0 10px; font-size: 12px; }
   .cat-pill { padding: 0 12px; font-size: 14px; }
@@ -532,9 +545,47 @@ svg { display: block; }
   function byId(id) { for (var i = 0; i < state.players.length; i++) if (state.players[i].id === id) return state.players[i]; return null; }
   function isOpen(cat) { return CATS[cat].free || state.unlocked; }
 
+  // Tio figurer som visas när man inte tagit egen bild. Ritade i 100x100, mörka drag på spelarens färg.
+  var S = 'fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"';
+  var PINK = "#ff5f8f";
+  var EYES = '<g class="f-eyes"><circle cx="36" cy="46" r="6"/><circle cx="64" cy="46" r="6"/><circle cx="38" cy="44" r="2" fill="#fff"/><circle cx="66" cy="44" r="2" fill="#fff"/></g>';
+  var BLUSH = '<circle cx="25" cy="60" r="6" fill="' + PINK + '" opacity=".35"/><circle cx="75" cy="60" r="6" fill="' + PINK + '" opacity=".35"/>';
+  var SMILE = '<path d="M39 64q11 10 22 0" ' + S + "/>";
+  var GRIN = '<path d="M35 61h30c0 10-6 17-15 17s-15-7-15-17z"/><path d="M42 72q8 5 16 0" fill="' + PINK + '"/>';
+  var FACES = [
+    // Solglasögon och smil
+    '<g class="f-eyes"><path d="M18 40h64v5c0 9-6 14-14 14-7 0-12-5-13-11h-10c-1 6-6 11-13 11-8 0-14-5-14-14z"/></g><path d="M26 45l6-4M58 45l6-4" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".7"/><path d="M40 70q12 6 22-5" ' + S + "/>",
+    // Mustasch
+    EYES + '<path d="M50 63c-6-7-17-7-23 2 5 0 9 4 15 3 4-1 6-3 8-5 2 2 4 4 8 5 6 1 10-3 15-3-6-9-17-9-23-2z"/>',
+    // Rosett och fransar
+    EYES + '<path d="M29 39l-4-4M71 39l4-4" ' + S + '/>' + BLUSH + SMILE + '<path d="M50 15L35 6v18zM50 15l15-9v18z" fill="' + PINK + '"/><circle cx="50" cy="15" r="4.5" fill="' + PINK + '"/>',
+    // Partyhatt
+    '<path d="M50 0L37 27h26z" fill="#b199ff"/><path d="M44 14h12M41 21h18" stroke="#fff" stroke-width="3" opacity=".7"/><circle cx="50" cy="2" r="4" fill="#fff"/>' + EYES + GRIN,
+    // Sömnig
+    '<g class="f-eyes"><path d="M27 47q9 6 18 0M55 47q9 6 18 0" ' + S + '/></g><ellipse cx="50" cy="68" rx="5" ry="6"/><path d="M68 16h10l-10 10h10" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity=".6"/>',
+    // Nördglasögon och tänder
+    EYES + '<circle cx="36" cy="46" r="12" ' + S + '/><circle cx="64" cy="46" r="12" ' + S + '/><path d="M48 46h4" ' + S + '/><path d="M38 63q12 9 24 0" ' + S + '/><rect x="45" y="65" width="10" height="7" rx="1.5" fill="#fff" stroke="currentColor" stroke-width="2"/>',
+    // Blinkar och räcker ut tungan
+    '<g class="f-eyes"><circle cx="36" cy="46" r="6"/><circle cx="38" cy="44" r="2" fill="#fff"/></g><path d="M57 46q7-6 14 0" ' + S + '/><path d="M37 63q13 9 26 0" ' + S + '/><path d="M49 66h12v7a6 6 0 0 1-12 0z" fill="' + PINK + '" stroke="currentColor" stroke-width="2.5"/>',
+    // Fräknar och stort flin
+    EYES + '<g opacity=".55"><circle cx="24" cy="58" r="1.8"/><circle cx="30" cy="62" r="1.8"/><circle cx="26" cy="65" r="1.8"/><circle cx="76" cy="58" r="1.8"/><circle cx="70" cy="62" r="1.8"/><circle cx="74" cy="65" r="1.8"/></g>' + GRIN,
+    // Hörlurar och glada ögon
+    '<path d="M14 56a36 36 0 0 1 72 0" fill="none" stroke="currentColor" stroke-width="6"/><rect x="6" y="48" width="13" height="22" rx="6"/><rect x="81" y="48" width="13" height="22" rx="6"/><g class="f-eyes"><path d="M29 49q7-9 14 0M57 49q7-9 14 0" ' + S + '/></g>' + BLUSH + SMILE,
+    // Chockad
+    '<path d="M26 30l14-4M74 30l-14-4" ' + S + '/><g class="f-eyes"><circle cx="36" cy="45" r="8"/><circle cx="64" cy="45" r="8"/><circle cx="38.5" cy="42.5" r="2.6" fill="#fff"/><circle cx="66.5" cy="42.5" r="2.6" fill="#fff"/></g><ellipse cx="50" cy="69" rx="7" ry="9"/>'
+  ];
+
+  function faceIndex(p) {
+    if (typeof p.face === "number") return p.face % FACES.length;
+    var i = state.players.indexOf(p);
+    return (i < 0 ? 0 : i) % FACES.length;
+  }
+
   function avatarHTML(p, extraStyle) {
     var style = "background-color:" + p.color + ";" + (p.photo ? "background-image:url(" + p.photo + ");" : "") + (extraStyle || "");
-    return '<div class="avatar" style="' + style + '">' + (p.photo ? "" : esc(p.name.charAt(0).toUpperCase())) + "</div>";
+    var f = faceIndex(p);
+    var face = p.photo ? "" : '<svg class="face" viewBox="0 0 100 100" fill="currentColor" style="--d:' + ((f * 0.73) % 4).toFixed(2) + 's" aria-hidden="true">' + FACES[f] + "</svg>";
+    return '<div class="avatar" style="' + style + '">' + face + "</div>";
   }
 
   var ICON = {
@@ -627,7 +678,10 @@ svg { display: block; }
     if (exists) { toast(name + " är redan med"); return; }
     var used = state.players.map(function (p) { return p.color; });
     var color = AVATAR_COLORS.filter(function (c) { return used.indexOf(c) < 0; })[0] || AVATAR_COLORS[state.players.length % AVATAR_COLORS.length];
-    state.players.push({ id: uid(), name: name, photo: null, color: color });
+    var usedFaces = state.players.map(faceIndex);
+    var free = range(FACES.length).filter(function (i) { return usedFaces.indexOf(i) < 0; });
+    var face = free[Math.floor(Math.random() * free.length)];
+    state.players.push({ id: uid(), name: name, photo: null, color: color, face: face === undefined ? state.players.length : face });
     savePlayers();
     renderPlayers();
   }
@@ -691,7 +745,9 @@ svg { display: block; }
 
   // ---------- Spelet ----------
   function startGame() {
-    var g = { round: 0, scores: {}, played: {}, pairCount: {}, pairMatch: {}, lastPair: null };
+    var n = state.players.length;
+    // Fast längd så att spelet tar slut av sig självt: 10 rundor, fler när ni är många så alla hinner spela ungefär fyra gånger.
+    var g = { round: 0, total: Math.max(10, n * 2), duo: n === 2, history: [], scores: {}, played: {}, pairCount: {}, pairMatch: {}, lastPair: null };
     state.players.forEach(function (p) { g.scores[p.id] = 0; g.played[p.id] = 0; });
     state.game = g;
     show("round");
@@ -725,7 +781,12 @@ svg { display: block; }
     renderFighter(g.pair[1], $("fB"));
 
     var card = $("card"), actions = $("actions"), hint = $("hint");
-    var meta = '<div class="card-meta">Runda ' + g.round + "</div>";
+    var meta = '<div class="card-meta">Runda ' + g.round + " av " + g.total + "</div>";
+    var last = g.round >= g.total;
+    function nextButton() {
+      actions.innerHTML = '<button class="btn btn-primary" id="next">' + (last ? "Se resultat" : "Nästa runda") + "</button>";
+      $("next").onclick = last ? showResults : newRound;
+    }
 
     if (g.phase === "ready" || g.phase === "counting" || g.phase === "answer") {
       if (fresh || !card.querySelector(".question")) {
@@ -734,7 +795,7 @@ svg { display: block; }
     }
 
     if (g.phase === "ready") {
-      hint.textContent = "På noll säger ni båda ett namn högt: ditt eget eller den andras.";
+      hint.textContent = g.duo && g.round === 1 ? "Ni spelar som ett lag. Hur många matcher klarar ni av " + g.total + "?" : "På noll säger ni båda ett namn högt: ditt eget eller den andras.";
       actions.innerHTML = '<button class="btn btn-primary" id="go">Räkna ner</button>';
       $("go").onclick = countdown;
     } else if (g.phase === "counting") {
@@ -748,8 +809,11 @@ svg { display: block; }
     } else if (g.phase === "match") {
       card.innerHTML = meta + '<div class="verdict"><div class="verdict-big match">Match!</div><p class="verdict-text">Plus ett till både ' + esc(a.name) + " och " + esc(b.name) + ".</p></div>";
       hint.textContent = "";
-      actions.innerHTML = '<button class="btn btn-primary" id="next">Nästa runda</button>';
-      $("next").onclick = newRound;
+      nextButton();
+    } else if (g.phase === "miss2") {
+      card.innerHTML = meta + '<div class="verdict"><div class="verdict-big miss">Mismatch!</div><p class="verdict-text">Förklara er för varandra. Ingen poäng den här gången.</p></div>';
+      hint.textContent = "";
+      nextButton();
     } else if (g.phase === "vote") {
       card.innerHTML = meta + '<div class="verdict"><div class="verdict-big miss">Mismatch!</div><p class="verdict-text">Ni har tio sekunder på er att förklara. Sen röstar gruppen: vem hade rätt?</p></div>';
       hint.textContent = "Gruppen röstar";
@@ -760,8 +824,7 @@ svg { display: block; }
       var w = g.winners[0] ? byId(g.winners[0]) : null;
       card.innerHTML = meta + '<div class="verdict"><div class="verdict-big ' + (w ? "match" : "miss") + '">' + (w ? esc(w.name) : "Ingen") + '</div><p class="verdict-text">' + (w ? "Gruppen har talat. Plus ett." : "Ingen poäng den här gången.") + "</p></div>";
       hint.textContent = "";
-      actions.innerHTML = '<button class="btn btn-primary" id="next">Nästa runda</button>';
-      $("next").onclick = newRound;
+      nextButton();
     }
   }
 
@@ -800,6 +863,7 @@ svg { display: block; }
     g.scores[g.pair[0]]++; g.scores[g.pair[1]]++;
     g.winners = g.pair.slice();
     finishPair(g, true);
+    g.history.push(true);
     g.phase = "match";
     buzz([40, 40, 40]);
     renderRound();
@@ -807,7 +871,8 @@ svg { display: block; }
   function onMismatch() {
     var g = state.game;
     finishPair(g, false);
-    g.phase = "vote";
+    g.history.push(false);
+    g.phase = g.duo ? "miss2" : "vote";
     renderRound();
   }
   function onVote(id) {
@@ -863,6 +928,9 @@ svg { display: block; }
     var nobody = top === 0;
     if (nobody) winners = [];
     var shared = winners.length > 1;
+    $("awards").hidden = g.duo;
+    $("ranking").classList.toggle("dots", g.duo);
+    if (g.duo) { showDuoResults(g); return; }
     $("winner").innerHTML =
       (nobody ? '<div class="winner-kicker">Inga poäng</div><h2 class="winner-title">Ingen vann</h2><div class="winner-pts">Ni känner inte varandra alls. Kör en runda till.</div>' : (
       '<div class="winner-kicker">' + (shared ? "Delad seger" : "Kvällens vinnare") + '</div>' +
@@ -887,6 +955,25 @@ svg { display: block; }
       '<div class="award" style="--c:var(--green)"><div class="award-k">Bästa duon</div><div class="award-v">' + (bestKey ? esc(duo(bestKey)) : "Ingen än") + '</div><div class="award-s">' + (bestKey ? bestVal + " match" + (bestVal === 1 ? "" : "er") : "Inga matcher") + "</div></div>" +
       '<div class="award" style="--c:var(--pink)"><div class="award-k">Mest osams</div><div class="award-v">' + (worstKey ? esc(duo(worstKey)) : "Ingen") + '</div><div class="award-s">' + (worstKey ? worstVal + " miss" + (worstVal === 1 ? "" : "ar") : "Helt sams") + "</div></div>";
 
+    show("results");
+  }
+
+  // Två spelare: lagresultat i stället för vinnare, eftersom båda alltid har samma poäng.
+  function showDuoResults(g) {
+    var hits = g.history.filter(Boolean).length, played = g.history.length;
+    var ratio = played ? hits / played : 0;
+    var title = ratio >= 0.9 ? "Tankeläsare" : ratio >= 0.7 ? "Själsfränder" : ratio >= 0.5 ? "Bra koll" : ratio >= 0.3 ? "Ytligt bekanta" : "Främlingar";
+    var line = ratio >= 0.9 ? "Ni delar en hjärna. Lite läskigt." : ratio >= 0.7 ? "Ni känner varandra på riktigt." : ratio >= 0.5 ? "Hälften rätt. Det finns mer att upptäcka." : ratio >= 0.3 ? "Ni borde nog ses oftare." : "Har ni ens träffats förut?";
+    var duo = state.players;
+    $("winner").innerHTML =
+      '<div class="winner-kicker">Ert lagresultat</div>' +
+      '<h2 class="winner-title">' + title + "</h2>" +
+      '<div class="winner-faces">' + (ratio >= 0.7 ? '<span class="crown">' + ICON.crown + "</span>" : "") + duo.map(function (p) { return avatarHTML(p); }).join("") + "</div>" +
+      '<div class="winner-name">' + hits + " av " + played + " matcher</div>" +
+      '<div class="winner-pts">' + line + "</div>";
+    $("ranking").innerHTML = g.history.map(function (h, i) {
+      return '<div class="dot ' + (h ? "hit" : "miss") + '">' + (i + 1) + "</div>";
+    }).join("") || '<div class="dot" style="grid-column:1/-1">Inga rundor spelade</div>';
     show("results");
   }
 

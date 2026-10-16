@@ -10,6 +10,9 @@ Samma namn ger 1 poäng var. Olika namn: de förklarar sig och gruppen röstar o
 - Warm up är gratis. Juicy och Crazy låses upp med ett engångsköp på 59 kr (köpet är en demo tills appen paketeras med riktiga köp via App Store och Google Play).
 - Frågorna går igenom alla 100 innan något upprepas. Nästa varv blandas om och samma fråga kommer aldrig tillbaka inom 50 frågor. Positionen sparas mellan spelkvällar.
 - Paren roteras så att alla spelar lika ofta och ingen spelar två rundor i rad (vid 4+ spelare).
+- Ett spel är 10 rundor, eller två rundor per spelare när ni är fler än fem. Sen visas resultatet automatiskt.
+- Två spelare: ni spelar som ett lag. Olika svar ger ingen omröstning, och resultatet är hur många matcher ni klarade.
+- Spelare utan egen bild får en av tio animerade figurer.
 - Inget scrollande på någon skärmstorlek. Testat på 320×568 till 430×932.
 
 ## Köra lokalt
