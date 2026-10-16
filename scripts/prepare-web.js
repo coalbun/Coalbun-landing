@@ -3,9 +3,9 @@ const fs = require("fs");
 const path = require("path");
 const root = path.join(__dirname, "..");
 const copies = [
-  ["node_modules/@fontsource-variable/lexend/files/lexend-latin-wght-normal.woff2", "app/fonts/lexend-latin.woff2"],
-  ["node_modules/@fontsource-variable/lexend/files/lexend-latin-ext-wght-normal.woff2", "app/fonts/lexend-latin-ext.woff2"],
-  ["node_modules/@fontsource-variable/lexend/LICENSE", "app/fonts/LICENSE-Lexend.txt"],
+  ["node_modules/@fontsource-variable/outfit/files/outfit-latin-wght-normal.woff2", "app/fonts/outfit-latin.woff2"],
+  ["node_modules/@fontsource-variable/outfit/files/outfit-latin-ext-wght-normal.woff2", "app/fonts/outfit-latin-ext.woff2"],
+  ["node_modules/@fontsource-variable/outfit/LICENSE", "app/fonts/LICENSE-Outfit.txt"],
   ["node_modules/@capacitor/core/dist/capacitor.js", "app/vendor/capacitor.js"]
 ];
 for (const [from, to] of copies) {

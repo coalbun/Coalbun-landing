@@ -16,7 +16,7 @@ Kopiera in texterna nedan i App Store Connect. Siffran inom parentes är antal t
 
 Två spelare, en fråga, tre sekunder. Säger ni samma namn får ni poäng. Det perfekta förfestspelet för gänget, från mysigt till riktigt galet.
 
-**Beskrivning** (1300/4000):
+**Beskrivning** (1283/4000):
 
 ```
 Två spelare. En fråga. Tre sekunder.
@@ -27,7 +27,7 @@ Synk är festspelet som får hela rummet att skrika, skratta och säga "NEJ, det
 
 SÅ FUNKAR DET
 • 2 till 10 spelare. Skriv in namnen och kör på under en minut.
-• Ta en profilbild på varje spelare, eller välj en av figurerna.
+• Ta en profilbild på varje spelare om ni vill.
 • Alla spelar lika många gånger, och ett spel tar runt tio minuter.
 • Kvällens vinnare koras till Tankeläsaren.
 • Är ni bara två spelar ni som ett lag och ser hur väl ni känner varandra.
