@@ -216,7 +216,7 @@ window.QUESTIONS = {
     "Vem skulle våga ge sin olåsta mobil till den andra i en timme?",
     "Vem har fantasier som skulle chocka hela rummet?",
     "Vem skulle ha bäst artistnamn i en vuxenfilm?",
-    "Vem skulle bli otrogen om ingen någonsin fick veta?",
+    "Vem skulle vara otrogen om ingen någonsin fick veta?",
     "Vem är mest trolig att råka skicka en sexig video till familjechatten?",
     "Vem skulle börja fnissa mitt i en trekant?",
     "Vem skulle gå med i mile high club först?",
