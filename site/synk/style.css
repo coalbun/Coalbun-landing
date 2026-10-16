@@ -1,0 +1,21 @@
+/* Samma värld som appen: mörk plommon, champagneguld, rosa */
+@font-face { font-family: "Lexend"; font-weight: 100 900; font-display: swap; src: url("lexend-latin.woff2") format("woff2"); unicode-range: U+0000-00FF, U+2000-206F, U+20AC, U+2122; }
+@font-face { font-family: "Lexend"; font-weight: 100 900; font-display: swap; src: url("lexend-latin-ext.woff2") format("woff2"); unicode-range: U+0100-02BA, U+1E00-1E9F; }
+:root {
+  color-scheme: dark;
+  --bg: #100c10; --surface: #1c161b; --line: rgba(255, 228, 214, .1);
+  --ink: #f6eee8; --muted: #a39499; --gold: #e9c88c; --pink: #ff5f8f;
+  --font: "Lexend", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: radial-gradient(90% 40% at 50% 0%, #2b1a24, transparent 70%), var(--bg); color: var(--ink); font-family: var(--font); line-height: 1.6; }
+main { max-width: 680px; margin: 0 auto; padding-block: 48px 72px; padding-left: max(20px, env(safe-area-inset-left, 0px)); padding-right: max(20px, env(safe-area-inset-right, 0px)); }
+.brand { font-weight: 800; font-size: 28px; letter-spacing: -.02em; color: var(--gold); text-decoration: none; }
+h1 { font-size: clamp(30px, 6vw, 42px); line-height: 1.1; letter-spacing: -.02em; margin: 24px 0 8px; text-wrap: balance; }
+h2 { font-size: 20px; margin: 36px 0 8px; letter-spacing: -.01em; }
+p, li { color: #e4d9d3; font-weight: 400; }
+.meta { color: var(--muted); font-size: 14px; }
+a { color: var(--pink); }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 18px 20px; margin-top: 16px; }
+.card h2 { margin-top: 0; }
+footer { margin-top: 56px; color: var(--muted); font-size: 14px; border-top: 1px solid var(--line); padding-top: 20px; display: flex; gap: 16px; flex-wrap: wrap; }

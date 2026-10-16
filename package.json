@@ -1,0 +1,24 @@
+{
+  "name": "synk",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Synk, festspel för App Store",
+  "scripts": {
+    "prepare-web": "node scripts/prepare-web.js",
+    "sync": "npm run prepare-web && npx cap sync ios",
+    "open": "npx cap open ios"
+  },
+  "dependencies": {
+    "@capacitor/core": "8.5.2",
+    "@capacitor/haptics": "8.0.2",
+    "@capacitor/ios": "8.5.2",
+    "@capacitor/preferences": "8.0.1",
+    "@capacitor/splash-screen": "8.0.2",
+    "@capacitor/status-bar": "8.0.3",
+    "@capgo/native-purchases": "8.8.1"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "8.5.2",
+    "@fontsource-variable/lexend": "5.3.0"
+  }
+}
