@@ -8,7 +8,7 @@
 <meta name="theme-color" content="#100c10">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,300..800&family=Instrument+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lexend:wght@300..800&display=swap">
 <style>
 /* Layout: en skärm i taget, alltid 100% höjd, aldrig scroll. Mörk, varm nattklubbston med champagneguld och djup i ytorna. */
 :root {
@@ -30,8 +30,8 @@
   --violet: #b199ff;
   --on-bright: #1a1216;
 
-  --font-display: "Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, sans-serif;
-  --font-body: "Instrument Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-display: "Lexend", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Lexend", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 
   --gap: clamp(8px, 1.6vh, 16px);
   --radius: 20px;
@@ -82,14 +82,13 @@ svg { display: block; }
   font-weight: 800;
   font-size: clamp(36px, 6.6vh, 58px);
   line-height: 0.9;
-  letter-spacing: -0.045em;
+  letter-spacing: -0.02em;
   margin: 0;
-  font-variation-settings: "wdth" 85;
   background: linear-gradient(180deg, #fff6ea 0%, var(--yellow) 55%, var(--gold-deep) 100%);
   -webkit-background-clip: text; background-clip: text; color: transparent;
 }
 .logo span {
-  font-style: italic; font-weight: 300; letter-spacing: -0.03em;
+  font-weight: 300; letter-spacing: -0.02em;
   background: linear-gradient(180deg, #ffd0dd, var(--pink));
   -webkit-background-clip: text; background-clip: text; color: transparent;
   padding-right: .06em;
@@ -134,7 +133,7 @@ svg { display: block; }
   display: grid; place-items: center;
   font-family: var(--font-display);
   font-weight: 700;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.02em;
   color: var(--on-bright);
   background-size: cover; background-position: center;
   overflow: hidden;
@@ -265,7 +264,7 @@ svg { display: block; }
 .fighter-name { font-family: var(--font-display); font-weight: 700; letter-spacing: -0.02em; font-size: clamp(17px, 2.8vh, 23px); max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .fighter-score { font-size: 12px; font-weight: 600; color: var(--muted); font-variant-numeric: tabular-nums; margin-top: -6px; letter-spacing: .04em; }
 .vs-mark {
-  font-family: var(--font-display); font-weight: 300; font-style: italic;
+  font-family: var(--font-display); font-weight: 300;
   font-size: clamp(20px, 3.4vh, 28px); letter-spacing: -0.02em;
   color: var(--muted);
 }
@@ -297,9 +296,9 @@ svg { display: block; }
   margin: 0;
   font-family: var(--font-display);
   font-weight: 600;
-  font-size: clamp(24px, 4.2vh, 38px);
-  line-height: 1.1;
-  letter-spacing: -0.03em;
+  font-size: clamp(24px, 4.1vh, 37px);
+  line-height: 1.2;
+  letter-spacing: -0.02em;
   text-wrap: balance;
   position: relative;
 }
@@ -309,7 +308,7 @@ svg { display: block; }
   display: grid; place-items: center;
   font-family: var(--font-display);
   font-weight: 800;
-  letter-spacing: -0.06em;
+  letter-spacing: -0.02em;
   font-size: clamp(120px, 26vh, 230px);
   background: radial-gradient(70% 50% at 50% 45%, color-mix(in srgb, var(--yellow) 10%, var(--surface)), var(--surface));
   color: var(--yellow);
@@ -322,7 +321,7 @@ svg { display: block; }
 .count.now { font-size: clamp(70px, 14vh, 124px); }
 .count.now span { background-image: linear-gradient(180deg, #ffd0dd, var(--pink) 60%, var(--pink-deep)); }
 .verdict { position: relative; display: flex; flex-direction: column; align-items: center; gap: 8px; animation: pop .35s cubic-bezier(.2, .9, .3, 1.2); }
-.verdict-big { font-family: var(--font-display); font-weight: 800; letter-spacing: -0.05em; font-size: clamp(40px, 7.6vh, 68px); line-height: 1; }
+.verdict-big { font-family: var(--font-display); font-weight: 800; letter-spacing: -0.02em; font-size: clamp(40px, 7.6vh, 68px); line-height: 1; }
 .verdict-big.match { color: var(--green); text-shadow: 0 0 40px color-mix(in srgb, var(--green) 45%, transparent); }
 .verdict-big.miss { color: var(--pink); text-shadow: 0 0 40px color-mix(in srgb, var(--pink) 45%, transparent); }
 .verdict-text { margin: 0; color: var(--muted); font-weight: 500; font-size: clamp(15px, 2.2vh, 17px); line-height: 1.45; max-width: 28ch; }
@@ -332,7 +331,7 @@ svg { display: block; }
 .winner { flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; }
 .winner-kicker { font-size: 11px; font-weight: 600; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); }
 .winner-title {
-  font-family: var(--font-display); font-weight: 800; letter-spacing: -0.045em;
+  font-family: var(--font-display); font-weight: 800; letter-spacing: -0.02em;
   font-size: clamp(32px, 5.6vh, 48px); line-height: 1; margin: 0;
   background: linear-gradient(180deg, #fff6ea 0%, var(--yellow) 55%, var(--gold-deep) 100%);
   -webkit-background-clip: text; background-clip: text; color: transparent;
@@ -383,10 +382,10 @@ svg { display: block; }
   max-height: 92%;
 }
 .sheet::before { content: ""; width: 38px; height: 4px; border-radius: 4px; background: var(--line-hi); align-self: center; margin: -10px 0 2px; }
-.sheet h2 { margin: 0; font-family: var(--font-display); font-weight: 700; letter-spacing: -0.035em; font-size: 28px; line-height: 1.05; }
+.sheet h2 { margin: 0; font-family: var(--font-display); font-weight: 700; letter-spacing: -0.02em; font-size: 28px; line-height: 1.05; }
 .sheet p { margin: 0; color: var(--muted); font-weight: 500; line-height: 1.5; }
 .sheet .price {
-  font-family: var(--font-display); font-weight: 800; letter-spacing: -0.04em; font-size: 46px; line-height: 1;
+  font-family: var(--font-display); font-weight: 800; letter-spacing: -0.02em; font-size: 46px; line-height: 1;
   background: linear-gradient(180deg, #fff6ea, var(--yellow) 60%, var(--gold-deep));
   -webkit-background-clip: text; background-clip: text; color: transparent;
 }
@@ -411,6 +410,10 @@ svg { display: block; }
   box-shadow: 0 14px 30px -10px rgba(0, 0, 0, .8);
 }
 
+@media (max-width: 360px) {
+  .top-btn { padding: 0 10px; font-size: 12px; }
+  .cat-pill { padding: 0 12px; font-size: 14px; }
+}
 @keyframes pop { from { transform: scale(.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 @keyframes rise { from { transform: translateY(14px); opacity: 0; filter: blur(4px); } to { transform: none; opacity: 1; filter: none; } }
 @keyframes tick { 0% { transform: scale(1.5); opacity: 0; filter: blur(8px); } 30% { transform: scale(1); opacity: 1; filter: none; } 100% { transform: scale(.94); opacity: 1; } }
