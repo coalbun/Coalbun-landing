@@ -629,13 +629,25 @@ svg { display: block; }
         var a = ids[i], b = ids[j];
         var rested = ids.length >= 4 ? (last.indexOf(a) < 0 && last.indexOf(b) < 0) : true;
         var key = [a, b].sort().join("|");
-        var score = (g.played[a] + g.played[b]) * 100 + (g.pairCount[key] || 0) * 10 + (rested ? 0 : 1000);
+        // Viktigast: de som spelat minst. Sen: inte två rundor i rad. Sen: nya par före gamla.
+        var score = (g.played[a] * g.played[a] + g.played[b] * g.played[b]) * 1000 + (rested ? 0 : 100) + (g.pairCount[key] || 0) * 10;
         if (score < bestScore) { bestScore = score; best = [[a, b]]; }
         else if (score === bestScore) best.push([a, b]);
       }
     }
     var pick = best[Math.floor(Math.random() * best.length)];
     return Math.random() < 0.5 ? pick : [pick[1], pick[0]];
+  }
+
+  // ---------- Spellängd ----------
+  // Alla spelar exakt lika många gånger. Varje runda har två platser, så rundor = spelare x gånger / 2.
+  // Minst 7 rundor och högst 10, så att ett spel tar runt 10 minuter oavsett hur många ni är.
+  // Vid udda antal spelare måste antal gånger vara jämnt, annars går det inte jämnt ut.
+  function planRounds(n) {
+    if (n <= 2) return { total: 10, each: 10 };
+    var each = Math.ceil(14 / n);
+    if ((n * each) % 2) each++;
+    return { total: n * each / 2, each: each };
   }
 
   // ---------- Setup ----------
@@ -657,7 +669,8 @@ svg { display: block; }
     $("add-btn").disabled = full;
     $("name-input").placeholder = full ? "Max 10 spelare" : "Skriv ett namn";
     $("start-btn").disabled = state.players.length < 2;
-    $("start-btn").textContent = state.players.length < 2 ? "Minst 2 spelare" : "Kör!";
+    var plan = planRounds(state.players.length);
+    $("start-btn").textContent = state.players.length < 2 ? "Minst 2 spelare" : "Kör! " + plan.total + " rundor";
   }
 
   function renderCats() {
@@ -746,8 +759,7 @@ svg { display: block; }
   // ---------- Spelet ----------
   function startGame() {
     var n = state.players.length;
-    // Fast längd så att spelet tar slut av sig självt: 10 rundor, fler när ni är många så alla hinner spela ungefär fyra gånger.
-    var g = { round: 0, total: Math.max(10, n * 2), duo: n === 2, history: [], scores: {}, played: {}, pairCount: {}, pairMatch: {}, lastPair: null };
+    var g = { round: 0, total: planRounds(n).total, duo: n === 2, history: [], scores: {}, played: {}, pairCount: {}, pairMatch: {}, lastPair: null };
     state.players.forEach(function (p) { g.scores[p.id] = 0; g.played[p.id] = 0; });
     state.game = g;
     show("round");
