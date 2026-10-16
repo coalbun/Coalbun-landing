@@ -80,8 +80,9 @@ svg { display: block; }
 .logo {
   font-family: var(--font-display);
   font-weight: 800;
-  font-size: clamp(36px, 6.6vh, 58px);
+  font-size: min(clamp(36px, 6.6vh, 58px), 12vw);
   line-height: 0.9;
+  white-space: nowrap;
   letter-spacing: -0.02em;
   margin: 0;
   background: linear-gradient(180deg, #fff6ea 0%, var(--yellow) 55%, var(--gold-deep) 100%);
@@ -208,7 +209,7 @@ svg { display: block; }
 .cats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; flex-shrink: 0; }
 .cat {
   position: relative;
-  height: clamp(78px, 12.5vh, 112px);
+  height: clamp(84px, 13vh, 120px);
   border-radius: var(--radius);
   background: linear-gradient(180deg, var(--surface-2), var(--surface));
   border: 1px solid var(--line);
@@ -220,7 +221,7 @@ svg { display: block; }
 .cat:active { transform: scale(.97); }
 .cat-name { font-family: var(--font-display); font-weight: 700; letter-spacing: -0.02em; font-size: clamp(17px, 2.8vh, 22px); color: var(--c); }
 .cat-sub { font-size: 11px; font-weight: 500; color: var(--muted); letter-spacing: .04em; }
-.cat .mascot { height: clamp(34px, 5.8vh, 56px); aspect-ratio: 1; overflow: visible; filter: saturate(.45) brightness(.8); transition: filter .3s, transform .3s; }
+.cat .mascot { height: clamp(40px, 6.6vh, 64px); aspect-ratio: 1; overflow: visible; filter: saturate(.45) brightness(.8); transition: filter .3s, transform .3s; }
 .cat[aria-pressed="true"] .mascot { filter: none; }
 .cat.just .mascot { animation: jump .6s cubic-bezier(.3, 1.6, .5, 1); }
 .cat.just { animation: tilepop .45s cubic-bezier(.3, 1.6, .5, 1); }
@@ -235,22 +236,39 @@ svg { display: block; }
 .cat.just .heat .on:nth-child(2) { animation-delay: .08s; }
 .cat.just .heat .on:nth-child(3) { animation-delay: .16s; }
 .wave { position: fixed; z-index: 34; pointer-events: none; border-radius: 20px; border: 2px solid var(--col); animation: wave .6s ease-out forwards; }
-/* Rörelser i maskotarna, bara när nivån är vald */
-.m-rays, .m-spiral { transform-box: fill-box; transform-origin: center; }
-.cat[aria-pressed="true"] .m-rays { animation: spin 8s linear infinite; }
-.cat[aria-pressed="true"] .m-spiral { animation: spin 1.4s linear infinite; }
-.m-drip { opacity: 0; }
-.cat[aria-pressed="true"] .m-drip { animation: drip 1.8s ease-in infinite; }
-.cat[aria-pressed="true"] .m-drip.d2 { animation-delay: .9s; }
-.m-bolt { opacity: 0; }
-.cat[aria-pressed="true"] .m-bolt { animation: flicker 1.6s steps(1) infinite; }
-.cat[aria-pressed="true"] .m-bolt.b2 { animation-delay: .8s; }
+/* Nivåillustrationer: stilla när de inte är valda, levande när de är det */
+.m-glow { opacity: 0; transition: opacity .4s; }
+.cat[aria-pressed="true"] .m-glow { opacity: 1; animation: glowpulse 2.6s ease-in-out infinite; }
+.m-glint { opacity: 0; transform-box: fill-box; transform-origin: center; }
+.cat[aria-pressed="true"] .m-glint { animation: twinkle 2.2s ease-in-out infinite; }
+.cat[aria-pressed="true"] .m-glint:nth-of-type(2) { animation-delay: .7s; }
+.cat[aria-pressed="true"] .m-glint:nth-of-type(3) { animation-delay: 1.4s; }
+.m-bubbles circle { opacity: 0; }
+.cat[aria-pressed="true"] .m-bubbles circle { animation: bubble 1.8s ease-in infinite; }
+.cat[aria-pressed="true"] .m-bubbles circle:nth-child(2) { animation-delay: .45s; }
+.cat[aria-pressed="true"] .m-bubbles circle:nth-child(3) { animation-delay: .9s; }
+.cat[aria-pressed="true"] .m-bubbles circle:nth-child(4) { animation-delay: 1.35s; }
+.m-swing { transform-origin: 60px 14px; }
+.cat[aria-pressed="true"] .m-swing { animation: swing 2.6s ease-in-out infinite; }
+.cat[aria-pressed="true"] .m-facets { animation: facets 2.4s linear infinite; }
+.cat[aria-pressed="true"] .m-ball { animation: sway 3s ease-in-out infinite; transform-origin: 50px 0; }
+@keyframes glowpulse { 50% { opacity: .55; } }
+@keyframes twinkle { 0%, 100% { opacity: 0; transform: scale(.3) rotate(0); } 50% { opacity: 1; transform: scale(1) rotate(45deg); } }
+@keyframes bubble { 0% { opacity: 0; transform: translateY(0); } 25% { opacity: .95; } 100% { opacity: 0; transform: translateY(-20px); } }
+@keyframes swing { 0%, 100% { transform: rotate(-5deg); } 50% { transform: rotate(6deg); } }
+@keyframes facets { to { transform: translateX(-16px); } }
+@keyframes sway { 0%, 100% { transform: rotate(-3deg); } 50% { transform: rotate(3deg); } }
 
-/* Partiklar när man väljer nivå */
-.spark { position: fixed; z-index: 35; pointer-events: none; width: var(--s); height: var(--s); margin: calc(var(--s) / -2) 0 0 calc(var(--s) / -2); background: var(--col); border-radius: 50%; animation: burst var(--t, .7s) cubic-bezier(.1, .8, .3, 1) forwards; }
-.spark.ring { background: none; border: 2px solid var(--col); }
-.spark.drop { border-radius: 50% 0 50% 50%; }
-.spark.bar { border-radius: 2px; height: calc(var(--s) * .4); }
+/* Konfetti ritas på en canvas ovanpå allt */
+.confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 36; }
+
+/* Ljudknapp */
+.setup-head { position: relative; padding-right: 50px; }
+.sound-btn { position: absolute; top: 2px; right: 0; width: 42px; height: 42px; border-radius: 50%; display: grid; place-items: center; color: var(--muted); background: color-mix(in srgb, var(--surface-2) 80%, transparent); border: 1px solid var(--line); }
+.sound-btn[aria-pressed="true"] { color: var(--yellow); }
+.sound-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 0 0; border-top: 1px solid var(--line); font-weight: 600; }
+.sound-row .top-btn { color: var(--ink); }
+.haptic-proxy { position: fixed; left: -100px; top: 0; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
 
 /* Bakgrundsglöd som byter färg med nivån */
 @property --amb { syntax: "<color>"; inherits: true; initial-value: #e9c88c; }
@@ -259,10 +277,6 @@ svg { display: block; }
 .app { z-index: 1; }
 @keyframes tilepop { 0% { transform: scale(1); } 40% { transform: scale(1.07); } 100% { transform: scale(1); } }
 @keyframes shake { 0%, 100% { transform: none; } 15% { transform: translateX(-4px) rotate(-2deg); } 30% { transform: translateX(4px) rotate(2deg); } 45% { transform: translateX(-3px) rotate(-1deg); } 60% { transform: translateX(3px) rotate(1deg); } 80% { transform: translateX(-1px); } }
-@keyframes spin { to { transform: rotate(360deg); } }
-@keyframes drip { 0% { opacity: 0; transform: translateY(0); } 20% { opacity: 1; } 100% { opacity: 0; transform: translateY(14px); } }
-@keyframes flicker { 0%, 100% { opacity: 0; } 10%, 30% { opacity: 1; } 20%, 40% { opacity: 0; } }
-@keyframes burst { 0% { transform: translate(0, 0) scale(1) rotate(0); opacity: 1; } 100% { transform: translate(var(--dx), var(--dy)) scale(.2) rotate(var(--r)); opacity: 0; } }
 @keyframes flame { 0%, 100% { transform: scale(1, 1); } 50% { transform: scale(.88, 1.15); } }
 @keyframes wave { from { transform: scale(1); opacity: .9; } to { transform: scale(1.35, 1.6); opacity: 0; } }
 @keyframes breathe { 50% { opacity: .6; } }
@@ -487,9 +501,10 @@ svg { display: block; }
 
   <!-- SETUP -->
   <section class="screen" id="setup">
-    <header>
+    <header class="setup-head">
       <h1 class="logo">Vem av <span>oss?</span></h1>
       <p class="tagline">Två spelare per runda. Säg samma namn så får ni poäng.</p>
+      <button class="sound-btn" id="sound-btn" aria-label="Ljud"></button>
     </header>
 
     <form class="add-row" id="add-form" autocomplete="off">
@@ -588,7 +603,222 @@ svg { display: block; }
   function shuffle(a) { a = a.slice(); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
   function range(n) { var a = []; for (var i = 0; i < n; i++) a.push(i); return a; }
   function uid() { return Math.random().toString(36).slice(2, 9); }
-  function buzz(ms) { try { navigator.vibrate && navigator.vibrate(ms); } catch (e) {} }
+  // ---------- Haptik ----------
+  // Android: vibrationsmönster. iPhone (Safari 18+): en dold switch som ger ett haptiskt klick när den trycks.
+  // I den paketerade appen byts detta mot telefonens riktiga haptik.
+  var hapticLabel = null;
+  function iosTap() {
+    try {
+      if (!hapticLabel) {
+        hapticLabel = document.createElement("label");
+        hapticLabel.className = "haptic-proxy";
+        hapticLabel.setAttribute("aria-hidden", "true");
+        hapticLabel.innerHTML = '<input type="checkbox" switch tabindex="-1">';
+        document.body.appendChild(hapticLabel);
+      }
+      hapticLabel.click();
+    } catch (e) {}
+  }
+  function buzz(pattern) {
+    var arr = Array.isArray(pattern) ? pattern : [pattern];
+    try { if (navigator.vibrate && navigator.vibrate(arr)) return; } catch (e) {}
+    var t = 0;
+    for (var i = 0; i < arr.length; i += 2) { setTimeout(iosTap, t); t += arr[i] + (arr[i + 1] || 0); }
+  }
+
+  // ---------- Ljud ----------
+  // Allt ljud skapas i webbläsaren: rena klockliknande toner med lite rumsklang, inga ljudfiler.
+  var Sound = (function () {
+    var ac = null, out = null, verb = null;
+    var on = store.get("sound", true);
+    function init() {
+      if (ac) return ac;
+      var C = window.AudioContext || window.webkitAudioContext;
+      if (!C) return null;
+      try { ac = new C(); } catch (e) { return null; }
+      var comp = ac.createDynamicsCompressor();
+      comp.connect(ac.destination);
+      out = ac.createGain(); out.gain.value = 0.55; out.connect(comp);
+      verb = ac.createConvolver();
+      var len = Math.floor(ac.sampleRate * 1.6), buf = ac.createBuffer(2, len, ac.sampleRate);
+      for (var ch = 0; ch < 2; ch++) { var d = buf.getChannelData(ch); for (var i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 3.2); }
+      verb.buffer = buf;
+      var wet = ac.createGain(); wet.gain.value = 0.28; verb.connect(wet); wet.connect(comp);
+      return ac;
+    }
+    function wake() { if (init() && ac.state === "suspended") ac.resume(); }
+    document.addEventListener("pointerdown", wake, { passive: true });
+    function env(g, t, peak, att, dur) {
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.linearRampToValueAtTime(peak, t + att);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    }
+    function voice(f, t, dur, type, peak, att, bendTo) {
+      var o = ac.createOscillator(), g = ac.createGain();
+      o.type = type || "sine";
+      o.frequency.setValueAtTime(f, t);
+      if (bendTo) o.frequency.exponentialRampToValueAtTime(bendTo, t + dur * 0.8);
+      env(g, t, peak, att || 0.005, dur);
+      o.connect(g); g.connect(out); g.connect(verb);
+      o.start(t); o.stop(t + dur + 0.05);
+    }
+    function bell(f, t, peak, dur) {
+      dur = dur || 1.1;
+      voice(f, t, dur, "sine", peak);
+      voice(f * 2, t, dur * 0.55, "sine", peak * 0.3);
+      voice(f * 3, t, dur * 0.25, "sine", peak * 0.1);
+    }
+    function noise(t, dur, peak, type, f0, f1) {
+      var len = Math.floor(ac.sampleRate * dur), buf = ac.createBuffer(1, len, ac.sampleRate), d = buf.getChannelData(0);
+      for (var i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
+      var src = ac.createBufferSource(); src.buffer = buf;
+      var flt = ac.createBiquadFilter(); flt.type = type; flt.Q.value = 1.2;
+      flt.frequency.setValueAtTime(f0, t); flt.frequency.exponentialRampToValueAtTime(f1, t + dur);
+      var g = ac.createGain(); env(g, t, peak, dur * 0.7, dur);
+      src.connect(flt); flt.connect(g); g.connect(out); g.connect(verb);
+      src.start(t); src.stop(t + dur + 0.05);
+    }
+    var N = { C5: 523.25, D5: 587.33, E5: 659.25, G5: 783.99, A5: 880, B5: 987.77, C6: 1046.5, E6: 1318.5, G6: 1568, C7: 2093 };
+    var SFX = {
+      add: function (t) { voice(420, t, 0.18, "sine", 0.22, 0.004, 880); },
+      remove: function (t) { voice(520, t, 0.16, "sine", 0.16, 0.004, 260); },
+      tick: function (t, i) { bell([N.E5, N.G5, N.B5][i] || N.E5, t, 0.26, 0.5); },
+      go: function (t) { noise(t, 0.28, 0.12, "bandpass", 600, 5000); [N.C6, N.E6, N.G6].forEach(function (f) { bell(f, t + 0.12, 0.16, 1.1); }); voice(110, t + 0.12, 0.35, "sine", 0.35, 0.004, 55); },
+      match: function (t) { [N.C5, N.E5, N.G5, N.C6, N.E6].forEach(function (f, i) { bell(f, t + i * 0.07, 0.2, 1.2); }); bell(N.C7, t + 0.4, 0.06, 1.6); },
+      miss: function (t) { voice(330, t, 0.35, "triangle", 0.2, 0.01, 300); voice(262, t + 0.28, 0.6, "triangle", 0.2, 0.01, 220); },
+      vote: function (t) { bell(N.G5, t, 0.2, 0.8); bell(N.D5 * 2, t + 0.09, 0.14, 1); },
+      unlock: function (t) { noise(t, 0.6, 0.08, "highpass", 2000, 9000); [N.G5, N.C6, N.E6, N.G6].forEach(function (f, i) { bell(f, t + i * 0.08, 0.16, 1.4); }); },
+      win: function (t) {
+        [N.C5, N.E5, N.G5, N.C6].forEach(function (f, i) { bell(f, t + i * 0.12, 0.2, 1.2); });
+        [N.C6, N.E6, N.G6].forEach(function (f) { bell(f, t + 0.6, 0.15, 2); });
+        voice(130.8, t + 0.6, 1.2, "sine", 0.25, 0.01);
+        noise(t + 0.55, 1.4, 0.05, "highpass", 4000, 9000);
+      },
+      level: function (t, cat) {
+        if (cat === "warmup") { bell(N.A5, t, 0.18, 1); bell(N.E6, t + 0.08, 0.12, 1.2); }
+        else if (cat === "juicy") { voice(900, t, 0.12, "sine", 0.3, 0.003, 260); bell(N.E6, t + 0.08, 0.14, 1); bell(N.B5, t + 0.16, 0.1, 1.2); }
+        else { noise(t, 0.32, 0.14, "bandpass", 300, 6000); voice(80, t + 0.3, 0.4, "sine", 0.45, 0.004, 40); [N.C6, N.E6, N.G6, N.C7].forEach(function (f, i) { bell(f, t + 0.3 + i * 0.04, 0.12, 1.3); }); }
+      }
+    };
+    return {
+      play: function (name, arg) {
+        if (!on || !init()) return;
+        if (ac.state === "suspended") ac.resume();
+        try { SFX[name](ac.currentTime + 0.01, arg); } catch (e) {}
+      },
+      isOn: function () { return on; },
+      toggle: function () { on = !on; store.set("sound", on); if (on) this.play("vote"); return on; }
+    };
+  })();
+
+  // ---------- Konfetti ----------
+  // Metallisk konfetti i guld, champagne och rosé som vänds i luften och faller långsamt.
+  var Confetti = (function () {
+    var cv = null, ctx, parts = [], raf = null, dpr = 1, W = 0, H = 0;
+    var PAL = {
+      gold:   ["#f4dfae", "#e9c88c", "#caa05a", "#fff6e2", "#ff8fb0"],
+      warmup: ["#f4dfae", "#e9c88c", "#caa05a", "#fff6e2"],
+      juicy:  ["#ff5f8f", "#ff9fbb", "#ffd6e2", "#e9c88c"],
+      crazy:  ["#b199ff", "#d9ccff", "#ff5f8f", "#e9c88c", "#fff6e2"]
+    };
+    function shade(hex, k) {
+      var n = parseInt(hex.slice(1), 16), r = n >> 16, g = (n >> 8) & 255, b = n & 255;
+      function c(v) { return Math.max(0, Math.min(255, Math.round(k < 0 ? v * (1 + k) : v + (255 - v) * k))); }
+      return "rgb(" + c(r) + "," + c(g) + "," + c(b) + ")";
+    }
+    function reduced() { return window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches; }
+    function ensure() {
+      if (cv) return;
+      cv = document.createElement("canvas"); cv.className = "confetti"; cv.setAttribute("aria-hidden", "true");
+      document.body.appendChild(cv); ctx = cv.getContext("2d");
+      resize(); window.addEventListener("resize", resize);
+    }
+    function resize() { dpr = Math.min(2, window.devicePixelRatio || 1); W = innerWidth; H = innerHeight; cv.width = W * dpr; cv.height = H * dpr; }
+    function emit(o) {
+      if (reduced()) return;
+      ensure();
+      var pal = PAL[o.palette || "gold"];
+      for (var i = 0; i < o.count; i++) {
+        var kind = o.kinds[Math.floor(Math.random() * o.kinds.length)];
+        var ang = o.angle + (Math.random() - 0.5) * o.spread;
+        var sp = o.speed * (0.45 + Math.random() * 0.75);
+        var col = pal[Math.floor(Math.random() * pal.length)];
+        var big = kind === "ribbon";
+        parts.push({
+          x: o.x + (o.jitterX ? (Math.random() - 0.5) * o.jitterX : 0), y: o.y,
+          vx: Math.cos(ang) * sp, vy: Math.sin(ang) * sp,
+          kind: kind, col: col, dark: shade(col, -0.38), light: shade(col, 0.55),
+          w: kind === "glitter" ? 2 + Math.random() * 2.5 : big ? 4 + Math.random() * 2 : 7 + Math.random() * 6,
+          h: big ? 13 + Math.random() * 10 : 4 + Math.random() * 4,
+          rot: Math.random() * Math.PI * 2, vr: (Math.random() - 0.5) * 0.22,
+          flip: Math.random() * Math.PI * 2, vf: 0.06 + Math.random() * 0.12,
+          sway: Math.random() * Math.PI * 2,
+          g: o.gravity, drag: o.drag || 0.982,
+          life: 0, max: (o.life || 150) + Math.random() * 70
+        });
+      }
+      if (!raf) raf = requestAnimationFrame(frame);
+    }
+    function frame() {
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.clearRect(0, 0, W, H);
+      for (var i = parts.length - 1; i >= 0; i--) {
+        var p = parts[i];
+        p.vx *= p.drag; p.vy = p.vy * p.drag + p.g;
+        p.sway += 0.06; p.flip += p.vf; p.rot += p.vr; p.life++;
+        p.x += p.vx + (p.kind === "glitter" ? 0 : Math.sin(p.sway) * 0.7);
+        p.y += p.vy;
+        if (p.life > p.max || p.y > H + 40) { parts.splice(i, 1); continue; }
+        var a = p.life > p.max - 35 ? (p.max - p.life) / 35 : 1;
+        ctx.globalAlpha = a;
+        ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rot);
+        if (p.kind === "glitter") {
+          ctx.globalAlpha = a * (0.45 + 0.55 * Math.abs(Math.sin(p.flip * 1.5)));
+          ctx.fillStyle = p.light; ctx.beginPath(); ctx.arc(0, 0, p.w, 0, 6.283); ctx.fill();
+        } else if (p.kind === "star") {
+          var r = p.w * 0.9 * (0.6 + 0.4 * Math.abs(Math.sin(p.flip)));
+          ctx.fillStyle = p.light; ctx.beginPath();
+          ctx.moveTo(0, -r); ctx.quadraticCurveTo(0, 0, r, 0); ctx.quadraticCurveTo(0, 0, 0, r); ctx.quadraticCurveTo(0, 0, -r, 0); ctx.quadraticCurveTo(0, 0, 0, -r);
+          ctx.fill();
+        } else {
+          var c = Math.cos(p.flip);
+          ctx.scale(1, Math.max(0.08, Math.abs(c)));
+          var shine = Math.abs(Math.sin(p.flip));
+          ctx.fillStyle = c < 0 ? p.dark : shine > 0.93 ? p.light : p.col;
+          if (p.kind === "ribbon") { ctx.beginPath(); ctx.roundRect ? ctx.roundRect(-p.w / 2, -p.h / 2, p.w, p.h, p.w / 2) : ctx.rect(-p.w / 2, -p.h / 2, p.w, p.h); ctx.fill(); }
+          else ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+        }
+        ctx.restore();
+      }
+      ctx.globalAlpha = 1;
+      if (parts.length) raf = requestAnimationFrame(frame);
+      else { raf = null; ctx.clearRect(0, 0, W, H); }
+    }
+    return {
+      // Litet utbrott från en nivåruta
+      pop: function (x, y, cat) {
+        var heat = HEAT[cat];
+        emit({ x: x, y: y, count: [18, 28, 44][heat - 1], angle: -Math.PI / 2, spread: Math.PI * 1.6, speed: [6, 7.5, 10][heat - 1], gravity: 0.16, palette: cat, life: 70,
+          kinds: cat === "warmup" ? ["glitter", "glitter", "star", "rect"] : cat === "juicy" ? ["rect", "ribbon", "glitter"] : ["rect", "ribbon", "star", "glitter"] });
+      },
+      // Två kanoner från nederkanten vid en match
+      match: function () {
+        var o = { count: 50, spread: 0.5, speed: 17, gravity: 0.24, palette: "gold", kinds: ["rect", "rect", "ribbon", "ribbon", "star"], life: 120 };
+        emit(Object.assign({}, o, { x: -10, y: innerHeight * 0.92, angle: -Math.PI / 3 }));
+        emit(Object.assign({}, o, { x: innerWidth + 10, y: innerHeight * 0.92, angle: -Math.PI * 2 / 3 }));
+      },
+      // Regn uppifrån plus kanoner, för vinnaren
+      celebrate: function (strength) {
+        var n = strength || 1;
+        this.match();
+        for (var k = 0; k < 3; k++) (function (k) {
+          setTimeout(function () {
+            emit({ x: innerWidth / 2, jitterX: innerWidth, y: -20, count: Math.round(45 * n), angle: Math.PI / 2, spread: 0.9, speed: 2.5, gravity: 0.07, drag: 0.99, palette: "gold", kinds: ["rect", "ribbon", "ribbon", "glitter"], life: 260 });
+          }, 250 + k * 380);
+        })(k);
+      }
+    };
+  })();
   function byId(id) { for (var i = 0; i < state.players.length; i++) if (state.players[i].id === id) return state.players[i]; return null; }
   function isOpen(cat) { return CATS[cat].free || state.unlocked; }
 
@@ -723,16 +953,61 @@ svg { display: block; }
   // Varje nivå har en egen figur som vaknar till liv när den väljs.
   var CAT_COLOR = { warmup: "#e9c88c", juicy: "#ff5f8f", crazy: "#b199ff" };
   var HEAT = { warmup: 1, juicy: 2, crazy: 3 };
+  function glint(cx, cy, r, col) {
+    return '<path class="m-glint" fill="' + col + '" d="M' + cx + " " + (cy - r) + "Q" + cx + " " + cy + " " + (cx + r) + " " + cy + "Q" + cx + " " + cy + " " + cx + " " + (cy + r) + "Q" + cx + " " + cy + " " + (cx - r) + " " + cy + "Q" + cx + " " + cy + " " + cx + " " + (cy - r) + 'z"/>';
+  }
+  // Discokulans speglar: rutnät med ljusa och mörka plattor, dubbelt så brett så att det kan "snurra".
+  var FACETS = (function () {
+    var out = "", seed = 7;
+    function rnd() { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; }
+    for (var y = 22; y < 90; y += 8) for (var x = 14; x < 104; x += 8) {
+      var o = (0.15 + rnd() * 0.75).toFixed(2);
+      out += '<rect x="' + x + '" y="' + y + '" width="7" height="7" rx="1" fill="#fff" opacity="' + o + '"/>';
+    }
+    return out;
+  })();
   var MASCOT = {
-    warmup: '<g class="m-rays" stroke="#e9c88c" stroke-width="6" stroke-linecap="round"><path d="M50 -4v10M50 94v10M-4 50h10M94 50h10M12 12l7 7M81 81l7 7M12 88l7-7M81 19l7-7"/></g>' +
-      '<circle cx="50" cy="50" r="36" fill="#e9c88c"/><g fill="none" stroke="#1a1216" stroke-width="5" stroke-linecap="round"><path d="M32 47q6-8 12 0M56 47q6-8 12 0"/><path d="M38 60q12 11 24 0"/></g>' +
-      '<circle cx="28" cy="58" r="5" fill="#ff5f8f" opacity=".35"/><circle cx="72" cy="58" r="5" fill="#ff5f8f" opacity=".35"/>',
-    juicy: '<circle cx="50" cy="50" r="36" fill="#ff5f8f"/><g fill="none" stroke="#1a1216" stroke-width="5" stroke-linecap="round"><path d="M30 46q7 5 14 0M56 44q7-6 14 0"/><path d="M28 42l-3-4M33 40l-1-5"/><path d="M40 61q10 8 22-2"/></g>' +
-      '<path d="M52 62q5 7 10-1" fill="#1a1216"/><circle cx="27" cy="57" r="5" fill="#fff" opacity=".35"/><circle cx="73" cy="57" r="5" fill="#fff" opacity=".35"/>' +
-      '<path class="m-drip" d="M36 84q4 6 0 9q-4-3 0-9z" fill="#ff5f8f"/><path class="m-drip d2" d="M64 86q4 6 0 9q-4-3 0-9z" fill="#ff5f8f"/>',
-    crazy: '<path class="m-bolt" d="M88 6l-10 16h8l-10 16" fill="none" stroke="#e9c88c" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path class="m-bolt b2" d="M12 62l-8 12h7l-8 12" fill="none" stroke="#e9c88c" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>' +
-      '<circle cx="50" cy="50" r="36" fill="#b199ff"/><g fill="none" stroke="#1a1216" stroke-width="3.6" stroke-linecap="round"><path class="m-spiral" d="M37 45a2 2 0 1 1 3 1a5 5 0 1 1-7-4a8 8 0 1 1 3 13"/><path class="m-spiral" d="M63 45a2 2 0 1 1 3 1a5 5 0 1 1-7-4a8 8 0 1 1 3 13"/></g>' +
-      '<path d="M34 62h32c0 9-7 15-16 15s-16-6-16-15z" fill="#1a1216"/><path d="M42 72q8 5 16 0" fill="#ff5f8f"/><path d="M44 62h4v5h-4zM52 62h4v5h-4z" fill="#fff"/>'
+    // Champagneglas med bubblor
+    warmup: '<defs><linearGradient id="wuLiq" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff3d1"/><stop offset=".45" stop-color="#ecca8a"/><stop offset="1" stop-color="#b3843b"/></linearGradient>' +
+      '<linearGradient id="wuGlass" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity=".6"/><stop offset=".3" stop-color="#fff" stop-opacity=".06"/><stop offset=".75" stop-color="#fff" stop-opacity=".14"/><stop offset="1" stop-color="#fff" stop-opacity=".5"/></linearGradient>' +
+      '<radialGradient id="wuGlow"><stop offset="0" stop-color="#e9c88c" stop-opacity=".5"/><stop offset="1" stop-color="#e9c88c" stop-opacity="0"/></radialGradient></defs>' +
+      '<circle class="m-glow" cx="50" cy="46" r="50" fill="url(#wuGlow)"/>' +
+      '<path d="M22 37h56c-2 12-14 21-28 21S24 49 22 37z" fill="url(#wuLiq)"/>' +
+      '<ellipse cx="50" cy="37" rx="28" ry="3.2" fill="#fff7e2" opacity=".85"/>' +
+      '<g class="m-bubbles" fill="#fff"><circle cx="40" cy="50" r="1.5"/><circle cx="53" cy="52" r="1.1"/><circle cx="60" cy="48" r="1.7"/><circle cx="46" cy="46" r="1"/></g>' +
+      '<path d="M16 32h68c0 16-15 28-34 28S16 48 16 32z" fill="url(#wuGlass)" stroke="#fff" stroke-opacity=".55" stroke-width="1.4"/>' +
+      '<ellipse cx="50" cy="32" rx="34" ry="4" fill="none" stroke="#fff" stroke-opacity=".75" stroke-width="1.4"/>' +
+      '<path d="M22 37q3 10 12 15" fill="none" stroke="#fff" stroke-opacity=".7" stroke-width="2" stroke-linecap="round"/>' +
+      '<path d="M48 60h4l1 24h-6z" fill="url(#wuGlass)" stroke="#fff" stroke-opacity=".5" stroke-width="1"/>' +
+      '<ellipse cx="50" cy="86" rx="17" ry="4" fill="url(#wuGlass)" stroke="#fff" stroke-opacity=".6" stroke-width="1.2"/>' +
+      glint(82, 14, 6, "#fff4dc") + glint(14, 18, 4, "#e9c88c") + glint(88, 54, 3.5, "#fff4dc"),
+    // Blanka körsbär med guldskaft
+    juicy: '<defs><radialGradient id="jcR" cx=".36" cy=".3" r=".75"><stop offset="0" stop-color="#ffc2d3"/><stop offset=".28" stop-color="#ff5585"/><stop offset=".72" stop-color="#b8123f"/><stop offset="1" stop-color="#5e0820"/></radialGradient>' +
+      '<linearGradient id="jcG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fbe7c0"/><stop offset=".5" stop-color="#e3bd7c"/><stop offset="1" stop-color="#9c7438"/></linearGradient>' +
+      '<radialGradient id="jcGlow"><stop offset="0" stop-color="#ff5f8f" stop-opacity=".5"/><stop offset="1" stop-color="#ff5f8f" stop-opacity="0"/></radialGradient></defs>' +
+      '<circle class="m-glow" cx="50" cy="56" r="50" fill="url(#jcGlow)"/>' +
+      '<g class="m-swing">' +
+      '<path d="M37 58C39 40 47 24 60 14M67 62C67 44 65 28 60 14" fill="none" stroke="url(#jcG)" stroke-width="3" stroke-linecap="round"/>' +
+      '<path d="M60 14C68 4 82 5 88 12C80 20 68 21 60 14z" fill="url(#jcG)"/><path d="M62 14q12-3 23-2" fill="none" stroke="#7d5a26" stroke-opacity=".5" stroke-width="1"/>' +
+      '<circle cx="35" cy="70" r="16" fill="url(#jcR)"/><circle cx="68" cy="74" r="16" fill="url(#jcR)"/>' +
+      '<ellipse cx="29" cy="63" rx="5.5" ry="3.2" fill="#fff" opacity=".75" transform="rotate(-35 29 63)"/><circle cx="25.5" cy="70" r="1.4" fill="#fff" opacity=".6"/>' +
+      '<ellipse cx="62" cy="67" rx="5.5" ry="3.2" fill="#fff" opacity=".75" transform="rotate(-35 62 67)"/><circle cx="58.5" cy="74" r="1.4" fill="#fff" opacity=".6"/>' +
+      '<path d="M37 56.5a3 1.6 0 0 0 0 3M67 60.5a3 1.6 0 0 0 0 3" fill="none" stroke="#5e0820" stroke-width="1.6" stroke-linecap="round"/>' +
+      "</g>" + glint(16, 30, 5, "#ffd6e2") + glint(90, 44, 4, "#fff4dc") + glint(86, 90, 3.5, "#ffd6e2"),
+    // Discokula som snurrar
+    crazy: '<defs><radialGradient id="czB" cx=".34" cy=".3" r=".8"><stop offset="0" stop-color="#f3edff"/><stop offset=".35" stop-color="#b9a4ff"/><stop offset=".75" stop-color="#6a4fd0"/><stop offset="1" stop-color="#2b1d63"/></radialGradient>' +
+      '<radialGradient id="czS" cx=".5" cy=".5" r=".5"><stop offset=".55" stop-color="#140c2e" stop-opacity="0"/><stop offset="1" stop-color="#140c2e" stop-opacity=".7"/></radialGradient>' +
+      '<radialGradient id="czH" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#fff" stop-opacity=".95"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>' +
+      '<radialGradient id="czGlow"><stop offset="0" stop-color="#b199ff" stop-opacity=".55"/><stop offset="1" stop-color="#b199ff" stop-opacity="0"/></radialGradient>' +
+      '<clipPath id="czC"><circle cx="50" cy="56" r="31"/></clipPath></defs>' +
+      '<circle class="m-glow" cx="50" cy="56" r="50" fill="url(#czGlow)"/>' +
+      '<g class="m-ball"><path d="M50 0v22" stroke="#d8d0ee" stroke-width="1.4"/><rect x="45" y="21" width="10" height="5" rx="1.5" fill="#d8d0ee"/>' +
+      '<circle cx="50" cy="56" r="31" fill="url(#czB)"/>' +
+      '<g clip-path="url(#czC)"><g class="m-facets">' + FACETS + "</g></g>" +
+      '<circle cx="50" cy="56" r="31" fill="url(#czS)"/>' +
+      '<ellipse cx="40" cy="44" rx="11" ry="8" fill="url(#czH)"/>' +
+      '<circle cx="50" cy="56" r="31" fill="none" stroke="#fff" stroke-opacity=".25" stroke-width="1"/></g>' +
+      glint(14, 30, 6, "#fff4dc") + glint(88, 36, 5, "#ffd6e2") + glint(84, 88, 4.5, "#e9c88c")
   };
   var FLAME = '<svg viewBox="0 0 10 13" fill="currentColor"><path d="M5 0c1 3 5 5 5 8.5A5 4.5 0 0 1 0 8.5C0 6.5 1.5 5 2.5 4c0 1.5 1 2.5 2 2.5C4.5 4.5 4 2 5 0z"/></svg>';
   function heatHTML(k) { var h = ""; for (var i = 1; i <= 3; i++) h += FLAME.replace("<svg", '<svg class="' + (i <= HEAT[k] ? "on" : "") + '"'); return '<span class="heat" aria-hidden="true">' + h + "</span>"; }
@@ -750,6 +1025,7 @@ svg { display: block; }
     if (animate) {
       var tile = $("cats").querySelector('[data-cat="' + state.cat + '"]');
       if (tile) burst(tile, state.cat);
+      Sound.play("level", state.cat);
     }
   }
 
@@ -768,8 +1044,6 @@ svg { display: block; }
     if (reduce) return;
     var r = el.getBoundingClientRect();
     var cx = r.left + r.width / 2, cy = r.top + r.height / 2;
-    var count = [16, 24, 36][heat - 1];
-    var spread = [80, 110, 160][heat - 1];
     for (var w = 0; w < (heat === 3 ? 2 : 1); w++) {
       var wave = document.createElement("span");
       wave.className = "wave";
@@ -777,23 +1051,7 @@ svg { display: block; }
       document.body.appendChild(wave);
       setTimeout(wave.remove.bind(wave), 900);
     }
-    var colors = cat === "crazy" ? ["#b199ff", "#e9c88c", "#ff5f8f", "#f6eee8"] : cat === "juicy" ? ["#ff5f8f", "#ff9fbb", "#f6eee8"] : ["#e9c88c", "#fff1cf", "#f6eee8"];
-    var shapes = cat === "juicy" ? ["drop", "drop", ""] : cat === "crazy" ? ["", "ring", "bar", "bar"] : ["", "", "ring"];
-    for (var i = 0; i < count; i++) {
-      var sp = document.createElement("span");
-      var ang = Math.random() * Math.PI * 2;
-      var dist = spread * (0.45 + Math.random() * 0.75);
-      sp.className = "spark " + shapes[i % shapes.length];
-      sp.style.left = cx + "px"; sp.style.top = cy + "px";
-      sp.style.setProperty("--dx", Math.cos(ang) * dist + "px");
-      sp.style.setProperty("--dy", Math.sin(ang) * dist - 10 + "px");
-      sp.style.setProperty("--r", (Math.random() * 540 - 270) + "deg");
-      sp.style.setProperty("--s", (6 + Math.random() * (6 + heat * 3)) + "px");
-      sp.style.setProperty("--t", (0.55 + Math.random() * 0.4) + "s");
-      sp.style.setProperty("--col", colors[i % colors.length]);
-      document.body.appendChild(sp);
-      setTimeout(sp.remove.bind(sp), 1000);
-    }
+    Confetti.pop(cx, cy, cat);
   }
 
   function addPlayer(name) {
@@ -810,6 +1068,7 @@ svg { display: block; }
     state.players.push({ id: uid(), name: name, photo: null, color: color, face: face === undefined ? state.players.length : face });
     savePlayers();
     renderPlayers();
+    Sound.play("add");
   }
 
   $("add-form").addEventListener("submit", function (e) {
@@ -823,7 +1082,7 @@ svg { display: block; }
     var rm = e.target.closest("[data-remove]");
     if (rm) {
       state.players = state.players.filter(function (p) { return p.id !== rm.dataset.remove; });
-      savePlayers(); renderPlayers(); return;
+      savePlayers(); renderPlayers(); Sound.play("remove"); return;
     }
     var ph = e.target.closest("[data-photo]");
     if (ph) { photoTarget = ph.dataset.photo; $("photo-input").click(); }
@@ -850,6 +1109,19 @@ svg { display: block; }
     };
     reader.readAsDataURL(file);
   });
+
+  function renderSound() {
+    var onNow = Sound.isOn();
+    $("sound-btn").setAttribute("aria-pressed", onNow);
+    $("sound-btn").setAttribute("aria-label", onNow ? "Stäng av ljud" : "Sätt på ljud");
+    $("sound-btn").innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/>' +
+      (onNow ? '<path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/>' : '<path d="M17 9l5 6M22 9l-5 6"/>') + "</svg>";
+  }
+  $("sound-btn").addEventListener("click", function () { Sound.toggle(); renderSound(); buzz(10); });
+  renderSound();
+
+  // Lätt haptik på alla knappar
+  document.addEventListener("click", function (e) { if (e.target.closest(".btn, .top-btn, .cat-pill, .icon-btn, .chip-remove")) buzz(8); });
 
   $("cats").addEventListener("click", function (e) {
     var b = e.target.closest("[data-cat]");
@@ -969,7 +1241,8 @@ svg { display: block; }
       el.innerHTML = "<span>" + steps[i] + "</span>";
       el.className = "count tick" + (i === 3 ? " now" : "");
       void el.offsetWidth;
-      buzz(i === 3 ? 120 : 30);
+      buzz(i === 3 ? [40, 30, 90] : 20);
+      Sound.play(i === 3 ? "go" : "tick", i);
       i++;
       if (i < steps.length) countTimer = setTimeout(step, 800);
       else countTimer = setTimeout(function () { el.remove(); g.phase = "answer"; renderRound(); }, 900);
@@ -991,7 +1264,9 @@ svg { display: block; }
     finishPair(g, true);
     g.history.push(true);
     g.phase = "match";
-    buzz([40, 40, 40]);
+    buzz([20, 50, 20, 50, 60]);
+    Sound.play("match");
+    Confetti.match();
     renderRound();
   }
   function onMismatch() {
@@ -999,11 +1274,14 @@ svg { display: block; }
     finishPair(g, false);
     g.history.push(false);
     g.phase = g.duo ? "miss2" : "vote";
+    buzz([70, 90, 70]);
+    Sound.play("miss");
     renderRound();
   }
   function onVote(id) {
     var g = state.game;
-    if (id !== "none") { g.scores[id]++; g.winners = [id]; }
+    if (id !== "none") { g.scores[id]++; g.winners = [id]; Sound.play("vote"); buzz([20, 40, 20]); }
+    else Sound.play("miss");
     g.phase = "voted";
     renderRound();
   }
@@ -1042,7 +1320,8 @@ svg { display: block; }
     var g = state.game;
     sheet("<h2>Ställning</h2><div class=\"sheet-list\">" + sortedPlayers().map(function (p) {
       return '<div class="score-row">' + avatarHTML(p) + '<span class="nm">' + esc(p.name) + '</span><span class="pts">' + g.scores[p.id] + "</span></div>";
-    }).join("") + '</div><button class="btn btn-ghost" data-close>Stäng</button>');
+    }).join("") + '</div><div class="sound-row"><span>Ljud</span><button class="top-btn" id="sound-toggle">' + (Sound.isOn() ? "På" : "Av") + '</button></div><button class="btn btn-ghost" data-close>Stäng</button>');
+    $("sound-toggle").onclick = function () { var v = Sound.toggle(); this.textContent = v ? "På" : "Av"; renderSound(); };
   }
 
   // ---------- Resultat ----------
@@ -1082,6 +1361,8 @@ svg { display: block; }
       '<div class="award" style="--c:var(--pink)"><div class="award-k">Mest osams</div><div class="award-v">' + (worstKey ? esc(duo(worstKey)) : "Ingen") + '</div><div class="award-s">' + (worstKey ? worstVal + " miss" + (worstVal === 1 ? "" : "ar") : "Helt sams") + "</div></div>";
 
     show("results");
+    if (!nobody) celebrate(1);
+    else Sound.play("miss");
   }
 
   // Två spelare: lagresultat i stället för vinnare, eftersom båda alltid har samma poäng.
@@ -1101,6 +1382,12 @@ svg { display: block; }
       return '<div class="dot ' + (h ? "hit" : "miss") + '">' + (i + 1) + "</div>";
     }).join("") || '<div class="dot" style="grid-column:1/-1">Inga rundor spelade</div>';
     show("results");
+    if (ratio >= 0.5) celebrate(ratio >= 0.9 ? 1.4 : 1);
+    else Sound.play("miss");
+  }
+
+  function celebrate(strength) {
+    setTimeout(function () { Sound.play("win"); buzz([30, 60, 30, 60, 30, 60, 120]); Confetti.celebrate(strength); }, 250);
   }
 
   $("again-btn").addEventListener("click", startGame);
@@ -1120,6 +1407,8 @@ svg { display: block; }
       store.set("unlocked", true);
       closeSheet();
       toast("Upplåst. Ha så kul!");
+      Sound.play("unlock");
+      buzz([20, 40, 20, 40, 80]);
       renderCats();
       onDone && onDone();
     };
