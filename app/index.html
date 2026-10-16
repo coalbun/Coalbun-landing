@@ -1,0 +1,848 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<title>Vem av oss</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="theme-color" content="#1c1913">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Figtree:wght@500;600;700;800&display=swap">
+<style>
+/* Layout: en skärm i taget, alltid 100% höjd, aldrig scroll. Allt krymper med skärmhöjden. */
+:root {
+  color-scheme: dark;
+  --bg: #1c1913;
+  --bg-glow: #3a3320;
+  --surface: #2a261c;
+  --surface-2: #383226;
+  --line: rgba(255, 238, 200, 0.10);
+  --ink: #f7f0df;
+  --muted: #b5a98e;
+  --pink: #ff4f8b;
+  --pink-deep: #c42a62;
+  --yellow: #ffd447;
+  --green: #8fd46a;
+  --violet: #b48cff;
+  --on-bright: #1c1913;
+
+  --font-display: "Lilita One", "Arial Rounded MT Bold", "Trebuchet MS", system-ui, sans-serif;
+  --font-body: "Figtree", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
+  --gap: clamp(8px, 1.6vh, 16px);
+  --radius: 18px;
+  --tap: clamp(48px, 7.6vh, 64px);
+}
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; margin: 0; }
+html { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); background: var(--bg); }
+body {
+  overflow: hidden;
+  background:
+    radial-gradient(120% 60% at 50% 0%, var(--bg-glow) 0%, transparent 70%),
+    var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  user-select: none;
+  -webkit-user-select: none;
+}
+[hidden] { display: none !important; }
+button { font: inherit; color: inherit; border: 0; background: none; cursor: pointer; padding: 0; }
+button:focus-visible, input:focus-visible, .chip-avatar:focus-visible { outline: 3px solid var(--yellow); outline-offset: 2px; }
+svg { display: block; }
+
+.app {
+  height: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: clamp(10px, 2vh, 20px);
+  position: relative;
+}
+.screen { height: 100%; display: flex; flex-direction: column; gap: var(--gap); min-height: 0; }
+
+/* ---------- Gemensamt ---------- */
+.logo {
+  font-family: var(--font-display);
+  font-size: clamp(34px, 6.4vh, 56px);
+  line-height: 0.95;
+  letter-spacing: 0.01em;
+  margin: 0;
+  color: var(--yellow);
+  text-shadow: 0 3px 0 var(--pink-deep);
+  transform: rotate(-2deg);
+  transform-origin: left center;
+}
+.logo span { color: var(--ink); }
+.tagline { margin: 4px 0 0; color: var(--muted); font-weight: 600; font-size: clamp(13px, 1.9vh, 15px); }
+
+.btn {
+  height: var(--tap);
+  border-radius: 999px;
+  font-family: var(--font-display);
+  font-size: clamp(20px, 3.2vh, 26px);
+  letter-spacing: 0.02em;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  width: 100%;
+  transition: transform .12s ease, filter .12s ease, opacity .2s;
+  flex-shrink: 0;
+}
+.btn:active { transform: translateY(2px) scale(.98); }
+.btn-primary { background: var(--pink); color: var(--ink); box-shadow: 0 5px 0 var(--pink-deep); }
+.btn-primary:active { box-shadow: 0 2px 0 var(--pink-deep); }
+.btn-primary:disabled { opacity: .35; pointer-events: none; }
+.btn-green { background: var(--green); color: var(--on-bright); box-shadow: 0 5px 0 #4f8d32; }
+.btn-ghost { background: var(--surface-2); color: var(--ink); box-shadow: 0 5px 0 #15130e; }
+.btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; flex-shrink: 0; }
+
+.avatar {
+  width: 100%; aspect-ratio: 1; max-width: 100%;
+  border-radius: 50%;
+  display: grid; place-items: center;
+  font-family: var(--font-display);
+  color: var(--on-bright);
+  background-size: cover; background-position: center;
+  overflow: hidden;
+}
+
+/* ---------- Setup ---------- */
+.add-row { display: flex; gap: 8px; flex-shrink: 0; }
+.add-row input {
+  flex: 1; min-width: 0;
+  height: clamp(46px, 6.6vh, 56px);
+  border-radius: 14px;
+  border: 2px solid var(--line);
+  background: var(--surface);
+  color: var(--ink);
+  padding: 0 16px;
+  font: 600 17px var(--font-body);
+  user-select: text; -webkit-user-select: text;
+}
+.add-row input::placeholder { color: var(--muted); }
+.add-row input:focus { border-color: var(--yellow); outline: none; }
+.icon-btn {
+  width: clamp(46px, 6.6vh, 56px); height: clamp(46px, 6.6vh, 56px);
+  border-radius: 14px; flex-shrink: 0;
+  background: var(--yellow); color: var(--on-bright);
+  display: grid; place-items: center;
+}
+.icon-btn:disabled { opacity: .35; }
+
+.players {
+  flex: 1; min-height: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: repeat(5, minmax(0, 1fr));
+  gap: clamp(6px, 1vh, 10px);
+}
+.players-empty {
+  grid-column: 1 / -1; grid-row: 1 / -1;
+  border: 2px dashed var(--line); border-radius: var(--radius);
+  display: grid; place-items: center; text-align: center;
+  color: var(--muted); font-weight: 600; padding: 16px; line-height: 1.4;
+}
+.chip {
+  min-height: 0;
+  display: flex; align-items: center; gap: 10px;
+  background: var(--surface);
+  border-radius: 999px;
+  padding: 4px 6px 4px 4px;
+  animation: pop .25s ease;
+}
+.chip-avatar { height: 100%; max-height: 52px; aspect-ratio: 1; flex-shrink: 0; position: relative; border-radius: 50%; }
+.chip-avatar .avatar { font-size: clamp(14px, 2.4vh, 20px); height: 100%; width: auto; }
+.chip-avatar .cam {
+  position: absolute; right: -2px; bottom: -2px;
+  width: 18px; height: 18px; border-radius: 50%;
+  background: var(--ink); color: var(--on-bright);
+  display: grid; place-items: center;
+}
+.chip-name { flex: 1; min-width: 0; font-weight: 700; font-size: clamp(14px, 2.2vh, 17px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.chip-remove { width: 28px; height: 28px; border-radius: 50%; color: var(--muted); display: grid; place-items: center; flex-shrink: 0; }
+.chip-remove:active { background: var(--surface-2); }
+
+.section-label { font-size: 12px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin: 0 0 -2px 4px; flex-shrink: 0; }
+.cats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; flex-shrink: 0; }
+.cat {
+  position: relative;
+  height: clamp(58px, 9.5vh, 84px);
+  border-radius: var(--radius);
+  background: var(--surface);
+  border: 2px solid transparent;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+  transition: transform .12s ease, border-color .15s, background .15s;
+}
+.cat:active { transform: scale(.97); }
+.cat-name { font-family: var(--font-display); font-size: clamp(18px, 3vh, 24px); color: var(--c); }
+.cat-sub { font-size: 11px; font-weight: 700; color: var(--muted); letter-spacing: .04em; }
+.cat[aria-pressed="true"] { border-color: var(--c); background: color-mix(in srgb, var(--c) 16%, var(--surface)); }
+.cat .lock { position: absolute; top: 7px; right: 8px; color: var(--muted); }
+.cat[data-cat="warmup"] { --c: var(--yellow); }
+.cat[data-cat="juicy"]  { --c: var(--pink); }
+.cat[data-cat="crazy"]  { --c: var(--violet); }
+
+/* ---------- Runda ---------- */
+.topbar { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-shrink: 0; }
+.top-btn { height: 38px; padding: 0 14px; border-radius: 999px; background: var(--surface); font-weight: 700; font-size: 14px; color: var(--muted); }
+.top-btn:active { background: var(--surface-2); }
+.cat-pill {
+  height: 38px; padding: 0 16px; border-radius: 999px;
+  font-family: var(--font-display); font-size: 18px; letter-spacing: .02em;
+  background: color-mix(in srgb, var(--c) 18%, var(--surface)); color: var(--c);
+  display: flex; align-items: center; gap: 6px; white-space: nowrap;
+}
+
+.vs {
+  flex-shrink: 0;
+  display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 8px;
+}
+.fighter { display: flex; flex-direction: column; align-items: center; gap: 6px; min-width: 0; }
+.fighter .avatar {
+  width: clamp(64px, 12vh, 108px);
+  font-size: clamp(26px, 5vh, 44px);
+  border: 4px solid var(--surface-2);
+  box-shadow: 0 0 0 0 transparent;
+  transition: box-shadow .3s, border-color .3s;
+}
+.fighter.win .avatar { border-color: var(--green); box-shadow: 0 0 0 6px color-mix(in srgb, var(--green) 25%, transparent); }
+.fighter-name { font-family: var(--font-display); font-size: clamp(18px, 3vh, 26px); max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fighter-score { font-size: 13px; font-weight: 700; color: var(--muted); font-variant-numeric: tabular-nums; margin-top: -4px; }
+.vs-mark {
+  font-family: var(--font-display); font-size: clamp(26px, 4.6vh, 40px);
+  color: var(--pink); transform: rotate(-8deg);
+  text-shadow: 0 3px 0 var(--pink-deep);
+}
+
+.card {
+  flex: 1; min-height: 0;
+  position: relative;
+  border-radius: 26px;
+  background: var(--surface);
+  border: 2px solid var(--line);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center;
+  padding: clamp(14px, 3vh, 28px) 20px;
+  overflow: hidden;
+}
+.card::before {
+  content: ""; position: absolute; inset: 0;
+  background: radial-gradient(80% 60% at 50% 0%, color-mix(in srgb, var(--c) 14%, transparent), transparent 70%);
+  pointer-events: none;
+}
+.card-meta { position: absolute; top: 14px; left: 0; right: 0; font-size: 12px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.question {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(24px, 4.4vh, 40px);
+  line-height: 1.12;
+  text-wrap: balance;
+  position: relative;
+}
+.question.in { animation: rise .35s ease; }
+.count {
+  position: absolute; inset: 0;
+  display: grid; place-items: center;
+  font-family: var(--font-display);
+  font-size: clamp(110px, 24vh, 220px);
+  color: var(--yellow);
+  text-shadow: 0 8px 0 var(--pink-deep);
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+}
+.count.tick { animation: tick .8s ease; }
+.count.now { font-size: clamp(64px, 13vh, 120px); color: var(--pink); text-shadow: 0 6px 0 #6b1636; }
+.verdict { position: relative; display: flex; flex-direction: column; align-items: center; gap: 6px; animation: pop .3s ease; }
+.verdict-big { font-family: var(--font-display); font-size: clamp(44px, 9vh, 80px); line-height: 1; }
+.verdict-big.match { color: var(--green); }
+.verdict-big.miss { color: var(--pink); }
+.verdict-text { margin: 0; color: var(--muted); font-weight: 600; font-size: clamp(15px, 2.2vh, 18px); line-height: 1.35; max-width: 28ch; }
+.hint { text-align: center; color: var(--muted); font-size: 13px; font-weight: 600; margin: -2px 0 0; flex-shrink: 0; min-height: 1.2em; }
+
+/* ---------- Resultat ---------- */
+.winner { flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; }
+.winner-kicker { font-size: 12px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+.winner-title { font-family: var(--font-display); font-size: clamp(30px, 5.4vh, 46px); color: var(--yellow); line-height: 1; text-shadow: 0 3px 0 var(--pink-deep); margin: 0; }
+.winner-faces { display: flex; justify-content: center; gap: 8px; position: relative; padding-top: 14px; }
+.winner-faces .avatar { width: clamp(70px, 12vh, 110px); font-size: clamp(28px, 5vh, 46px); border: 4px solid var(--yellow); }
+.crown { position: absolute; top: -6px; left: 50%; transform: translateX(-50%) rotate(-6deg); color: var(--yellow); }
+.winner-name { font-family: var(--font-display); font-size: clamp(22px, 3.6vh, 30px); }
+.winner-pts { color: var(--muted); font-weight: 700; font-size: 14px; margin-top: -4px; }
+
+.ranking {
+  flex: 1; min-height: 0;
+  display: grid; grid-auto-rows: minmax(0, 1fr); gap: 4px;
+  background: var(--surface); border-radius: var(--radius); padding: 8px 12px;
+}
+.rank-row { display: grid; grid-template-columns: 22px auto 1fr auto; align-items: center; gap: 10px; min-height: 0; }
+.rank-row .n { color: var(--muted); font-weight: 800; font-size: 13px; font-variant-numeric: tabular-nums; }
+.rank-row .avatar { height: clamp(22px, 3.6vh, 34px); width: auto; font-size: 12px; }
+.rank-row .nm { font-weight: 700; font-size: clamp(14px, 2vh, 16px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rank-row .pts { font-family: var(--font-display); font-size: clamp(16px, 2.6vh, 22px); font-variant-numeric: tabular-nums; }
+.awards { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; flex-shrink: 0; }
+.award { background: var(--surface); border-radius: 16px; padding: 10px 12px; min-width: 0; }
+.award-k { font-size: 11px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--c, var(--muted)); }
+.award-v { font-weight: 800; font-size: 15px; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.award-s { font-size: 12px; color: var(--muted); font-weight: 600; }
+
+/* ---------- Sheets ---------- */
+.scrim { position: fixed; inset: 0; background: rgba(10, 9, 6, .6); z-index: 20; animation: fade .2s ease; }
+.sheet {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 21;
+  max-width: 480px; margin: 0 auto;
+  background: var(--surface);
+  border-radius: 28px 28px 0 0;
+  padding: 22px max(20px, env(safe-area-inset-right, 0px)) calc(20px + env(safe-area-inset-bottom, 0px)) max(20px, env(safe-area-inset-left, 0px));
+  display: flex; flex-direction: column; gap: 14px;
+  animation: up .28s cubic-bezier(.2, .9, .3, 1.1);
+  max-height: 92%;
+}
+.sheet h2 { margin: 0; font-family: var(--font-display); font-weight: 400; font-size: 30px; line-height: 1.05; }
+.sheet p { margin: 0; color: var(--muted); font-weight: 600; line-height: 1.4; }
+.sheet .price { font-family: var(--font-display); font-size: 44px; color: var(--yellow); line-height: 1; }
+.sheet .price small { font-family: var(--font-body); font-size: 14px; color: var(--muted); font-weight: 700; margin-left: 6px; }
+.sheet .fine { font-size: 12px; text-align: center; }
+.sheet-list { display: grid; gap: 6px; }
+.score-row { display: grid; grid-template-columns: auto 1fr auto; gap: 12px; align-items: center; }
+.score-row .avatar { width: 32px; font-size: 13px; }
+.score-row .nm { font-weight: 700; }
+.score-row .pts { font-family: var(--font-display); font-size: 22px; font-variant-numeric: tabular-nums; }
+.cat-option { display: flex; align-items: center; justify-content: space-between; height: 58px; padding: 0 18px; border-radius: 16px; background: var(--surface-2); }
+.cat-option .cat-name { color: var(--c); }
+.cat-option[data-cat="warmup"] { --c: var(--yellow); }
+.cat-option[data-cat="juicy"]  { --c: var(--pink); }
+.cat-option[data-cat="crazy"]  { --c: var(--violet); }
+.cat-option[aria-pressed="true"] { outline: 2px solid var(--c); }
+
+.toast {
+  position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%);
+  background: var(--ink); color: var(--on-bright); font-weight: 700; font-size: 14px;
+  padding: 10px 18px; border-radius: 999px; z-index: 30; animation: up .25s ease; white-space: nowrap;
+}
+
+@keyframes pop { from { transform: scale(.85); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+@keyframes rise { from { transform: translateY(12px); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes tick { 0% { transform: scale(1.6); opacity: 0; } 25% { transform: scale(1); opacity: 1; } 100% { transform: scale(.9); opacity: 1; } }
+@keyframes up { from { transform: translateY(40px); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { *, *::before { animation: none !important; transition: none !important; } }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- SETUP -->
+  <section class="screen" id="setup">
+    <header>
+      <h1 class="logo">Vem av <span>oss?</span></h1>
+      <p class="tagline">Två spelare per runda. Säg samma namn så får ni poäng.</p>
+    </header>
+
+    <form class="add-row" id="add-form" autocomplete="off">
+      <input id="name-input" maxlength="14" placeholder="Skriv ett namn" enterkeyhint="done" aria-label="Spelarens namn">
+      <button class="icon-btn" id="add-btn" type="submit" aria-label="Lägg till spelare">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+      </button>
+    </form>
+
+    <div class="players" id="players"></div>
+
+    <p class="section-label">Välj nivå</p>
+    <div class="cats" id="cats"></div>
+
+    <button class="btn btn-primary" id="start-btn">Kör!</button>
+  </section>
+
+  <!-- RUNDA -->
+  <section class="screen" id="round" hidden>
+    <div class="topbar">
+      <button class="top-btn" id="end-btn">Avsluta</button>
+      <button class="cat-pill" id="cat-pill"></button>
+      <button class="top-btn" id="score-btn">Ställning</button>
+    </div>
+
+    <div class="vs">
+      <div class="fighter" id="fA"></div>
+      <div class="vs-mark">VS</div>
+      <div class="fighter" id="fB"></div>
+    </div>
+
+    <div class="card" id="card"></div>
+    <p class="hint" id="hint"></p>
+    <div id="actions"></div>
+  </section>
+
+  <!-- RESULTAT -->
+  <section class="screen" id="results" hidden>
+    <div class="winner" id="winner"></div>
+    <div class="ranking" id="ranking"></div>
+    <div class="awards" id="awards"></div>
+    <div class="btn-row">
+      <button class="btn btn-ghost" id="new-players-btn">Nya spelare</button>
+      <button class="btn btn-primary" id="again-btn">Kör igen</button>
+    </div>
+  </section>
+
+</div>
+
+<div id="layer"></div>
+<input type="file" id="photo-input" accept="image/*" capture="user" hidden>
+
+<script src="questions.js"></script>
+<script>
+(function () {
+  "use strict";
+
+  // ---------- Data ----------
+  var CATS = {
+    warmup: { name: "Warm up", sub: "Gratis", free: true },
+    juicy:  { name: "Juicy",   sub: "Kryddigt", free: false },
+    crazy:  { name: "Crazy",   sub: "Helt galet", free: false }
+  };
+  var CAT_KEYS = ["warmup", "juicy", "crazy"];
+  var PRICE = "59 kr";
+  var MAX_PLAYERS = 10;
+  var NO_REPEAT_WITHIN = 50;
+  var AVATAR_COLORS = ["#ffd447", "#ff8fb4", "#8fd46a", "#b48cff", "#6fd0e0", "#ffab5c", "#f7f0df", "#ff6b6b", "#9be3b0", "#e7c6ff"];
+
+  var Q = window.QUESTIONS || {
+    warmup: ["Vem av er är smartast?", "Vem skulle överleva längst utan mobil?", "Vem är sämst på att svara på sms?"],
+    juicy:  ["Vem har legat med flest?", "Vem har stalkat ett ex mest?"],
+    crazy:  ["Vem skulle gå med på en dejt i ett tv-program?", "Vem skulle klara en vecka på en nudiststrand?"]
+  };
+
+  // ---------- Lagring (tål att den saknas) ----------
+  var store = {
+    get: function (k, d) { try { var v = localStorage.getItem("vao_" + k); return v ? JSON.parse(v) : d; } catch (e) { return d; } },
+    set: function (k, v) { try { localStorage.setItem("vao_" + k, JSON.stringify(v)); } catch (e) {} }
+  };
+
+  var state = {
+    players: store.get("players", []),          // {id, name, photo, color}
+    unlocked: store.get("unlocked", false),
+    cat: "warmup",
+    decks: store.get("decks", {}),             // per kategori: {order:[...], pos}
+    game: null
+  };
+  if (!state.unlocked) state.cat = "warmup";
+
+  function savePlayers() { store.set("players", state.players); }
+
+  // ---------- Hjälpare ----------
+  function $(id) { return document.getElementById(id); }
+  function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+  function shuffle(a) { a = a.slice(); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+  function range(n) { var a = []; for (var i = 0; i < n; i++) a.push(i); return a; }
+  function uid() { return Math.random().toString(36).slice(2, 9); }
+  function buzz(ms) { try { navigator.vibrate && navigator.vibrate(ms); } catch (e) {} }
+  function byId(id) { for (var i = 0; i < state.players.length; i++) if (state.players[i].id === id) return state.players[i]; return null; }
+  function isOpen(cat) { return CATS[cat].free || state.unlocked; }
+
+  function avatarHTML(p, extraStyle) {
+    var style = "background-color:" + p.color + ";" + (p.photo ? "background-image:url(" + p.photo + ");" : "") + (extraStyle || "");
+    return '<div class="avatar" style="' + style + '">' + (p.photo ? "" : esc(p.name.charAt(0).toUpperCase())) + "</div>";
+  }
+
+  var ICON = {
+    x: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>',
+    cam: '<svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M9 3L7.2 5H4a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-3.2L15 3H9zm3 5a4.5 4.5 0 1 1 0 9 4.5 4.5 0 0 1 0-9z"/></svg>',
+    lock: '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a5 5 0 0 0-5 5v3H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2h-1V7a5 5 0 0 0-5-5zm-3 8V7a3 3 0 1 1 6 0v3H9z"/></svg>',
+    crown: '<svg width="44" height="30" viewBox="0 0 44 30" fill="currentColor"><path d="M2 8l10 9L22 2l10 15 10-9-4 22H6z"/></svg>',
+    chev: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>'
+  };
+
+  // ---------- Frågekortlek ----------
+  // Går igenom alla frågor innan något upprepas. Vid ny runda läggs de senaste
+  // NO_REPEAT_WITHIN frågorna sist, så samma fråga aldrig dyker upp inom 50 frågor.
+  function nextQuestion(cat) {
+    var list = Q[cat] || [];
+    var n = list.length;
+    if (!n) return "";
+    var d = state.decks[cat];
+    if (!d || !d.order || d.order.length !== n) d = { order: shuffle(range(n)), pos: 0 };
+    if (d.pos >= n) {
+      var k = Math.min(NO_REPEAT_WITHIN, Math.floor(n / 2));
+      var old = d.order;
+      d.order = shuffle(old.slice(0, n - k)).concat(shuffle(old.slice(n - k)));
+      d.pos = 0;
+    }
+    var q = list[d.order[d.pos]];
+    d.pos++;
+    state.decks[cat] = d;
+    store.set("decks", state.decks);
+    return q;
+  }
+
+  // ---------- Rättvis parning ----------
+  // Väljer det par där spelarna har spelat minst, och undviker att någon spelar två rundor i rad.
+  function nextPair(g) {
+    var ids = state.players.map(function (p) { return p.id; });
+    var last = g.lastPair || [];
+    var best = [], bestScore = Infinity;
+    for (var i = 0; i < ids.length; i++) {
+      for (var j = i + 1; j < ids.length; j++) {
+        var a = ids[i], b = ids[j];
+        var rested = ids.length >= 4 ? (last.indexOf(a) < 0 && last.indexOf(b) < 0) : true;
+        var key = [a, b].sort().join("|");
+        var score = (g.played[a] + g.played[b]) * 100 + (g.pairCount[key] || 0) * 10 + (rested ? 0 : 1000);
+        if (score < bestScore) { bestScore = score; best = [[a, b]]; }
+        else if (score === bestScore) best.push([a, b]);
+      }
+    }
+    var pick = best[Math.floor(Math.random() * best.length)];
+    return Math.random() < 0.5 ? pick : [pick[1], pick[0]];
+  }
+
+  // ---------- Setup ----------
+  function renderPlayers() {
+    var el = $("players");
+    if (!state.players.length) {
+      el.innerHTML = '<div class="players-empty">Lägg till minst två spelare.<br>Tryck på en spelares bild för att ta ett foto.</div>';
+    } else {
+      el.innerHTML = state.players.map(function (p) {
+        return '<div class="chip">' +
+          '<button class="chip-avatar" data-photo="' + p.id + '" aria-label="Ta foto av ' + esc(p.name) + '">' + avatarHTML(p) +
+          '<span class="cam">' + ICON.cam + "</span></button>" +
+          '<span class="chip-name">' + esc(p.name) + "</span>" +
+          '<button class="chip-remove" data-remove="' + p.id + '" aria-label="Ta bort ' + esc(p.name) + '">' + ICON.x + "</button></div>";
+      }).join("");
+    }
+    var full = state.players.length >= MAX_PLAYERS;
+    $("name-input").disabled = full;
+    $("add-btn").disabled = full;
+    $("name-input").placeholder = full ? "Max 10 spelare" : "Skriv ett namn";
+    $("start-btn").disabled = state.players.length < 2;
+    $("start-btn").textContent = state.players.length < 2 ? "Minst 2 spelare" : "Kör!";
+  }
+
+  function renderCats() {
+    $("cats").innerHTML = CAT_KEYS.map(function (k) {
+      var c = CATS[k];
+      var locked = !isOpen(k);
+      return '<button class="cat" data-cat="' + k + '" aria-pressed="' + (state.cat === k) + '">' +
+        (locked ? '<span class="lock">' + ICON.lock + "</span>" : "") +
+        '<span class="cat-name">' + c.name + '</span><span class="cat-sub">' + (locked ? PRICE : c.sub) + "</span></button>";
+    }).join("");
+  }
+
+  function addPlayer(name) {
+    name = name.trim().replace(/\s+/g, " ");
+    if (!name) return;
+    if (state.players.length >= MAX_PLAYERS) return;
+    var exists = state.players.some(function (p) { return p.name.toLowerCase() === name.toLowerCase(); });
+    if (exists) { toast(name + " är redan med"); return; }
+    var used = state.players.map(function (p) { return p.color; });
+    var color = AVATAR_COLORS.filter(function (c) { return used.indexOf(c) < 0; })[0] || AVATAR_COLORS[state.players.length % AVATAR_COLORS.length];
+    state.players.push({ id: uid(), name: name, photo: null, color: color });
+    savePlayers();
+    renderPlayers();
+  }
+
+  $("add-form").addEventListener("submit", function (e) {
+    e.preventDefault();
+    addPlayer($("name-input").value);
+    $("name-input").value = "";
+    $("name-input").focus();
+  });
+
+  $("players").addEventListener("click", function (e) {
+    var rm = e.target.closest("[data-remove]");
+    if (rm) {
+      state.players = state.players.filter(function (p) { return p.id !== rm.dataset.remove; });
+      savePlayers(); renderPlayers(); return;
+    }
+    var ph = e.target.closest("[data-photo]");
+    if (ph) { photoTarget = ph.dataset.photo; $("photo-input").click(); }
+  });
+
+  var photoTarget = null;
+  $("photo-input").addEventListener("change", function () {
+    var file = this.files && this.files[0];
+    this.value = "";
+    if (!file || !photoTarget) return;
+    var target = photoTarget;
+    var reader = new FileReader();
+    reader.onload = function () {
+      var img = new Image();
+      img.onload = function () {
+        var size = 192, c = document.createElement("canvas");
+        c.width = c.height = size;
+        var s = Math.min(img.width, img.height);
+        c.getContext("2d").drawImage(img, (img.width - s) / 2, (img.height - s) / 2, s, s, 0, 0, size, size);
+        var p = byId(target);
+        if (p) { p.photo = c.toDataURL("image/jpeg", 0.8); savePlayers(); renderPlayers(); }
+      };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
+
+  $("cats").addEventListener("click", function (e) {
+    var b = e.target.closest("[data-cat]");
+    if (!b) return;
+    chooseCat(b.dataset.cat, renderCats);
+  });
+
+  function chooseCat(cat, after) {
+    if (!isOpen(cat)) { openUnlock(function () { state.cat = cat; after(); }); return; }
+    state.cat = cat;
+    after();
+  }
+
+  $("start-btn").addEventListener("click", function () {
+    if ($("name-input").value.trim()) { addPlayer($("name-input").value); $("name-input").value = ""; }
+    if (state.players.length < 2) return;
+    startGame();
+  });
+
+  // ---------- Spelet ----------
+  function startGame() {
+    var g = { round: 0, scores: {}, played: {}, pairCount: {}, pairMatch: {}, lastPair: null };
+    state.players.forEach(function (p) { g.scores[p.id] = 0; g.played[p.id] = 0; });
+    state.game = g;
+    show("round");
+    newRound();
+  }
+
+  function newRound() {
+    var g = state.game;
+    g.round++;
+    g.pair = nextPair(g);
+    g.lastPair = g.pair;
+    g.question = nextQuestion(state.cat);
+    g.phase = "ready";
+    g.winners = [];
+    renderRound(true);
+  }
+
+  function renderFighter(id, el) {
+    var p = byId(id), g = state.game;
+    el.className = "fighter" + (g.winners.indexOf(id) >= 0 ? " win" : "");
+    el.innerHTML = avatarHTML(p) + '<div class="fighter-name">' + esc(p.name) + '</div><div class="fighter-score">' + g.scores[id] + " p</div>";
+  }
+
+  function renderRound(fresh) {
+    var g = state.game, a = byId(g.pair[0]), b = byId(g.pair[1]);
+    var c = CATS[state.cat];
+    var colorVar = "var(--" + { warmup: "yellow", juicy: "pink", crazy: "violet" }[state.cat] + ")";
+    $("round").style.setProperty("--c", colorVar);
+    $("cat-pill").innerHTML = c.name + ICON.chev;
+    renderFighter(g.pair[0], $("fA"));
+    renderFighter(g.pair[1], $("fB"));
+
+    var card = $("card"), actions = $("actions"), hint = $("hint");
+    var meta = '<div class="card-meta">Runda ' + g.round + "</div>";
+
+    if (g.phase === "ready" || g.phase === "counting" || g.phase === "answer") {
+      if (fresh || !card.querySelector(".question")) {
+        card.innerHTML = meta + '<p class="question in">' + esc(g.question) + "</p>";
+      }
+    }
+
+    if (g.phase === "ready") {
+      hint.textContent = "På noll säger ni båda ett namn högt: ditt eget eller den andras.";
+      actions.innerHTML = '<button class="btn btn-primary" id="go">Räkna ner</button>';
+      $("go").onclick = countdown;
+    } else if (g.phase === "counting") {
+      hint.textContent = "";
+      actions.innerHTML = '<button class="btn btn-primary" disabled>Räkna ner</button>';
+    } else if (g.phase === "answer") {
+      hint.textContent = "Sa ni samma namn?";
+      actions.innerHTML = '<div class="btn-row"><button class="btn btn-ghost" id="diff">Olika</button><button class="btn btn-green" id="same">Samma</button></div>';
+      $("same").onclick = onMatch;
+      $("diff").onclick = onMismatch;
+    } else if (g.phase === "match") {
+      card.innerHTML = meta + '<div class="verdict"><div class="verdict-big match">Match!</div><p class="verdict-text">Plus ett till både ' + esc(a.name) + " och " + esc(b.name) + ".</p></div>";
+      hint.textContent = "";
+      actions.innerHTML = '<button class="btn btn-primary" id="next">Nästa runda</button>';
+      $("next").onclick = newRound;
+    } else if (g.phase === "vote") {
+      card.innerHTML = meta + '<div class="verdict"><div class="verdict-big miss">Mismatch!</div><p class="verdict-text">Ni har tio sekunder på er att förklara. Sen röstar gruppen: vem hade rätt?</p></div>';
+      hint.textContent = "Gruppen röstar";
+      actions.innerHTML = '<div class="btn-row" style="margin-bottom:10px"><button class="btn btn-ghost" data-vote="' + a.id + '">' + esc(a.name) + '</button><button class="btn btn-ghost" data-vote="' + b.id + '">' + esc(b.name) + '</button></div>' +
+        '<button class="top-btn" style="width:100%" data-vote="none">Ingen fick rätt</button>';
+      actions.querySelectorAll("[data-vote]").forEach(function (el) { el.onclick = function () { onVote(el.dataset.vote); }; });
+    } else if (g.phase === "voted") {
+      var w = g.winners[0] ? byId(g.winners[0]) : null;
+      card.innerHTML = meta + '<div class="verdict"><div class="verdict-big ' + (w ? "match" : "miss") + '">' + (w ? esc(w.name) : "Ingen") + '</div><p class="verdict-text">' + (w ? "Gruppen har talat. Plus ett." : "Ingen poäng den här gången.") + "</p></div>";
+      hint.textContent = "";
+      actions.innerHTML = '<button class="btn btn-primary" id="next">Nästa runda</button>';
+      $("next").onclick = newRound;
+    }
+  }
+
+  var countTimer = null;
+  function countdown() {
+    var g = state.game;
+    g.phase = "counting";
+    renderRound();
+    var card = $("card");
+    var el = document.createElement("div");
+    el.className = "count";
+    card.appendChild(el);
+    var steps = ["3", "2", "1", "NU!"];
+    var i = 0;
+    (function step() {
+      el.textContent = steps[i];
+      el.className = "count tick" + (i === 3 ? " now" : "");
+      void el.offsetWidth;
+      buzz(i === 3 ? 120 : 30);
+      i++;
+      if (i < steps.length) countTimer = setTimeout(step, 800);
+      else countTimer = setTimeout(function () { el.remove(); g.phase = "answer"; renderRound(); }, 900);
+    })();
+  }
+
+  function pairKey(g) { return g.pair.slice().sort().join("|"); }
+  function finishPair(g, matched) {
+    var key = pairKey(g);
+    g.played[g.pair[0]]++; g.played[g.pair[1]]++;
+    g.pairCount[key] = (g.pairCount[key] || 0) + 1;
+    if (matched) g.pairMatch[key] = (g.pairMatch[key] || 0) + 1;
+  }
+
+  function onMatch() {
+    var g = state.game;
+    g.scores[g.pair[0]]++; g.scores[g.pair[1]]++;
+    g.winners = g.pair.slice();
+    finishPair(g, true);
+    g.phase = "match";
+    buzz([40, 40, 40]);
+    renderRound();
+  }
+  function onMismatch() {
+    var g = state.game;
+    finishPair(g, false);
+    g.phase = "vote";
+    renderRound();
+  }
+  function onVote(id) {
+    var g = state.game;
+    if (id !== "none") { g.scores[id]++; g.winners = [id]; }
+    g.phase = "voted";
+    renderRound();
+  }
+
+  $("score-btn").addEventListener("click", openScores);
+  $("end-btn").addEventListener("click", function () {
+    var g = state.game;
+    if (!g || g.round <= 1 && g.phase === "ready") { clearTimeout(countTimer); show("setup"); return; }
+    sheet('<h2>Avsluta spelet?</h2><p>Ni ser resultatet direkt.</p>' +
+      '<div class="btn-row"><button class="btn btn-ghost" data-close>Spela vidare</button><button class="btn btn-primary" id="confirm-end">Visa resultat</button></div>');
+    $("confirm-end").onclick = function () { closeSheet(); clearTimeout(countTimer); showResults(); };
+  });
+  $("cat-pill").addEventListener("click", function () {
+    sheet("<h2>Byt nivå</h2><p>Gäller från nästa fråga.</p><div class=\"sheet-list\">" + CAT_KEYS.map(function (k) {
+      return '<button class="cat-option" data-cat="' + k + '" aria-pressed="' + (state.cat === k) + '"><span class="cat-name" style="font-family:var(--font-display);font-size:22px">' + CATS[k].name + "</span>" +
+        '<span style="color:var(--muted);font-weight:700;font-size:13px;display:flex;gap:6px;align-items:center">' + (isOpen(k) ? CATS[k].sub : ICON.lock + PRICE) + "</span></button>";
+    }).join("") + "</div>");
+    $("layer").querySelectorAll(".cat-option").forEach(function (b) {
+      b.onclick = function () {
+        closeSheet();
+        chooseCat(b.dataset.cat, function () {
+          var g = state.game;
+          if (g.phase === "ready") { g.question = nextQuestion(state.cat); renderRound(true); } else renderRound();
+          renderCats();
+        });
+      };
+    });
+  });
+
+  function sortedPlayers() {
+    var g = state.game;
+    return state.players.slice().sort(function (a, b) { return g.scores[b.id] - g.scores[a.id]; });
+  }
+
+  function openScores() {
+    var g = state.game;
+    sheet("<h2>Ställning</h2><div class=\"sheet-list\">" + sortedPlayers().map(function (p) {
+      return '<div class="score-row">' + avatarHTML(p) + '<span class="nm">' + esc(p.name) + '</span><span class="pts">' + g.scores[p.id] + "</span></div>";
+    }).join("") + '</div><button class="btn btn-ghost" data-close>Stäng</button>');
+  }
+
+  // ---------- Resultat ----------
+  function showResults() {
+    var g = state.game;
+    var list = sortedPlayers();
+    var top = list.length ? g.scores[list[0].id] : 0;
+    var winners = list.filter(function (p) { return g.scores[p.id] === top; });
+    var nobody = top === 0;
+    if (nobody) winners = [];
+    var shared = winners.length > 1;
+    $("winner").innerHTML =
+      (nobody ? '<div class="winner-kicker">Inga poäng</div><h2 class="winner-title">Ingen vann</h2><div class="winner-pts">Ni känner inte varandra alls. Kör en runda till.</div>' : (
+      '<div class="winner-kicker">' + (shared ? "Delad seger" : "Kvällens vinnare") + '</div>' +
+      '<h2 class="winner-title">' + (shared ? "Tankeläsarna" : "Tankeläsaren") + "</h2>" +
+      '<div class="winner-faces"><span class="crown">' + ICON.crown + "</span>" + winners.slice(0, 3).map(function (p) { return avatarHTML(p); }).join("") + "</div>" +
+      '<div class="winner-name">' + winners.slice(0, 3).map(function (p) { return esc(p.name); }).join(" & ") + (winners.length > 3 ? " m.fl." : "") + "</div>" +
+      '<div class="winner-pts">' + top + (top === 1 ? " poäng" : " poäng") + "</div>"));
+
+    $("ranking").innerHTML = list.map(function (p, i) {
+      return '<div class="rank-row"><span class="n">' + (i + 1) + "</span>" + avatarHTML(p) + '<span class="nm">' + esc(p.name) + '</span><span class="pts">' + g.scores[p.id] + "</span></div>";
+    }).join("");
+
+    // Awards: bästa duon (flest matchningar) och mest osams duo (flest missar)
+    var bestKey = null, bestVal = 0, worstKey = null, worstVal = 0;
+    Object.keys(g.pairCount).forEach(function (k) {
+      var m = g.pairMatch[k] || 0, miss = g.pairCount[k] - m;
+      if (m > bestVal) { bestVal = m; bestKey = k; }
+      if (miss > worstVal) { worstVal = miss; worstKey = k; }
+    });
+    function duo(k) { return k.split("|").map(function (id) { return byId(id).name; }).join(" & "); }
+    $("awards").innerHTML =
+      '<div class="award" style="--c:var(--green)"><div class="award-k">Bästa duon</div><div class="award-v">' + (bestKey ? esc(duo(bestKey)) : "Ingen än") + '</div><div class="award-s">' + (bestKey ? bestVal + " match" + (bestVal === 1 ? "" : "er") : "Inga matcher") + "</div></div>" +
+      '<div class="award" style="--c:var(--pink)"><div class="award-k">Mest osams</div><div class="award-v">' + (worstKey ? esc(duo(worstKey)) : "Ingen") + '</div><div class="award-s">' + (worstKey ? worstVal + " miss" + (worstVal === 1 ? "" : "ar") : "Helt sams") + "</div></div>";
+
+    show("results");
+  }
+
+  $("again-btn").addEventListener("click", startGame);
+  $("new-players-btn").addEventListener("click", function () { show("setup"); });
+
+  // ---------- Köp ----------
+  // Demo: riktiga köp kopplas in via App Store / Google Play när appen paketeras.
+  function openUnlock(onDone) {
+    sheet('<h2>Lås upp Juicy och Crazy</h2>' +
+      "<p>200 frågor till, för kvällar när Warm up inte räcker. Du betalar en gång och har dem för alltid. Ingen prenumeration.</p>" +
+      '<div class="price">' + PRICE + "<small>engångsköp</small></div>" +
+      '<button class="btn btn-primary" id="buy">Lås upp för ' + PRICE + "</button>" +
+      '<button class="top-btn" style="width:100%" data-close>Inte nu</button>' +
+      '<p class="fine">Testversion: knappen låser upp direkt, inget köp görs.</p>');
+    $("buy").onclick = function () {
+      state.unlocked = true;
+      store.set("unlocked", true);
+      closeSheet();
+      toast("Upplåst. Ha så kul!");
+      renderCats();
+      onDone && onDone();
+    };
+  }
+
+  // ---------- Sheets, toast, skärmar ----------
+  function sheet(html) {
+    $("layer").innerHTML = '<div class="scrim" data-close></div><div class="sheet" role="dialog" aria-modal="true">' + html + "</div>";
+    $("layer").querySelectorAll("[data-close]").forEach(function (el) { el.onclick = closeSheet; });
+  }
+  function closeSheet() { $("layer").innerHTML = ""; }
+
+  var toastTimer = null;
+  function toast(msg) {
+    var old = document.querySelector(".toast"); if (old) old.remove();
+    var t = document.createElement("div"); t.className = "toast"; t.textContent = msg;
+    document.body.appendChild(t);
+    clearTimeout(toastTimer); toastTimer = setTimeout(function () { t.remove(); }, 2200);
+  }
+
+  function show(id) {
+    ["setup", "round", "results"].forEach(function (s) { $(s).hidden = s !== id; });
+    if (id === "setup") { renderPlayers(); renderCats(); }
+  }
+
+  show("setup");
+})();
+</script>
+</body>
+</html>
