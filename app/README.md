@@ -1,10 +1,11 @@
-# Vem av oss (arbetsnamn)
+# Synk
 
 Festspel för 2–10 spelare. Två spelare per runda får en fråga, appen räknar ner 3-2-1 och på noll säger båda ett namn.
 Samma namn ger 1 poäng var. Olika namn: de förklarar sig och gruppen röstar om vem som hade rätt.
 
 - `index.html`: hela appen (HTML, CSS och JS i en fil, inga beroenden)
 - `questions.js`: 100 frågor per nivå (Warm up, Juicy, Crazy)
+- `icon.svg`, `icon-1024.png`, `icon-180.png`: appikonen (1024 för App Store och Google Play, 180 för hemskärmen)
 
 ## Regler i koden
 - Warm up är gratis. Juicy och Crazy låses upp med ett engångsköp på 59 kr (köpet är en demo tills appen paketeras med riktiga köp via App Store och Google Play).

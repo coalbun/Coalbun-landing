@@ -3,9 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
-<title>Vem av oss</title>
+<title>Synk</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <meta name="theme-color" content="#100c10">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-180.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lexend:wght@300..800&display=swap">
@@ -80,20 +82,31 @@ svg { display: block; }
 .logo {
   font-family: var(--font-display);
   font-weight: 800;
-  font-size: min(clamp(36px, 6.6vh, 58px), 12vw);
-  line-height: 0.9;
+  font-size: min(clamp(40px, 7vh, 62px), 13vw);
+  line-height: 1;
   white-space: nowrap;
-  letter-spacing: -0.02em;
   margin: 0;
+  display: flex; align-items: center; gap: .08em;
+}
+.logo-mark { height: 1.3em; width: auto; flex-shrink: 0; margin-left: -.18em; margin-top: -.2em; overflow: visible; }
+.logo-word {
+  letter-spacing: -0.03em;
   background: linear-gradient(180deg, #fff6ea 0%, var(--yellow) 55%, var(--gold-deep) 100%);
   -webkit-background-clip: text; background-clip: text; color: transparent;
+  padding-right: .04em;
 }
-.logo span {
-  font-weight: 300; letter-spacing: -0.02em;
-  background: linear-gradient(180deg, #ffd0dd, var(--pink));
-  -webkit-background-clip: text; background-clip: text; color: transparent;
-  padding-right: .06em;
-}
+/* Glasen skålar med jämna mellanrum, gnistan tänds när de möts */
+.sk-l { transform-origin: 25px 91px; animation: sk-l 5s ease-in-out .3s infinite both; }
+.sk-r { transform-origin: 95px 91px; animation: sk-r 5s ease-in-out .3s infinite both; }
+.sk-spark { transform-box: fill-box; transform-origin: 50% 70%; animation: sk-spark 5s ease-out .3s infinite both; }
+.sk-bub circle { animation: sk-bub 2.4s ease-in infinite; }
+.sk-bub circle:nth-child(2) { animation-delay: .6s; }
+.sk-bub circle:nth-child(3) { animation-delay: 1.2s; }
+.sk-bub circle:nth-child(4) { animation-delay: 1.8s; }
+@keyframes sk-l { 0% { transform: rotate(-13deg); } 12% { transform: rotate(1.5deg); } 16%, 74% { transform: rotate(0); } 90%, 100% { transform: rotate(-13deg); } }
+@keyframes sk-r { 0% { transform: rotate(13deg); } 12% { transform: rotate(-1.5deg); } 16%, 74% { transform: rotate(0); } 90%, 100% { transform: rotate(13deg); } }
+@keyframes sk-spark { 0%, 10% { opacity: 0; transform: scale(.2); } 14% { opacity: 1; transform: scale(1.15); } 36%, 100% { opacity: 0; transform: scale(1.5) rotate(25deg); } }
+@keyframes sk-bub { 0% { opacity: 0; transform: translateY(0); } 30% { opacity: .9; } 100% { opacity: 0; transform: translateY(-9px); } }
 .tagline { margin: 8px 0 0; color: var(--muted); font-weight: 500; font-size: clamp(13px, 1.9vh, 15px); letter-spacing: .005em; }
 
 .btn {
@@ -502,7 +515,7 @@ svg { display: block; }
   <!-- SETUP -->
   <section class="screen" id="setup">
     <header class="setup-head">
-      <h1 class="logo">Vem av <span>oss?</span></h1>
+      <h1 class="logo" aria-label="Synk"><svg class="logo-mark" viewBox="0 -8 120 108" aria-hidden="true"><defs><linearGradient id="skLiq" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff3d1"/><stop offset=".5" stop-color="#ecca8a"/><stop offset="1" stop-color="#b3843b"/></linearGradient><linearGradient id="skGlass" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset=".3" stop-color="#fff" stop-opacity=".05"/><stop offset=".75" stop-color="#fff" stop-opacity=".14"/><stop offset="1" stop-color="#fff" stop-opacity=".5"/></linearGradient><radialGradient id="skGlow"><stop offset="0" stop-color="#e9c88c" stop-opacity=".45"/><stop offset="1" stop-color="#e9c88c" stop-opacity="0"/></radialGradient><g id="skFlute"><path d="M-8.6 12C-8.6 26-7 37-2.2 44h4.4C7 37 8.6 26 8.6 12z" fill="url(#skLiq)"/><ellipse cx="0" cy="12" rx="8.6" ry="1.6" fill="#fff7e2" opacity=".9"/><g class="sk-bub" fill="#fff"><circle cx="-3" cy="38" r="1.1"/><circle cx="2.4" cy="33" r=".8"/><circle cx="-1" cy="27" r="1.2"/><circle cx="3" cy="21" r=".8"/></g><path d="M-10 0C-10 22-8 38-2 46h4C8 38 10 22 10 0z" fill="url(#skGlass)" stroke="#fff" stroke-opacity=".6" stroke-width="1.2"/><ellipse cx="0" cy="0" rx="10" ry="1.8" fill="none" stroke="#fff" stroke-opacity=".85" stroke-width="1.2"/><path d="M-6.5 6C-6.5 20-5.5 30-2.6 38" fill="none" stroke="#fff" stroke-opacity=".75" stroke-width="1.6" stroke-linecap="round"/><path d="M-1.6 46h3.2l-.6 30h-2z" fill="url(#skGlass)" stroke="#fff" stroke-opacity=".5" stroke-width=".8"/><ellipse cx="0" cy="77" rx="11" ry="2.6" fill="url(#skGlass)" stroke="#fff" stroke-opacity=".65" stroke-width="1"/></g></defs><circle cx="60" cy="40" r="56" fill="url(#skGlow)"/><g class="sk-l"><g transform="translate(52 16) rotate(20)"><use href="#skFlute"/></g></g><g class="sk-r"><g transform="translate(68 16) rotate(-20)"><use href="#skFlute"/></g></g><g class="sk-spark"><path fill="#fff6e2" d="M60 0Q60 8 68 8Q60 8 60 16Q60 8 52 8Q60 8 60 0z"/><path fill="#ffd6e2" d="M45 1Q45 4 48 4Q45 4 45 7Q45 4 42 4Q45 4 45 1z"/><path fill="#e9c88c" d="M76 -0.6000000000000001Q76 3 79.6 3Q76 3 76 6.6Q76 3 72.4 3Q76 3 76 -0.6000000000000001z"/><path d="M60 -2v-4M50 2l-3-3M70 2l3-3" stroke="#fff6e2" stroke-width="1.6" stroke-linecap="round" fill="none"/></g></svg><span class="logo-word">Synk</span></h1>
       <p class="tagline">Två spelare per runda. Säg samma namn så får ni poäng.</p>
       <button class="sound-btn" id="sound-btn" aria-label="Ljud"></button>
     </header>
