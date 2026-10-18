@@ -1065,6 +1065,9 @@ svg { display: block; }
     renderRound(true);
   }
 
+  // "Vem har …"-frågor kan sakna svar om ingen av de två har gjort saken. Då gäller "skulle" i stället.
+  function isHarQuestion(q) { return /^Vem (av er )?har /i.test(q || ""); }
+
   function renderFighter(id, el, side) {
     var p = byId(id), g = state.game;
     el.className = "fighter" + (g.winners.indexOf(id) >= 0 ? " win" : "");
@@ -1097,7 +1100,9 @@ svg { display: block; }
     }
 
     if (g.phase === "ready") {
-      hint.textContent = g.duo && g.round === 1 ? "Ni spelar som ett lag. Hur många matcher klarar ni av " + g.total + "?" : "På noll säger ni båda ett namn högt: ditt eget eller den andras.";
+      hint.textContent = isHarQuestion(g.question) ? "Har ingen av er gjort det? Säg den som mest troligt skulle."
+        : g.duo && g.round === 1 ? "Ni spelar som ett lag. Hur många matcher klarar ni av " + g.total + "?"
+        : "På noll säger ni båda ett namn högt: ditt eget eller den andras.";
       actions.innerHTML = '<button class="btn btn-primary" id="go">Räkna ner</button>';
       $("go").onclick = countdown;
     } else if (g.phase === "counting") {
@@ -1342,7 +1347,7 @@ svg { display: block; }
   function openUnlock(onDone) {
     var price = priceText();
     sheet('<h2>Lås upp Juicy och Crazy</h2>' +
-      "<p>200 frågor till, för kvällar när Warm up inte räcker. Du betalar en gång och har dem för alltid. Ingen prenumeration.</p>" +
+      "<p>300 frågor till, för kvällar när Warm up inte räcker. Du betalar en gång och har dem för alltid. Ingen prenumeration.</p>" +
       (price ? '<div class="price" id="price">' + esc(price) + "<small>engångsköp</small></div>" : "") +
       '<button class="btn btn-primary" id="buy">' + (price ? "Lås upp för " + esc(price) : "Lås upp") + "</button>" +
       '<div class="btn-row"><button class="top-btn" data-close>Inte nu</button><button class="top-btn" id="restore">Återställ köp</button></div>' +
@@ -1399,6 +1404,7 @@ svg { display: block; }
       "<li><span>Varje runda möts <b>två spelare</b> och får en fråga, till exempel <i>Vem av er är smartast?</i></span></li>" +
       "<li><span>Tryck på <b>Räkna ner</b>. På noll säger ni båda ett namn högt: ditt eget eller den andras.</span></li>" +
       "<li><span><b>Samma namn:</b> en poäng var. <b>Olika:</b> förklara er, resten av gänget röstar och den som hade rätt får poängen.</span></li>" +
+      "<li><span>Är det en <b>har</b>-fråga och ingen av er har gjort det? Säg den som mest troligt skulle.</span></li>" +
       "<li><span>Flest poäng efter sista rundan vinner. Är ni bara två spelar ni som ett lag och ser hur många matcher ni klarar.</span></li>" +
       "</ol>");
     wireBack();
@@ -1408,7 +1414,7 @@ svg { display: block; }
     var qa = [
       ["Kostar det något?", "Warm up med 100 frågor är gratis. Juicy och Crazy låser du upp tillsammans med ett enda köp. Det finns ingen prenumeration."],
       ["Jag har köpt, men nivåerna är låsta", "Öppna menyn och tryck på Återställ köp. Du måste vara inloggad med samma Apple-ID som när du köpte."],
-      ["Kommer samma fråga tillbaka?", "Inte förrän ni har spelat alla 100 frågor på nivån. Sedan blandas de om, och samma fråga dyker inte upp igen inom 50 frågor."],
+      ["Kommer samma fråga tillbaka?", "Inte förrän ni har spelat alla frågor på nivån. Sedan blandas de om, och samma fråga dyker inte upp igen inom 50 frågor."],
       ["Hur lång tid tar ett spel?", "7 till 10 rundor, ungefär tio minuter. Alla spelar lika många gånger."],
       ["Var sparas namn och bilder?", "Bara på din telefon. Inget skickas till oss eller någon annan."]
     ];

@@ -5,7 +5,7 @@ Festspel för iPhone. Två spelare per runda får en fråga, appen räknar ner 3
 ## Vad som finns var
 | Mapp | Innehåll |
 |---|---|
-| `app/` | Själva spelet (HTML, CSS, JS), frågorna (`questions.js`), typsnitt och ikoner |
+| `app/` | Själva spelet (HTML, CSS, JS), frågorna (`questions.js`: Warm up 100, Juicy 200, Crazy 100), typsnitt och ikoner |
 | `ios/` | Xcode-projektet för iPhone (Capacitor) |
 | `appstore/` | Texter till App Store Connect och färdiga skärmbilder |
 | `site/synk/` | Integritetspolicy och supportsida, som Apple kräver |

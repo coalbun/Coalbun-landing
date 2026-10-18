@@ -16,7 +16,7 @@ Kopiera in texterna nedan i App Store Connect. Siffran inom parentes är antal t
 
 Två spelare, en fråga, tre sekunder. Säger ni samma namn får ni poäng. Det perfekta förfestspelet för gänget, från mysigt till riktigt galet.
 
-**Beskrivning** (1283/4000):
+**Beskrivning** (1294/4000):
 
 ```
 Två spelare. En fråga. Tre sekunder.
@@ -32,10 +32,10 @@ SÅ FUNKAR DET
 • Kvällens vinnare koras till Tankeläsaren.
 • Är ni bara två spelar ni som ett lag och ser hur väl ni känner varandra.
 
-TRE NIVÅER, 300 FRÅGOR
+TRE NIVÅER, 400 FRÅGOR
 • Warm up: 100 lättsamma frågor om vardagen. Alltid gratis.
-• Juicy: 100 frågor om dejter, ex, fyllor och hemligheter.
-• Crazy: 100 frågor för när kvällen spårar ur.
+• Juicy: 200 frågor om dejter, ex, fyllor och hemligheter.
+• Crazy: 100 frågor för när kvällen spårar ur på riktigt.
 
 Samma fråga kommer aldrig tillbaka förrän ni har spelat alla på nivån.
 
@@ -68,7 +68,7 @@ Skapa under **Monetization → In-App Purchases**.
 | Produkt-ID | `com.coalbun.synk.unlock` (måste vara exakt så, appen letar efter det) |
 | Pris | 59 kr, eller närmaste prisnivå som Apple erbjuder |
 | Visningsnamn (15/30) | Juicy och Crazy |
-| Beskrivning (35/45) | 200 kryddigare frågor, köps en gång |
+| Beskrivning (35/45) | 300 kryddigare frågor, köps en gång |
 | Skärmbild för granskning | `appstore/screenshots/iap-review.jpg` |
 
 **Viktigt:** det första köpet i en app måste skickas in **tillsammans med** en ny version av appen. Lägg till köpet under "In-App Purchases and Subscriptions" på versionssidan innan du skickar in.
