@@ -1,7 +1,7 @@
 # Synk
 
 Festspel för 2–10 spelare. Två spelare per runda får en fråga, appen räknar ner 3-2-1 och på noll säger båda ett namn.
-Samma namn ger 1 poäng var. Olika namn: de förklarar sig och gruppen röstar om vem som hade rätt.
+Samma namn ger 1 poäng var. Olika namn: de förklarar sig och gruppen röstar om vem som svarade rätt, och den får poängen.
 
 - `index.html`: hela appen (HTML, CSS och JS i en fil, inga beroenden)
 - `questions.js`: frågorna: Warm up 100 (gratis), Juicy 200 och Crazy 100

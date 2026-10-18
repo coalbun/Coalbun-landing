@@ -325,7 +325,7 @@ svg { display: block; }
 .verdict-big { font-weight: 800; letter-spacing: -0.04em; font-size: clamp(46px, 8.4vh, 76px); line-height: 1; }
 .verdict-big.match { padding: 0.04em 0.1em 0.08em; line-height: 1.1; background: linear-gradient(180deg, #fff1e6, var(--apricot)); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .verdict-big.miss { color: var(--rose); }
-.verdict-text { margin: 0; color: var(--muted); font-weight: 500; font-size: clamp(15px, 2.2vh, 18px); line-height: 1.45; max-width: 28ch; }
+.verdict-text { margin: 0; color: var(--muted); font-weight: 500; font-size: clamp(15px, 2.2vh, 18px); line-height: 1.45; max-width: 28ch; text-wrap: balance; }
 .hint { text-align: center; color: var(--muted); font-size: 14px; font-weight: 500; margin: -2px 0 0; flex-shrink: 0; min-height: 1.2em; }
 
 /* ---------- Resultat ---------- */
@@ -1122,10 +1122,10 @@ svg { display: block; }
       hint.textContent = "";
       nextButton();
     } else if (g.phase === "vote") {
-      card.innerHTML = meta + '<div class="verdict"><div class="verdict-big miss">Mismatch!</div><p class="verdict-text">Ni har tio sekunder på er att förklara. Sen röstar gruppen: vem hade rätt?</p></div>';
-      hint.textContent = "Gruppen röstar";
+      card.innerHTML = meta + '<div class="verdict"><div class="verdict-big miss">Mismatch!</div><p class="verdict-text">Ni har tio sekunder på er att förklara. Sen röstar gruppen: vem av er svarade rätt?</p></div>';
+      hint.textContent = "Tryck på den som får poängen";
       actions.innerHTML = '<div class="btn-row" style="margin-bottom:10px"><button class="btn btn-ghost" data-vote="' + a.id + '">' + esc(a.name) + '</button><button class="btn btn-ghost" data-vote="' + b.id + '">' + esc(b.name) + '</button></div>' +
-        '<button class="top-btn" style="width:100%" data-vote="none">Ingen fick rätt</button>';
+        '<button class="top-btn" style="width:100%" data-vote="none">Ingen svarade rätt</button>';
       actions.querySelectorAll("[data-vote]").forEach(function (el) { el.onclick = function () { onVote(el.dataset.vote); }; });
     } else if (g.phase === "voted") {
       var w = g.winners[0] ? byId(g.winners[0]) : null;
@@ -1403,7 +1403,7 @@ svg { display: block; }
       "<li><span>Skriv in 2–10 spelare och välj nivå.</span></li>" +
       "<li><span>Varje runda möts <b>två spelare</b> och får en fråga, till exempel <i>Vem av er är smartast?</i></span></li>" +
       "<li><span>Tryck på <b>Räkna ner</b>. På noll säger ni båda ett namn högt: ditt eget eller den andras.</span></li>" +
-      "<li><span><b>Samma namn:</b> en poäng var. <b>Olika:</b> förklara er, resten av gänget röstar och den som hade rätt får poängen.</span></li>" +
+      "<li><span><b>Samma namn:</b> en poäng var. <b>Olika:</b> förklara er. Gänget röstar, och den som svarade rätt får poängen.</span></li>" +
       "<li><span>Är det en <b>har</b>-fråga och ingen av er har gjort det? Säg den som mest troligt skulle.</span></li>" +
       "<li><span>Flest poäng efter sista rundan vinner. Är ni bara två spelar ni som ett lag och ser hur många matcher ni klarar.</span></li>" +
       "</ol>");

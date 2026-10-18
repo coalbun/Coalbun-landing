@@ -21,7 +21,7 @@ Två spelare, en fråga, tre sekunder. Säger ni samma namn får ni poäng. Det 
 ```
 Två spelare. En fråga. Tre sekunder.
 
-"Vem av er skulle överleva längst utan mobil?" Appen räknar ner 3, 2, 1, och på noll säger ni båda ett namn högt: ditt eget eller den andras. Säger ni samma namn får ni en poäng var. Säger ni olika får ni förklara er, och resten av gänget röstar om vem som hade rätt.
+"Vem av er skulle överleva längst utan mobil?" Appen räknar ner 3, 2, 1, och på noll säger ni båda ett namn högt: ditt eget eller den andras. Säger ni samma namn får ni en poäng var. Säger ni olika får ni förklara er. Sen röstar resten av gänget om vem som svarade rätt, och den får poängen.
 
 Synk är festspelet som får hela rummet att skrika, skratta och säga "NEJ, det är ju du!".
 
