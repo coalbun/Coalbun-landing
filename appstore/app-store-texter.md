@@ -103,4 +103,16 @@ The Juicy and Crazy questions are text only and refer to dating, sex and alcohol
 ```
 
 ## Skärmbilder
-Ligger i `appstore/screenshots/`, i storleken 1320 × 2868 för 6,9-tumsskärm. Ladda upp dem i den ordningen de är numrerade.
+Ligger i `appstore/screenshots/`, i storleken 1320 × 2868 för 6,9-tumsskärm. Ladda upp dem i den ordningen de är numrerade:
+
+| Fil | Rubrik | Visar |
+|---|---|---|
+| `01-fragan.jpg` | Säg samma namn. Samtidigt. | En runda med frågan |
+| `02-match.jpg` | Samma namn? Poäng till båda. | Match |
+| `03-rosta.jpg` | Olika namn? Gänget avgör. | Röstningen |
+| `04-nivaer.jpg` | Tre nivåer. Från oskyldigt till galet. | Startskärmen med nivåvalet |
+| `05-vinnare.jpg` | Vem känner gänget bäst? | Resultatet |
+
+`iap-review.jpg` är bara för granskningen av köpet, inte för produktsidan.
+
+Tänk på inför nya skärmbilder: Apple kräver att skärmbilder passar alla åldrar (4+), även om appen har högre åldersgräns. Visa inga frågor om sex, alkohol eller nakenhet på bilderna.
