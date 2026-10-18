@@ -42,8 +42,7 @@ Det här kräver en Mac med **Xcode 26 eller senare** (Apples krav sedan april 2
   - En hel omgång med 3+ spelare (röstningen) och en med 2 spelare (lagläget).
 - **Köpet** `com.coalbun.synk.unlock` skickas in tillsammans med första versionen. Det läggs till på versionssidan.
 - **Build-nummer:** varje ny uppladdning kräver ett högre build-nummer (Xcode → App → General → Build). Version 1.0 och build 1 är förifyllda.
-- Lägg upp de två sidorna i `site/synk/` på coalbun.com (till exempel under `/synk/`) och klistra in adresserna i App Store Connect. Kontaktuppgifterna (support@coalbun.com, Coalbun Studios) är redan ifyllda.
-  - GitHub Pages: **Settings → Pages → Deploy from a branch**, välj `main` och `/ (root)`. Sidorna hamnar då under `.../site/synk/`. På ett privat repo kräver GitHub Pages ett betalkonto. Annars kan du lägga filerna på din vanliga hemsida.
+- Support- och integritetssidan ligger live på `https://coalbun.com/synk/support.html` och `https://coalbun.com/synk/integritetspolicy.html`. De publiceras från repot `coalbun-studios-hero-f335bb32` (mappen `public/synk/`), som Netlify bygger. Ändrar du i `site/synk/` här måste filerna kopieras dit också.
 
 ## Ändra bundle-ID eller produkt-ID
 - Bundle-ID: `capacitor.config.json` (`appId`) och i Xcode under Signing & Capabilities.

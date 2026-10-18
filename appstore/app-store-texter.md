@@ -53,9 +53,9 @@ Juicy och Crazy innehåller frågor om sex, dejting och fest och är för dig so
 festspel,förfest,partyspel,frågespel,vänner,sällskapsspel,möhippa,tjejkväll,vem av oss,par,dejt
 ```
 
-- **Support-URL:** adressen till `site/synk/support.html` när den ligger på coalbun.com, till exempel `https://coalbun.com/synk/support.html`
+- **Support-URL:** `https://coalbun.com/synk/support.html` (live)
 - **Marknadsförings-URL:** https://coalbun.com
-- **Integritetspolicy-URL:** adressen till `site/synk/integritetspolicy.html`, till exempel `https://coalbun.com/synk/integritetspolicy.html`
+- **Integritetspolicy-URL:** `https://coalbun.com/synk/integritetspolicy.html` (live)
 - **Copyright:** 2026 Coalbun Studios
 
 ## Köp i appen (In-App Purchase)
