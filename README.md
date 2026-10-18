@@ -33,6 +33,15 @@ Det här kräver en Mac med **Xcode 26 eller senare** (Apples krav sedan april 2
 8. Välj bygget på versionssidan i App Store Connect, lägg till köpet, ladda upp skärmbilderna och skicka in.
 
 ## Innan du skickar in
+- **Avtal för betalappar:** i App Store Connect, under **Företag → Avtal, skatt och bank**, måste avtalet *Paid Applications* vara signerat och ha bank- och skatteuppgifter. Annars går köpet inte att skapa eller köpa.
+- **Testa på din egen iPhone** innan du arkiverar:
+  - Nedräkningen 3, 2, 1, NU! ska vara hel, utan avhuggna kanter.
+  - Ljud och vibration ska fungera (ljudet slås av och på i menyn).
+  - Testköp och **Återställ köp** ska fungera med ett sandbox-konto.
+  - Länkarna under **Meny → Fler spel från oss** ska öppna ACT RUSH och Tune Trivia i App Store.
+  - En hel omgång med 3+ spelare (röstningen) och en med 2 spelare (lagläget).
+- **Köpet** `com.coalbun.synk.unlock` skickas in tillsammans med första versionen. Det läggs till på versionssidan.
+- **Build-nummer:** varje ny uppladdning kräver ett högre build-nummer (Xcode → App → General → Build). Version 1.0 och build 1 är förifyllda.
 - Lägg upp de två sidorna i `site/synk/` på coalbun.com (till exempel under `/synk/`) och klistra in adresserna i App Store Connect. Kontaktuppgifterna (support@coalbun.com, Coalbun Studios) är redan ifyllda.
   - GitHub Pages: **Settings → Pages → Deploy from a branch**, välj `main` och `/ (root)`. Sidorna hamnar då under `.../site/synk/`. På ett privat repo kräver GitHub Pages ett betalkonto. Annars kan du lägga filerna på din vanliga hemsida.
 
