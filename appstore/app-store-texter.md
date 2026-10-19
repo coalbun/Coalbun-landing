@@ -6,7 +6,7 @@ Kopiera in texterna nedan i App Store Connect. Siffran inom parentes är antal t
 - **Namn** (27/30): Synk: Vem av oss? Partyspel
   - På hemskärmen heter appen fortfarande bara **Synk**.
   - "Vem av oss" och "partyspel" står i namnet och behöver därför inte finnas bland sökorden.
-- **Undertitel** (28/30): Säg samma namn på 3 sekunder
+- **Undertitel** (30/30): 2-10 spelare - alla möter alla
 - **Primär kategori:** Spel. Underkategorier: Trivia och Casual
 - **Sekundär kategori:** Underhållning
 - **Paket-ID (Bundle ID):** com.coalbun.synk

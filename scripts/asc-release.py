@@ -1,8 +1,9 @@
 # Fyller i version 1.0 av Synk i App Store Connect så att den är redo att skickas in.
 #   python3 scripts/asc-release.py kolla  – visar läget, ändrar inget
 #   python3 scripts/asc-release.py fyll   – fyller i det som saknas eller skiljer sig
-# Texterna kommer från appstore/metadata.json. Skriptet skickar aldrig in för granskning
-# och tar aldrig bort något.
+#   python3 scripts/asc-release.py skicka – fyller i, lägger till köpet och skickar in för granskning
+# Texterna kommer från appstore/metadata.json. Bara läget "skicka" skickar in, och skriptet
+# tar aldrig bort något.
 import hashlib, json, os, sys, time
 
 from asc_common import ApiError, api, get_all, get_optional, upload_asset
@@ -339,10 +340,48 @@ def iap_status(app_id):
     manual.append("Köpet: bocka i 'Lås upp Juicy och Crazy' under In-App Purchases and Subscriptions på versionssidan")
 
 
+def submit(app_id, v):
+    """Lägger version och köp i en granskning och skickar in. Avbryter om köpet inte går att lägga till."""
+    say("\n== Skicka in för granskning")
+    subs = get_all(f"/v1/reviewSubmissions?filter[app]={app_id}&filter[platform]=IOS")
+    busy = [s for s in subs if s["attributes"].get("state") in ("WAITING_FOR_REVIEW", "IN_REVIEW", "UNRESOLVED_ISSUES")]
+    if busy:
+        say(f"  redan inskickad: {busy[0]['attributes']['state']}")
+        return
+    sub = next((s for s in subs if s["attributes"].get("state") == "READY_FOR_REVIEW"), None)
+    if not sub:
+        sub = api("POST", "/v1/reviewSubmissions", {"data": {"type": "reviewSubmissions", "attributes": {"platform": "IOS"},
+                  "relationships": {"app": {"data": {"type": "apps", "id": app_id}}}}})["data"]
+        say("  skapade en granskning")
+    items = api("GET", f"/v1/reviewSubmissions/{sub['id']}/items?include=appStoreVersion")
+    has_version = any((i.get("relationships", {}).get("appStoreVersion", {}).get("data") or {}).get("id") == v["id"]
+                      for i in items.get("data", []))
+    if not has_version:
+        api("POST", "/v1/reviewSubmissionItems", {"data": {"type": "reviewSubmissionItems", "relationships": {
+            "reviewSubmission": {"data": {"type": "reviewSubmissions", "id": sub["id"]}},
+            "appStoreVersion": {"data": {"type": "appStoreVersions", "id": v["id"]}}}}})
+        say("  lade till version " + VERSION)
+    for iap in get_all(f"/v1/apps/{app_id}/inAppPurchasesV2?limit=50"):
+        st = iap["attributes"].get("state")
+        if st == "READY_TO_SUBMIT":
+            api("POST", "/v1/inAppPurchaseSubmissions", {"data": {"type": "inAppPurchaseSubmissions", "relationships": {
+                "inAppPurchaseV2": {"data": {"type": "inAppPurchases", "id": iap["id"]}}}}})
+            say(f"  lade till köpet {iap['attributes']['productId']}")
+        else:
+            say(f"  köpet {iap['attributes']['productId']}: {st}")
+    api("PATCH", f"/v1/reviewSubmissions/{sub['id']}", {"data": {"type": "reviewSubmissions", "id": sub["id"],
+        "attributes": {"submitted": True}}})
+    state = api("GET", f"/v1/reviewSubmissions/{sub['id']}")["data"]["attributes"].get("state")
+    say(f"  INSKICKAD! Status: {state}")
+
+
 def main():
     global MODE
     MODE = (sys.argv[1] if len(sys.argv) > 1 else "kolla").strip().lower()
-    say(f"Läge: {MODE}")
+    send = MODE == "skicka"
+    if send:
+        MODE = "fyll"
+    say(f"Läge: {'skicka' if send else MODE}")
     app = find_app()
     app_id = app["id"]
     step("appen", app_level, app)
@@ -362,6 +401,16 @@ def main():
     step("pris", pricing, app_id)
     step("länder", availability, app_id)
     step("köpet", iap_status, app_id)
+
+    if send and v and not failed:
+        try:
+            submit(app_id, v)
+            manual[:] = [m for m in manual if not m.startswith("Köpet:")]
+        except ApiError as e:
+            failed.append("inskickning")
+            say(f"::error::Kunde inte skicka in: {e}")
+    elif send:
+        say("\nSkickar inte in, eftersom något ovan misslyckades.")
 
     manual.append("Appens integritet: välj 'Data Not Collected' och tryck Publicera (finns inte i API:t)")
     say("\n== Kvar för dig i App Store Connect")
