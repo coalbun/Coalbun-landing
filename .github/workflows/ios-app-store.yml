@@ -1,0 +1,124 @@
+# Bygger Synk på en Mac hos GitHub och laddar upp bygget till App Store Connect (TestFlight).
+# Starta: GitHub → Actions → "iOS: bygg och ladda upp" → Run workflow.
+# Kräver fyra hemligheter under Settings → Secrets and variables → Actions, se README.
+name: "iOS: bygg och ladda upp"
+
+on:
+  workflow_dispatch:
+    inputs:
+      build_number:
+        description: "Build-nummer. Lämna tomt så används körningens nummer."
+        required: false
+        default: ""
+
+concurrency:
+  group: ios-app-store
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: macos-26
+    timeout-minutes: 45
+    env:
+      ASC_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+      ASC_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+      ASC_KEY: ${{ secrets.APP_STORE_CONNECT_KEY }}
+      TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Kontrollera hemligheter
+        run: |
+          missing=""
+          [ -n "$ASC_KEY_ID" ]    || missing="$missing APP_STORE_CONNECT_KEY_ID"
+          [ -n "$ASC_ISSUER_ID" ] || missing="$missing APP_STORE_CONNECT_ISSUER_ID"
+          [ -n "$ASC_KEY" ]       || missing="$missing APP_STORE_CONNECT_KEY"
+          [ -n "$TEAM_ID" ]       || missing="$missing APPLE_TEAM_ID"
+          if [ -n "$missing" ]; then echo "::error::Saknade hemligheter:$missing"; exit 1; fi
+
+      - name: Välj Xcode
+        run: |
+          if [ -d /Applications/Xcode_26.6.app ]; then sudo xcode-select -s /Applications/Xcode_26.6.app; fi
+          xcodebuild -version
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Installera och kopiera in spelet
+        run: |
+          npm ci
+          npm run sync
+
+      - name: Förbered nyckel och inställningar
+        run: |
+          KEY_DIR="$RUNNER_TEMP/keys"
+          mkdir -p "$KEY_DIR"
+          printf '%s\n' "$ASC_KEY" > "$KEY_DIR/AuthKey_$ASC_KEY_ID.p8"
+          echo "KEY_PATH=$KEY_DIR/AuthKey_$ASC_KEY_ID.p8" >> "$GITHUB_ENV"
+          BUILD="${{ github.event.inputs.build_number }}"
+          [ -n "$BUILD" ] || BUILD="${{ github.run_number }}"
+          echo "BUILD=$BUILD" >> "$GITHUB_ENV"
+          cat > "$RUNNER_TEMP/ExportOptions.plist" <<PLIST
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>method</key><string>app-store-connect</string>
+            <key>destination</key><string>upload</string>
+            <key>teamID</key><string>$TEAM_ID</string>
+            <key>signingStyle</key><string>automatic</string>
+            <key>uploadSymbols</key><true/>
+            <key>manageAppVersionAndBuildNumber</key><false/>
+          </dict>
+          </plist>
+          PLIST
+          echo "Build-nummer: $BUILD"
+
+      - name: Arkivera
+        run: |
+          set -o pipefail
+          xcodebuild archive \
+            -project ios/App/App.xcodeproj \
+            -scheme App \
+            -configuration Release \
+            -destination 'generic/platform=iOS' \
+            -archivePath "$RUNNER_TEMP/Synk.xcarchive" \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "$KEY_PATH" \
+            -authenticationKeyID "$ASC_KEY_ID" \
+            -authenticationKeyIssuerID "$ASC_ISSUER_ID" \
+            DEVELOPMENT_TEAM="$TEAM_ID" \
+            CODE_SIGN_STYLE=Automatic \
+            CURRENT_PROJECT_VERSION="$BUILD" \
+            | tee "$RUNNER_TEMP/archive.log" | grep -E "error:|warning: .*sign|ARCHIVE (SUCCEEDED|FAILED)" || true
+          [ -d "$RUNNER_TEMP/Synk.xcarchive" ] || { echo "::error::Arkiveringen misslyckades, se loggen archive.log"; exit 1; }
+
+      - name: Ladda upp till App Store Connect
+        run: |
+          set -o pipefail
+          xcodebuild -exportArchive \
+            -archivePath "$RUNNER_TEMP/Synk.xcarchive" \
+            -exportOptionsPlist "$RUNNER_TEMP/ExportOptions.plist" \
+            -exportPath "$RUNNER_TEMP/export" \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "$KEY_PATH" \
+            -authenticationKeyID "$ASC_KEY_ID" \
+            -authenticationKeyIssuerID "$ASC_ISSUER_ID" \
+            2>&1 | tee "$RUNNER_TEMP/export.log"
+          echo "::notice::Build $BUILD är uppladdat. Det dyker upp i App Store Connect efter 10–30 minuter."
+
+      - name: Spara loggar
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: xcode-loggar
+          path: |
+            ${{ runner.temp }}/archive.log
+            ${{ runner.temp }}/export.log
+          if-no-files-found: ignore
+
+      - name: Ta bort nyckeln
+        if: always()
+        run: rm -rf "$RUNNER_TEMP/keys"

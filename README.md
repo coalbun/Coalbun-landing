@@ -32,6 +32,25 @@ Det här kräver en Mac med **Xcode 26 eller senare** (Apples krav sedan april 2
 7. I Xcode: **Product → Archive**, sedan **Distribute App → App Store Connect → Upload**.
 8. Välj bygget på versionssidan i App Store Connect, lägg till köpet, ladda upp skärmbilderna och skicka in.
 
+## Bygga utan Mac: GitHub Actions
+Arbetsflödet `.github/workflows/ios-app-store.yml` bygger appen på en Mac hos GitHub (macOS 26, Xcode 26.6) och laddar upp den till App Store Connect. Där syns den under TestFlight och kan väljas på versionssidan.
+
+**Förbered en gång:**
+1. **Skapa appen i App Store Connect** (Appar → + → Ny app). Namn: Synk, språk: svenska, bundle-ID: `com.coalbun.synk`, SKU: `synk-ios`. Finns bundle-ID:t inte i listan, skapa det under developer.apple.com → Certificates, IDs & Profiles → Identifiers.
+2. **Skapa en API-nyckel:** App Store Connect → Användare och åtkomst → Integrationer → App Store Connect API → Team-nycklar → +. Välj rollen **Admin**, som krävs för att GitHub ska få skapa signeringscertifikat. Ladda ner `.p8`-filen. Den går bara att ladda ner en gång.
+3. **Lägg in fyra hemligheter på GitHub:** repot → Settings → Secrets and variables → Actions → New repository secret.
+
+   | Namn | Värde |
+   |---|---|
+   | `APP_STORE_CONNECT_KEY_ID` | Nyckel-ID (står bredvid nyckeln, t.ex. `2X9R4HXF34`) |
+   | `APP_STORE_CONNECT_ISSUER_ID` | Utfärdar-ID (står överst på sidan med nycklar) |
+   | `APP_STORE_CONNECT_KEY` | Hela innehållet i `.p8`-filen, inklusive raderna `BEGIN` och `END` |
+   | `APPLE_TEAM_ID` | Team-ID från developer.apple.com → Membership details (10 tecken) |
+
+**Bygga:** GitHub → fliken **Actions** → **iOS: bygg och ladda upp** → **Run workflow**. Det tar cirka 10–15 minuter, och sedan 10–30 minuter innan bygget syns i App Store Connect. Build-numret blir körningens nummer, men du kan skriva ett eget när du startar.
+
+Knappen syns först när arbetsflödet ligger på grenen `main`. Misslyckas ett bygge finns hela Xcode-loggen under körningen som `xcode-loggar`.
+
 ## Innan du skickar in
 - **Avtal för betalappar:** i App Store Connect, under **Företag → Avtal, skatt och bank**, måste avtalet *Paid Applications* vara signerat och ha bank- och skatteuppgifter. Annars går köpet inte att skapa eller köpa.
 - **Testa på din egen iPhone** innan du arkiverar:
