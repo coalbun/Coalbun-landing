@@ -2,9 +2,9 @@
 #   python3 scripts/asc-iap.py kolla   – visar bara läget
 #   python3 scripts/asc-iap.py skapa   – skapar det som saknas, tar aldrig bort något
 # Läser ASC_KEY_ID, ASC_ISSUER_ID och KEY_PATH från miljön.
-import hashlib, json, os, sys, time, urllib.error, urllib.parse, urllib.request
+import hashlib, os, sys
 
-import jwt
+from asc_common import ApiError, api, get_all, get_optional, upload_asset
 
 BUNDLE_ID = "com.coalbun.synk"
 PRODUCT_ID = "com.coalbun.synk.unlock"
@@ -17,58 +17,6 @@ REVIEW_NOTE = ("Engångsköp som låser upp nivåerna Juicy och Crazy (300 fråg
                "Tryck på Juicy eller Crazy på startskärmen för att öppna köpet. "
                "Återställ köp finns i samma ruta och i menyn.")
 SCREENSHOT = os.path.join(os.path.dirname(__file__), "..", "appstore", "screenshots", "iap-review.jpg")
-BASE = "https://api.appstoreconnect.apple.com"
-
-
-class ApiError(Exception):
-    pass
-
-
-def token():
-    now = int(time.time())
-    with open(os.environ["KEY_PATH"]) as f:
-        key = f.read()
-    return jwt.encode({"iss": os.environ["ASC_ISSUER_ID"], "iat": now, "exp": now + 1200, "aud": "appstoreconnect-v1"},
-                      key, algorithm="ES256", headers={"kid": os.environ["ASC_KEY_ID"], "typ": "JWT"})
-
-
-def api(method, path, body=None):
-    url = path if path.startswith("http") else BASE + path
-    data = json.dumps(body).encode() if body is not None else None
-    req = urllib.request.Request(url, data=data, method=method)
-    req.add_header("Authorization", "Bearer " + token())
-    if data is not None:
-        req.add_header("Content-Type", "application/json")
-    try:
-        with urllib.request.urlopen(req) as r:
-            raw = r.read()
-            return json.loads(raw) if raw else {}
-    except urllib.error.HTTPError as e:
-        raw = e.read().decode(errors="replace")
-        try:
-            errs = json.loads(raw).get("errors", [])
-            msg = "; ".join(f"{x.get('title', '')}: {x.get('detail', '')}" for x in errs) or raw
-        except ValueError:
-            msg = raw
-        raise ApiError(f"{method} {urllib.parse.urlparse(url).path} gav {e.code}: {msg}")
-
-
-def get_all(path):
-    out, url = [], path
-    while url:
-        r = api("GET", url)
-        out += r.get("data", [])
-        url = r.get("links", {}).get("next")
-    return out
-
-
-def get_optional(path):
-    try:
-        return api("GET", path).get("data")
-    except ApiError as e:
-        if " gav 404" in str(e):
-            return None
-        raise
 
 
 def find_app():
@@ -159,12 +107,7 @@ def upload_screenshot(iap_id):
         "attributes": {"fileName": "iap-review.jpg", "fileSize": len(blob)},
         "relationships": {"inAppPurchaseV2": {"data": {"type": "inAppPurchases", "id": iap_id}}}}})
     shot = r["data"]
-    for op in shot["attributes"]["uploadOperations"]:
-        part = blob[op["offset"]:op["offset"] + op["length"]]
-        req = urllib.request.Request(op["url"], data=part, method=op["method"])
-        for h in op.get("requestHeaders") or []:
-            req.add_header(h["name"], h["value"])
-        urllib.request.urlopen(req).read()
+    upload_asset(shot, blob)
     api("PATCH", f"/v1/inAppPurchaseAppStoreReviewScreenshots/{shot['id']}", {"data": {
         "type": "inAppPurchaseAppStoreReviewScreenshots", "id": shot["id"],
         "attributes": {"uploaded": True, "sourceFileChecksum": hashlib.md5(blob).hexdigest()}}})
