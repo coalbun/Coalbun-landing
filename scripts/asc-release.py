@@ -296,7 +296,9 @@ def review_details(v):
 
 def pricing(app_id):
     say("\n== Pris (appen är gratis)")
-    if get_optional(f"/v1/apps/{app_id}/appPriceSchedule"):
+    sched = get_optional(f"/v1/apps/{app_id}/appPriceSchedule")
+    # Apple kan ha en tom prislista. Det räknas inte som satt pris.
+    if sched and get_all(f"/v1/appPriceSchedules/{sched['id']}/manualPrices?limit=5"):
         say("  pris finns redan")
         return
     if MODE != "fyll":
