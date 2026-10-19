@@ -1,0 +1,21 @@
+{
+  "appId": "com.coalbun.synk",
+  "appName": "Synk",
+  "webDir": "app",
+  "backgroundColor": "#000000",
+  "ios": {
+    "contentInset": "never",
+    "scrollEnabled": false,
+    "backgroundColor": "#000000",
+    "preferredContentMode": "mobile"
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 500,
+      "launchAutoHide": true,
+      "backgroundColor": "#000000",
+      "showSpinner": false,
+      "launchFadeOutDuration": 0
+    }
+  }
+}

@@ -1,0 +1,1500 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<title>Synk</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="theme-color" content="#1c0f1e">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-180.png">
+<style>
+/* FONTS:START  Outfit ligger i appen så att den fungerar utan internet (SIL Open Font License) */
+@font-face { font-family: "Outfit"; font-style: normal; font-weight: 100 900; font-display: swap; src: url("fonts/outfit-latin.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Outfit"; font-style: normal; font-weight: 100 900; font-display: swap; src: url("fonts/outfit-latin-ext.woff2") format("woff2"); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+/* FONTS:END */
+/* Golden Hour: en solnedgång en sommarkväll. Mörkt plommon som går över i glöd, lekfulla klistermärken i aprikos, rosa och lila.
+   Layout: en skärm i taget, alltid 100 % höjd och aldrig scroll. Allt krymper med skärmhöjden. */
+:root {
+  color-scheme: dark;
+  --bg-top: #1c0f1e;
+  --bg-mid: #281426;
+  --bg-bot: #42202a;
+  --ember: #ff9b6b;
+  --surface: rgba(255, 241, 230, 0.08);
+  --surface-2: rgba(255, 241, 230, 0.13);
+  --line: rgba(255, 241, 230, 0.12);
+  --ink: #fff1e6;
+  --muted: #dcb4a6;
+  --plum: #3a1828;
+  --apricot: #ffb38a;
+  --peach: #ffc9a6;
+  --rose: #ff9fae;
+  --lilac: #e7a7d8;
+  --gold: #ffd76e;
+  --c-warm: var(--peach);
+  --c-juicy: var(--rose);
+  --c-crazy: var(--lilac);
+
+  --font: "Outfit", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --gap: clamp(8px, 1.6vh, 16px);
+  --radius: 22px;
+  --tap: clamp(50px, 7.6vh, 62px);
+  --sticker-edge: 0 0 0 3px rgba(255, 241, 230, 0.92);
+  --lift: 0 14px 30px -14px rgba(20, 6, 18, 0.75);
+}
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; margin: 0; }
+html { -webkit-text-size-adjust: 100%; touch-action: manipulation; }
+html { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); background: var(--bg-top); }
+body {
+  overflow: hidden;
+  background:
+    radial-gradient(120% 45% at 50% 108%, color-mix(in srgb, var(--ember) 32%, transparent) 0%, transparent 70%),
+    linear-gradient(180deg, var(--bg-top) 0%, var(--bg-mid) 55%, var(--bg-bot) 100%);
+  background-attachment: fixed;
+  color: var(--ink);
+  font-family: var(--font);
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  user-select: none;
+  -webkit-user-select: none;
+}
+/* Fint brus, som på ett foto taget i solnedgång */
+body::after {
+  content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 40; opacity: .06; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+[hidden] { display: none !important; }
+button { font: inherit; color: inherit; border: 0; background: none; cursor: pointer; padding: 0; }
+button:focus-visible, input:focus-visible, .chip-avatar:focus-visible { outline: 2px solid var(--apricot); outline-offset: 3px; }
+svg { display: block; }
+
+.app {
+  height: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: clamp(10px, 2vh, 20px);
+  position: relative;
+  z-index: 1;
+}
+.screen { height: 100%; display: flex; flex-direction: column; gap: var(--gap); min-height: 0; }
+
+/* ---------- Logga och rubriker ---------- */
+.setup-head { position: relative; padding-right: 100px; }
+.logo {
+  display: inline-block;
+  margin: 4px 0 0 4px;
+  font: 800 clamp(30px, 5.4vh, 46px)/1 var(--font);
+  letter-spacing: -0.03em;
+  color: var(--plum);
+  background: linear-gradient(180deg, var(--peach), var(--apricot));
+  padding: .12em .42em .2em;
+  border-radius: .42em;
+  transform: rotate(-4deg);
+  box-shadow: var(--sticker-edge), var(--lift);
+  animation: stick .6s cubic-bezier(.3, 1.5, .5, 1) both;
+}
+.tagline { margin: clamp(10px, 1.8vh, 16px) 0 0; color: var(--muted); font-weight: 500; font-size: clamp(14px, 2vh, 16px); }
+.section-label { font-size: 12px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin: 0 0 -2px 4px; flex-shrink: 0; }
+
+/* ---------- Knappar ---------- */
+.btn {
+  height: var(--tap);
+  border-radius: 999px;
+  font: 800 clamp(17px, 2.6vh, 20px) var(--font);
+  letter-spacing: -0.01em;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  width: 100%;
+  flex-shrink: 0;
+  position: relative;
+  transition: transform .15s ease, filter .15s ease, opacity .2s;
+}
+.btn:active { transform: scale(.975); filter: brightness(.96); }
+.btn-primary, .btn-green {
+  color: var(--plum);
+  background: linear-gradient(90deg, var(--apricot), var(--rose));
+  box-shadow: 0 1px 0 rgba(255, 255, 255, .45) inset, 0 16px 36px -14px color-mix(in srgb, var(--rose) 75%, transparent);
+}
+.btn-primary:disabled { opacity: .35; pointer-events: none; box-shadow: none; }
+.btn-ghost { color: var(--ink); background: var(--surface-2); }
+.btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; flex-shrink: 0; }
+
+.top-btn {
+  height: 38px; padding: 0 14px; border-radius: 999px;
+  background: var(--surface);
+  font-weight: 600; font-size: 14px; color: var(--muted);
+}
+.top-btn:active { background: var(--surface-2); }
+
+/* ---------- Spelarbilder: initialer på mjuka, blanka knappar ---------- */
+.avatar {
+  width: 100%; aspect-ratio: 1; max-width: 100%;
+  border-radius: 50%;
+  display: grid; place-items: center;
+  font-weight: 800;
+  color: var(--plum);
+  background-size: cover; background-position: center;
+  overflow: hidden;
+  position: relative;
+}
+.avatar.initials {
+  background-image:
+    radial-gradient(circle at 34% 26%, rgba(255, 255, 255, .7), rgba(255, 255, 255, 0) 42%),
+    radial-gradient(circle at 70% 85%, rgba(58, 24, 40, .32), rgba(58, 24, 40, 0) 60%);
+}
+
+/* ---------- Startsidan ---------- */
+.add-row { display: flex; gap: 8px; flex-shrink: 0; }
+.add-row input {
+  flex: 1; min-width: 0;
+  height: clamp(48px, 6.6vh, 56px);
+  border-radius: 20px;
+  border: 1.5px solid transparent;
+  background: var(--surface);
+  color: var(--ink);
+  padding: 0 18px;
+  font: 500 17px var(--font);
+  transition: border-color .2s, background .2s;
+  user-select: text; -webkit-user-select: text;
+}
+.add-row input::placeholder { color: var(--muted); opacity: .85; }
+.add-row input:focus { border-color: color-mix(in srgb, var(--apricot) 70%, transparent); background: var(--surface-2); outline: none; }
+.icon-btn {
+  width: clamp(48px, 6.6vh, 56px); height: clamp(48px, 6.6vh, 56px);
+  border-radius: 50%; flex-shrink: 0;
+  background: linear-gradient(135deg, var(--apricot), var(--rose));
+  color: var(--plum);
+  display: grid; place-items: center;
+  box-shadow: 0 10px 24px -12px color-mix(in srgb, var(--rose) 80%, transparent);
+}
+.icon-btn:disabled { opacity: .35; box-shadow: none; }
+
+.players {
+  flex: 1; min-height: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: repeat(5, minmax(0, 1fr));
+  gap: clamp(6px, 1vh, 10px);
+}
+.players-empty {
+  grid-column: 1 / -1; grid-row: 1 / -1;
+  border: 1.5px dashed var(--line); border-radius: var(--radius);
+  display: grid; place-items: center; text-align: center;
+  color: var(--muted); font-weight: 500; padding: 16px; line-height: 1.5;
+}
+.chip {
+  min-height: 0;
+  display: flex; align-items: center; gap: 10px;
+  background: var(--surface);
+  border-radius: 999px;
+  padding: 4px 6px 4px 4px;
+  animation: pop .35s cubic-bezier(.3, 1.5, .5, 1);
+}
+.chip-avatar { height: 100%; max-height: 50px; aspect-ratio: 1; flex-shrink: 0; position: relative; border-radius: 50%; }
+.chip-avatar .avatar { font-size: clamp(14px, 2.3vh, 19px); height: 100%; width: auto; }
+.chip-avatar .cam {
+  position: absolute; right: -2px; bottom: -2px;
+  width: 15px; height: 15px; border-radius: 50%;
+  background: var(--ink); color: var(--plum);
+  box-shadow: 0 0 0 2px var(--bg-mid);
+  display: grid; place-items: center;
+}
+.chip-name { flex: 1; min-width: 0; font-weight: 600; font-size: clamp(15px, 2.2vh, 17px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.chip-remove { width: 28px; height: 28px; border-radius: 50%; color: var(--muted); display: grid; place-items: center; flex-shrink: 0; opacity: .75; }
+.chip-remove:active { background: var(--surface-2); }
+
+/* Nivåerna är klistermärken: lite sneda, och det valda får en krämvit kant */
+.cats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; flex-shrink: 0; padding: 6px 4px; }
+.cat {
+  position: relative;
+  height: clamp(78px, 12vh, 108px);
+  border-radius: 22px;
+  background: var(--c);
+  color: var(--plum);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+  transform: rotate(var(--tilt, 0deg));
+  box-shadow: var(--lift);
+  opacity: .82;
+  transition: transform .2s ease, box-shadow .2s, opacity .2s;
+}
+.cat::before {
+  content: ""; position: absolute; left: 14%; right: 30%; top: 9px; height: 8px; border-radius: 8px;
+  background: rgba(255, 255, 255, .35);
+}
+.cat:active { transform: rotate(var(--tilt, 0deg)) scale(.96); }
+.cat[aria-pressed="true"] { opacity: 1; box-shadow: var(--sticker-edge), 0 16px 32px -12px color-mix(in srgb, var(--c) 70%, transparent); transform: rotate(var(--tilt, 0deg)) scale(1.04); }
+.cat-name { font-weight: 800; font-size: clamp(17px, 2.8vh, 22px); letter-spacing: -0.01em; color: inherit; }
+/* "Gratis" är en liten etikett som sitter snett i hörnet på Warm up */
+.cat .free {
+  position: absolute; top: -10px; right: -8px;
+  font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase;
+  background: var(--ink); color: var(--plum);
+  padding: 4px 9px 5px; border-radius: 999px;
+  transform: rotate(9deg);
+  box-shadow: 0 6px 14px -6px rgba(20, 6, 18, .7);
+}
+.cats-note { grid-column: 1 / -1; margin: -4px 0 0; text-align: center; font-size: 12px; font-weight: 600; color: var(--muted); display: flex; align-items: center; justify-content: center; gap: 5px; }
+.cat .lock { position: absolute; top: 9px; right: 11px; opacity: .55; }
+.cat[data-cat="warmup"] { --c: var(--c-warm); --tilt: -3deg; }
+.cat[data-cat="juicy"]  { --c: var(--c-juicy); --tilt: 2.5deg; }
+.cat[data-cat="crazy"]  { --c: var(--c-crazy); --tilt: -2deg; }
+.cat.just { animation: tilepop .5s cubic-bezier(.3, 1.6, .5, 1); }
+.cat.just[data-cat="crazy"] { animation: shake .5s ease; }
+.heat { display: flex; gap: 4px; height: 11px; margin-top: 3px; }
+.heat svg { width: 8px; height: 11px; color: rgba(58, 24, 40, .22); }
+.heat .on { color: var(--plum); }
+.cat[aria-pressed="true"] .heat .on { transform-origin: 50% 100%; animation: flame 1.1s ease-in-out infinite; }
+.cat[aria-pressed="true"] .heat .on:nth-child(2) { animation-delay: -.4s; }
+.cat[aria-pressed="true"] .heat .on:nth-child(3) { animation-delay: -.75s; }
+
+/* ---------- Runda ---------- */
+.topbar { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-shrink: 0; }
+.cat-pill {
+  height: 38px; padding: 0 16px; border-radius: 999px;
+  font-weight: 800; font-size: 16px;
+  background: var(--c); color: var(--plum);
+  display: flex; align-items: center; gap: 6px; white-space: nowrap;
+  transform: rotate(-2deg);
+  box-shadow: var(--lift);
+}
+
+.vs { flex-shrink: 0; display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; gap: 4px; padding-top: clamp(6px, 1.4vh, 14px); }
+.fighter { display: flex; flex-direction: column; align-items: center; gap: 8px; min-width: 0; }
+.nametag {
+  display: flex; align-items: center; gap: 8px;
+  max-width: 100%;
+  padding: 5px 14px 5px 5px;
+  border-radius: 999px;
+  background: var(--t);
+  color: var(--plum);
+  transform: rotate(var(--tilt));
+  box-shadow: var(--sticker-edge), var(--lift);
+  transition: box-shadow .3s;
+}
+.nametag .avatar { width: clamp(34px, 5.2vh, 46px); flex-shrink: 0; font-size: clamp(14px, 2.2vh, 19px); background-color: rgba(255, 255, 255, .45) !important; }
+.nametag .avatar.photo { background-color: transparent !important; }
+.fighter-name { font-weight: 800; font-size: clamp(19px, 3vh, 25px); letter-spacing: -0.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.fighter-score { font-size: 13px; font-weight: 600; color: var(--muted); font-variant-numeric: tabular-nums; }
+.fighter.win .nametag { box-shadow: var(--sticker-edge), 0 0 38px 2px color-mix(in srgb, var(--t) 70%, transparent); animation: jump .7s cubic-bezier(.3, 1.6, .5, 1) 2; }
+.fighter-name.long { font-size: clamp(16px, 2.5vh, 21px); }
+.fighter-name.xlong { font-size: clamp(13px, 2vh, 17px); }
+.vs-mark { font-weight: 800; font-size: clamp(18px, 2.8vh, 24px); color: var(--muted); }
+
+.card {
+  flex: 1; min-height: 0;
+  position: relative;
+  border-radius: 32px;
+  background: var(--surface);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center;
+  padding: clamp(14px, 3vh, 28px) 22px;
+  overflow: hidden;
+}
+.card::before {
+  content: ""; position: absolute; inset: 0;
+  background: radial-gradient(90% 55% at 50% 0%, color-mix(in srgb, var(--c) 20%, transparent), transparent 70%);
+  pointer-events: none;
+}
+.card-meta { position: absolute; top: 16px; left: 0; right: 0; font-size: 12px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+.question {
+  margin: 0;
+  font-weight: 700;
+  font-size: clamp(25px, 4.3vh, 38px);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+  position: relative;
+}
+.question.in { animation: rise .45s cubic-bezier(.2, .8, .2, 1); }
+.count {
+  position: absolute; inset: 0;
+  display: grid; place-items: center;
+  font-weight: 800;
+  font-size: clamp(120px, 26vh, 230px);
+  background: radial-gradient(70% 50% at 50% 50%, rgba(255, 179, 138, .14), transparent 70%), rgba(28, 15, 30, .92);
+}
+/* background-clip: text målar bara inom spanets ruta, så rutan måste rymma hela glyfen */
+.count span { display: inline-block; line-height: 1.15; padding: 0.06em 0.14em 0.1em; background: linear-gradient(180deg, #fff1e6, var(--apricot) 60%, var(--rose)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.count.tick span { animation: tick .8s cubic-bezier(.2, .9, .3, 1); }
+.count.now { font-size: clamp(72px, 14vh, 126px); letter-spacing: -0.02em; }
+.count.now span { background-image: linear-gradient(180deg, #fff1e6, var(--rose) 60%, var(--lilac)); }
+.verdict { position: relative; display: flex; flex-direction: column; align-items: center; gap: 8px; animation: pop .35s cubic-bezier(.3, 1.5, .5, 1); }
+.verdict-big { font-weight: 800; letter-spacing: -0.04em; font-size: clamp(46px, 8.4vh, 76px); line-height: 1; }
+.verdict-big.match { padding: 0.04em 0.1em 0.08em; line-height: 1.1; background: linear-gradient(180deg, #fff1e6, var(--apricot)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.verdict-big.miss { color: var(--rose); }
+.verdict-text { margin: 0; color: var(--muted); font-weight: 500; font-size: clamp(15px, 2.2vh, 18px); line-height: 1.45; max-width: 28ch; text-wrap: balance; }
+.hint { text-align: center; color: var(--muted); font-size: 14px; font-weight: 500; margin: -2px 0 0; flex-shrink: 0; min-height: 1.2em; }
+
+/* ---------- Resultat ---------- */
+.winner { flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; }
+.winner-kicker { font-size: 12px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
+.winner-title {
+  font-weight: 800; letter-spacing: -0.03em;
+  font-size: clamp(34px, 5.8vh, 50px); line-height: 1.1; margin: 0; padding: 0.04em 0.1em 0.08em;
+  background: linear-gradient(90deg, var(--apricot), var(--rose));
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.winner-faces { display: flex; justify-content: center; gap: 10px; position: relative; padding-top: 18px; }
+.winner-faces .avatar { width: clamp(68px, 11.5vh, 104px); font-size: clamp(26px, 4.6vh, 42px); box-shadow: var(--sticker-edge), 0 0 40px -6px color-mix(in srgb, var(--apricot) 60%, transparent); }
+.crown { position: absolute; top: -6px; left: 50%; transform: translateX(-50%) rotate(-6deg); color: var(--gold); filter: drop-shadow(0 4px 12px color-mix(in srgb, var(--gold) 50%, transparent)); }
+.winner-name { font-weight: 800; letter-spacing: -0.02em; font-size: clamp(21px, 3.4vh, 28px); margin-top: 6px; }
+.winner-pts { color: var(--muted); font-weight: 500; font-size: 15px; margin-top: -4px; }
+
+.ranking {
+  flex: 1; min-height: 0;
+  display: grid; grid-auto-rows: minmax(0, 1fr); gap: 2px;
+  background: var(--surface);
+  border-radius: var(--radius); padding: 8px 14px;
+}
+.rank-row { display: grid; grid-template-columns: 22px auto 1fr auto; align-items: center; gap: 10px; min-height: 0; }
+.rank-row + .rank-row { border-top: 1px solid var(--line); }
+.rank-row .n { color: var(--muted); font-weight: 600; font-size: 13px; font-variant-numeric: tabular-nums; }
+.rank-row .avatar { height: clamp(22px, 3.4vh, 32px); width: auto; font-size: 12px; }
+.rank-row .nm { font-weight: 600; font-size: clamp(15px, 2.1vh, 17px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rank-row .pts { font-weight: 800; font-size: clamp(17px, 2.5vh, 21px); font-variant-numeric: tabular-nums; }
+.ranking.dots { grid-template-columns: repeat(5, minmax(0, 54px)); grid-auto-rows: auto; justify-content: center; align-content: center; gap: 10px; padding: 14px; }
+.dot { aspect-ratio: 1; border-radius: 50%; display: grid; place-items: center; min-height: 0; font-weight: 700; font-size: clamp(14px, 2.2vh, 18px); background: var(--surface); color: var(--muted); }
+.dot.hit { background: var(--apricot); color: var(--plum); }
+.dot.miss { background: color-mix(in srgb, var(--rose) 22%, transparent); color: var(--rose); }
+.awards { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; flex-shrink: 0; }
+.award { border-radius: 20px; padding: 11px 14px; min-width: 0; background: var(--surface); }
+.award-k { font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--c, var(--muted)); }
+.award-v { font-weight: 800; letter-spacing: -0.01em; font-size: 16px; margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.award-s { font-size: 13px; color: var(--muted); font-weight: 500; }
+
+/* ---------- Ark (köp, ställning, nivåval) ---------- */
+.scrim { position: fixed; inset: 0; background: rgba(20, 6, 18, .6); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); z-index: 20; animation: fade .2s ease; }
+.sheet {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 21;
+  max-width: 480px; margin: 0 auto;
+  background: linear-gradient(180deg, #391a2b, var(--bg-top) 55%);
+  border-radius: 32px 32px 0 0;
+  padding: 24px max(20px, env(safe-area-inset-right, 0px)) calc(20px + env(safe-area-inset-bottom, 0px)) max(20px, env(safe-area-inset-left, 0px));
+  display: flex; flex-direction: column; gap: 14px;
+  box-shadow: 0 -30px 60px -20px rgba(0, 0, 0, .7);
+  animation: up .32s cubic-bezier(.2, .9, .3, 1.05);
+  max-height: 92%;
+}
+.sheet::before { content: ""; width: 40px; height: 5px; border-radius: 5px; background: var(--line); align-self: center; margin: -10px 0 2px; }
+.sheet h2 { margin: 0; font-weight: 800; letter-spacing: -0.02em; font-size: 28px; line-height: 1.1; }
+.sheet p { margin: 0; color: var(--muted); font-weight: 500; line-height: 1.5; }
+.sheet .price { font-weight: 800; letter-spacing: -0.03em; font-size: 46px; line-height: 1; color: var(--apricot); }
+.sheet .price small { font-size: 14px; color: var(--muted); font-weight: 600; margin-left: 8px; letter-spacing: 0; }
+.sheet .fine { font-size: 12px; text-align: center; }
+.sheet-list { display: grid; gap: 6px; }
+.score-row { display: grid; grid-template-columns: auto 1fr auto; gap: 12px; align-items: center; padding: 2px 0; }
+.score-row .avatar { width: 34px; font-size: 14px; }
+.score-row .nm { font-weight: 600; }
+.score-row .pts { font-weight: 800; font-size: 20px; font-variant-numeric: tabular-nums; }
+.cat-option { display: flex; align-items: center; justify-content: space-between; height: 58px; padding: 0 18px; border-radius: 20px; background: var(--surface); }
+.cat-option .cat-name { color: var(--c); }
+.cat-option[data-cat="warmup"] { --c: var(--c-warm); }
+.cat-option[data-cat="juicy"]  { --c: var(--c-juicy); }
+.cat-option[data-cat="crazy"]  { --c: var(--c-crazy); }
+.cat-option[aria-pressed="true"] { background: color-mix(in srgb, var(--c) 18%, transparent); }
+.menu-btn { position: absolute; top: 4px; right: 0; width: 42px; height: 42px; border-radius: 50%; display: grid; place-items: center; color: var(--ink); background: var(--surface); }
+.menu-btn:active, .sound-btn:active { background: var(--surface-2); }
+.sound-btn { position: absolute; top: 4px; right: 50px; width: 42px; height: 42px; border-radius: 50%; display: grid; place-items: center; color: var(--muted); background: var(--surface); }
+.sound-btn[aria-pressed="true"] { color: var(--apricot); }
+/* ---------- Meny ---------- */
+.menu-list { display: grid; gap: 6px; }
+.menu-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: clamp(46px, 7.4vh, 54px); padding: 0 18px; border-radius: 18px; background: var(--surface); font-weight: 600; font-size: 16px; text-align: left; width: 100%; }
+.menu-row:active { background: var(--surface-2); }
+.menu-row .val { color: var(--muted); font-weight: 600; font-size: 14px; display: flex; align-items: center; gap: 6px; }
+.menu-foot { text-align: center; color: var(--muted); font-size: 12px; margin-top: 2px; }
+.game-row { display: grid; grid-template-columns: 52px 1fr auto; align-items: center; gap: 14px; padding: 12px 18px 12px 12px; border-radius: 20px; background: var(--surface); color: inherit; text-decoration: none; }
+.game-row:active { background: var(--surface-2); }
+.game-row > svg { color: var(--muted); }
+.game-ico { width: 52px; height: 52px; border-radius: 15px; display: grid; place-items: center; color: var(--plum); box-shadow: var(--lift); }
+.game-txt { display: grid; gap: 2px; min-width: 0; }
+.game-txt b { font-weight: 700; font-size: 17px; letter-spacing: -0.01em; }
+.game-txt small { color: var(--muted); font-weight: 500; font-size: 14px; }
+.sheet .back { align-self: flex-start; height: 34px; padding: 0 12px 0 8px; border-radius: 999px; background: var(--surface); color: var(--muted); font-weight: 600; font-size: 14px; display: flex; align-items: center; gap: 4px; margin-bottom: -4px; }
+.rules { margin: 0; padding: 0; list-style: none; display: grid; gap: 10px; counter-reset: r; }
+.rules li { display: grid; grid-template-columns: 30px 1fr; gap: 10px; align-items: start; color: var(--ink); font-weight: 500; line-height: 1.4; font-size: 15px; }
+.rules li::before { counter-increment: r; content: counter(r); width: 30px; height: 30px; border-radius: 50%; background: var(--apricot); color: var(--plum); display: grid; place-items: center; font-weight: 800; font-size: 14px; transform: rotate(-6deg); }
+.rules b { color: var(--apricot); font-weight: 700; }
+.faq { display: grid; gap: 6px; }
+.faq details { background: var(--surface); border-radius: 16px; padding: 0 16px; }
+.faq summary { list-style: none; min-height: 48px; display: flex; align-items: center; justify-content: space-between; gap: 10px; font-weight: 600; font-size: 15px; cursor: pointer; }
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::after { content: "+"; font-weight: 700; font-size: 20px; color: var(--muted); transition: transform .2s; }
+.faq details[open] summary::after { transform: rotate(45deg); }
+.faq details p { padding: 0 0 14px; font-size: 14px; }
+.policy { display: grid; gap: 8px; }
+.policy p { font-size: 14px; }
+.policy b { color: var(--ink); }
+.sheet .scroll { overflow-y: auto; min-height: 0; margin: 0 -4px; padding: 0 4px; }
+.sound-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 0 0; border-top: 1px solid var(--line); font-weight: 600; }
+.sound-row .top-btn { color: var(--ink); }
+
+.toast {
+  position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%);
+  background: var(--ink); color: var(--plum); font-weight: 700; font-size: 15px;
+  padding: 11px 20px; border-radius: 999px; z-index: 30; animation: up .25s ease; white-space: nowrap;
+  box-shadow: 0 14px 30px -10px rgba(0, 0, 0, .7);
+}
+
+/* ---------- Intro: Coalbun Studios, litet i mitten på helt svart ---------- */
+.intro { position: fixed; inset: 0; z-index: 60; background: #000; display: grid; place-items: center; animation: introOut .5s ease 1.7s forwards; }
+.intro img { width: min(36vw, 160px); height: auto; opacity: 0; animation: introLogo 1.4s ease .15s forwards; }
+@keyframes introLogo { 0% { opacity: 0; transform: scale(.96); filter: blur(4px); } 35% { opacity: 1; transform: none; filter: none; } 80% { opacity: 1; } 100% { opacity: .9; } }
+@keyframes introOut { to { opacity: 0; visibility: hidden; } }
+@media (prefers-reduced-motion: reduce) { .intro { display: none; } }
+
+/* ---------- Effekter ---------- */
+.confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 36; }
+.wave { position: fixed; z-index: 34; pointer-events: none; border-radius: 22px; border: 3px solid var(--col); animation: wave .6s ease-out forwards; }
+.haptic-proxy { position: fixed; left: -100px; top: 0; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+@property --amb { syntax: "<color>"; inherits: true; initial-value: #ffb38a; }
+.ambient { position: fixed; inset: 0; pointer-events: none; z-index: 0; transition: --amb .7s ease, opacity .7s ease; background: radial-gradient(90% 40% at 50% 0%, color-mix(in srgb, var(--amb) 18%, transparent), transparent 70%); }
+.ambient.crazy { animation: breathe 2.4s ease-in-out infinite; }
+
+@keyframes stick { from { transform: rotate(-12deg) scale(.6); opacity: 0; } to { transform: rotate(-4deg) scale(1); opacity: 1; } }
+@keyframes pop { from { transform: scale(.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+@keyframes rise { from { transform: translateY(14px); opacity: 0; filter: blur(4px); } to { transform: none; opacity: 1; filter: none; } }
+@keyframes tick { 0% { transform: scale(1.5); opacity: 0; filter: blur(8px); } 30% { transform: scale(1); opacity: 1; filter: none; } 100% { transform: scale(.94); opacity: 1; } }
+@keyframes up { from { transform: translateY(40px); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes jump { 0%, 100% { translate: 0 0; } 40% { translate: 0 -8px; } }
+@keyframes tilepop { 0% { scale: 1; } 40% { scale: 1.1; } 100% { scale: 1; } }
+@keyframes shake { 0%, 100% { translate: 0 0; } 15% { translate: -5px 0; } 30% { translate: 5px 0; } 45% { translate: -4px 0; } 60% { translate: 4px 0; } 80% { translate: -1px 0; } }
+@keyframes flame { 0%, 100% { transform: scale(1, 1); } 50% { transform: scale(.88, 1.15); } }
+@keyframes wave { from { transform: scale(1); opacity: .9; } to { transform: scale(1.35, 1.6); opacity: 0; } }
+@keyframes breathe { 50% { opacity: .6; } }
+@media (max-width: 360px) {
+  .top-btn { padding: 0 10px; font-size: 13px; }
+  .cat-pill { padding: 0 12px; font-size: 14px; }
+}
+@media (prefers-reduced-motion: reduce) { *, *::before { animation: none !important; transition: none !important; } }
+</style>
+</head>
+<body>
+<div class="intro" id="intro" aria-hidden="true"><img src="brand/coalbun-studios.png" alt=""></div>
+<div class="ambient" id="ambient"></div>
+<div class="app">
+
+  <!-- SETUP -->
+  <section class="screen" id="setup">
+    <header class="setup-head">
+      <h1 class="logo">Synk</h1>
+      <p class="tagline">Två spelare per runda. Säg samma namn så får ni poäng.</p>
+      <button class="sound-btn" id="sound-btn" aria-label="Ljud"></button>
+      <button class="menu-btn" id="menu-btn" aria-label="Meny"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h10"/></svg></button>
+    </header>
+
+    <form class="add-row" id="add-form" autocomplete="off">
+      <input id="name-input" maxlength="14" placeholder="Skriv ett namn" enterkeyhint="done" aria-label="Spelarens namn">
+      <button class="icon-btn" id="add-btn" type="submit" aria-label="Lägg till spelare">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+      </button>
+    </form>
+
+    <div class="players" id="players"></div>
+
+    <p class="section-label">Välj nivå</p>
+    <div class="cats" id="cats"></div>
+
+    <button class="btn btn-primary" id="start-btn">Kör!</button>
+  </section>
+
+  <!-- RUNDA -->
+  <section class="screen" id="round" hidden>
+    <div class="topbar">
+      <button class="top-btn" id="end-btn">Avsluta</button>
+      <button class="cat-pill" id="cat-pill"></button>
+      <button class="top-btn" id="score-btn">Ställning</button>
+    </div>
+
+    <div class="vs">
+      <div class="fighter" id="fA"></div>
+      <div class="vs-mark">vs</div>
+      <div class="fighter" id="fB"></div>
+    </div>
+
+    <div class="card" id="card"></div>
+    <p class="hint" id="hint"></p>
+    <div id="actions"></div>
+  </section>
+
+  <!-- RESULTAT -->
+  <section class="screen" id="results" hidden>
+    <div class="winner" id="winner"></div>
+    <div class="ranking" id="ranking"></div>
+    <div class="awards" id="awards"></div>
+    <div class="btn-row">
+      <button class="btn btn-ghost" id="new-players-btn">Nya spelare</button>
+      <button class="btn btn-primary" id="again-btn">Kör igen</button>
+    </div>
+  </section>
+
+</div>
+
+<div id="layer"></div>
+<input type="file" id="photo-input" accept="image/*" hidden>
+
+<script src="vendor/capacitor.js"></script>
+<script src="questions.js"></script>
+<script>
+(function () {
+  "use strict";
+
+  // ---------- Data ----------
+  var CATS = {
+    warmup: { name: "Warm up", sub: "Gratis", free: true },
+    juicy:  { name: "Juicy",   sub: "Kryddigt", free: false },
+    crazy:  { name: "Crazy",   sub: "Helt galet", free: false }
+  };
+  var CAT_KEYS = ["warmup", "juicy", "crazy"];
+  var PRICE = "59 kr"; // visas bara i webbversionen; i appen används priset från App Store
+  function priceText() { return storePrice || (IS_NATIVE ? "" : PRICE); }
+  var MAX_PLAYERS = 10;
+  var NO_REPEAT_WITHIN = 50;
+  var AVATAR_COLORS = ["#ffb38a", "#ff9fae", "#e7a7d8", "#ffc9a6", "#ffd76e", "#f7a1b9", "#ffcf9e", "#d9a3e0", "#ff8f9f", "#f5b8a0"];
+
+  var Q = window.QUESTIONS || {
+    warmup: ["Vem av er är smartast?", "Vem skulle överleva längst utan mobil?", "Vem är sämst på att svara på sms?"],
+    juicy:  ["Vem har legat med flest?", "Vem har stalkat ett ex mest?"],
+    crazy:  ["Vem skulle gå med på en dejt i ett tv-program?", "Vem skulle klara en vecka på en nudiststrand?"]
+  };
+
+  // ---------- Lagring (tål att den saknas) ----------
+  var store = {
+    get: function (k, d) { try { var v = localStorage.getItem("vao_" + k); return v ? JSON.parse(v) : d; } catch (e) { return d; } },
+    set: function (k, v) { try { localStorage.setItem("vao_" + k, JSON.stringify(v)); } catch (e) {} }
+  };
+
+  // ---------- Plattform ----------
+  // I den riktiga appen (Capacitor) används iPhonens köp, haptik och lagring. I webbläsaren finns en testversion.
+  var Cap = window.Capacitor;
+  var IS_NATIVE = !!(Cap && Cap.isNativePlatform && Cap.isNativePlatform());
+  function nativePlugin(name) { try { return IS_NATIVE && Cap.registerPlugin ? Cap.registerPlugin(name) : null; } catch (e) { return null; } }
+  var NHaptics = nativePlugin("Haptics");
+  var NPrefs = nativePlugin("Preferences");
+  var NIAP = nativePlugin("NativePurchases");
+  var NStatus = nativePlugin("StatusBar");
+  var PRODUCT_ID = "com.coalbun.synk.unlock";
+  var storePrice = null; // pris från App Store, i köparens valuta
+
+  var state = {
+    players: store.get("players", []),          // {id, name, photo, color}
+    unlocked: store.get("unlocked", false),
+    cat: "warmup",
+    decks: store.get("decks", {}),             // per kategori: {order:[...], pos}
+    game: null
+  };
+  if (!state.unlocked) state.cat = "warmup";
+
+  function savePlayers() { store.set("players", state.players); }
+
+  // ---------- Hjälpare ----------
+  function $(id) { return document.getElementById(id); }
+  function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+  function shuffle(a) { a = a.slice(); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+  function range(n) { var a = []; for (var i = 0; i < n; i++) a.push(i); return a; }
+  function uid() { return Math.random().toString(36).slice(2, 9); }
+  // ---------- Haptik ----------
+  // Android: vibrationsmönster. iPhone (Safari 18+): en dold switch som ger ett haptiskt klick när den trycks.
+  // I den paketerade appen byts detta mot telefonens riktiga haptik.
+  var hapticLabel = null;
+  function iosTap() {
+    try {
+      if (!hapticLabel) {
+        hapticLabel = document.createElement("label");
+        hapticLabel.className = "haptic-proxy";
+        hapticLabel.setAttribute("aria-hidden", "true");
+        hapticLabel.innerHTML = '<input type="checkbox" switch tabindex="-1">';
+        document.body.appendChild(hapticLabel);
+      }
+      hapticLabel.click();
+    } catch (e) {}
+  }
+  function nativeBuzz(arr) {
+    var t = 0;
+    arr.forEach(function (d, i) {
+      if (i % 2 === 0) {
+        var style = d <= 15 ? "LIGHT" : d <= 45 ? "MEDIUM" : "HEAVY";
+        setTimeout(function () { NHaptics.impact({ style: style }).catch(function () {}); }, t);
+      }
+      t += d;
+    });
+  }
+  function buzz(pattern) {
+    var arr = Array.isArray(pattern) ? pattern : [pattern];
+    if (NHaptics) { nativeBuzz(arr); return; }
+    try { if (navigator.vibrate && navigator.vibrate(arr)) return; } catch (e) {}
+    var t = 0;
+    for (var i = 0; i < arr.length; i += 2) { setTimeout(iosTap, t); t += arr[i] + (arr[i + 1] || 0); }
+  }
+
+  // ---------- Ljud ----------
+  // Allt ljud skapas i webbläsaren: rena klockliknande toner med lite rumsklang, inga ljudfiler.
+  var Sound = (function () {
+    var ac = null, out = null, verb = null;
+    var on = store.get("sound", true);
+    function init() {
+      if (ac) return ac;
+      var C = window.AudioContext || window.webkitAudioContext;
+      if (!C) return null;
+      try { ac = new C(); } catch (e) { return null; }
+      var comp = ac.createDynamicsCompressor();
+      comp.connect(ac.destination);
+      out = ac.createGain(); out.gain.value = 0.55; out.connect(comp);
+      verb = ac.createConvolver();
+      var len = Math.floor(ac.sampleRate * 1.6), buf = ac.createBuffer(2, len, ac.sampleRate);
+      for (var ch = 0; ch < 2; ch++) { var d = buf.getChannelData(ch); for (var i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 3.2); }
+      verb.buffer = buf;
+      var wet = ac.createGain(); wet.gain.value = 0.28; verb.connect(wet); wet.connect(comp);
+      return ac;
+    }
+    function wake() { if (init() && ac.state === "suspended") ac.resume(); }
+    document.addEventListener("pointerdown", wake, { passive: true });
+    function env(g, t, peak, att, dur) {
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.linearRampToValueAtTime(peak, t + att);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    }
+    function voice(f, t, dur, type, peak, att, bendTo) {
+      var o = ac.createOscillator(), g = ac.createGain();
+      o.type = type || "sine";
+      o.frequency.setValueAtTime(f, t);
+      if (bendTo) o.frequency.exponentialRampToValueAtTime(bendTo, t + dur * 0.8);
+      env(g, t, peak, att || 0.005, dur);
+      o.connect(g); g.connect(out); g.connect(verb);
+      o.start(t); o.stop(t + dur + 0.05);
+    }
+    function bell(f, t, peak, dur) {
+      dur = dur || 1.1;
+      voice(f, t, dur, "sine", peak);
+      voice(f * 2, t, dur * 0.55, "sine", peak * 0.3);
+      voice(f * 3, t, dur * 0.25, "sine", peak * 0.1);
+    }
+    function noise(t, dur, peak, type, f0, f1) {
+      var len = Math.floor(ac.sampleRate * dur), buf = ac.createBuffer(1, len, ac.sampleRate), d = buf.getChannelData(0);
+      for (var i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
+      var src = ac.createBufferSource(); src.buffer = buf;
+      var flt = ac.createBiquadFilter(); flt.type = type; flt.Q.value = 1.2;
+      flt.frequency.setValueAtTime(f0, t); flt.frequency.exponentialRampToValueAtTime(f1, t + dur);
+      var g = ac.createGain(); env(g, t, peak, dur * 0.7, dur);
+      src.connect(flt); flt.connect(g); g.connect(out); g.connect(verb);
+      src.start(t); src.stop(t + dur + 0.05);
+    }
+    var N = { C5: 523.25, D5: 587.33, E5: 659.25, G5: 783.99, A5: 880, B5: 987.77, C6: 1046.5, E6: 1318.5, G6: 1568, C7: 2093 };
+    var SFX = {
+      add: function (t) { voice(420, t, 0.18, "sine", 0.22, 0.004, 880); },
+      remove: function (t) { voice(520, t, 0.16, "sine", 0.16, 0.004, 260); },
+      tick: function (t, i) { bell([N.E5, N.G5, N.B5][i] || N.E5, t, 0.26, 0.5); },
+      go: function (t) { noise(t, 0.28, 0.12, "bandpass", 600, 5000); [N.C6, N.E6, N.G6].forEach(function (f) { bell(f, t + 0.12, 0.16, 1.1); }); voice(110, t + 0.12, 0.35, "sine", 0.35, 0.004, 55); },
+      match: function (t) { [N.C5, N.E5, N.G5, N.C6, N.E6].forEach(function (f, i) { bell(f, t + i * 0.07, 0.2, 1.2); }); bell(N.C7, t + 0.4, 0.06, 1.6); },
+      miss: function (t) { voice(330, t, 0.35, "triangle", 0.2, 0.01, 300); voice(262, t + 0.28, 0.6, "triangle", 0.2, 0.01, 220); },
+      vote: function (t) { bell(N.G5, t, 0.2, 0.8); bell(N.D5 * 2, t + 0.09, 0.14, 1); },
+      unlock: function (t) { noise(t, 0.6, 0.08, "highpass", 2000, 9000); [N.G5, N.C6, N.E6, N.G6].forEach(function (f, i) { bell(f, t + i * 0.08, 0.16, 1.4); }); },
+      win: function (t) {
+        [N.C5, N.E5, N.G5, N.C6].forEach(function (f, i) { bell(f, t + i * 0.12, 0.2, 1.2); });
+        [N.C6, N.E6, N.G6].forEach(function (f) { bell(f, t + 0.6, 0.15, 2); });
+        voice(130.8, t + 0.6, 1.2, "sine", 0.25, 0.01);
+        noise(t + 0.55, 1.4, 0.05, "highpass", 4000, 9000);
+      },
+      level: function (t, cat) {
+        if (cat === "warmup") { bell(N.A5, t, 0.18, 1); bell(N.E6, t + 0.08, 0.12, 1.2); }
+        else if (cat === "juicy") { voice(900, t, 0.12, "sine", 0.3, 0.003, 260); bell(N.E6, t + 0.08, 0.14, 1); bell(N.B5, t + 0.16, 0.1, 1.2); }
+        else { noise(t, 0.32, 0.14, "bandpass", 300, 6000); voice(80, t + 0.3, 0.4, "sine", 0.45, 0.004, 40); [N.C6, N.E6, N.G6, N.C7].forEach(function (f, i) { bell(f, t + 0.3 + i * 0.04, 0.12, 1.3); }); }
+      }
+    };
+    return {
+      play: function (name, arg) {
+        if (!on || !init()) return;
+        if (ac.state === "suspended") ac.resume();
+        try { SFX[name](ac.currentTime + 0.01, arg); } catch (e) {}
+      },
+      isOn: function () { return on; },
+      toggle: function () { on = !on; store.set("sound", on); if (on) this.play("vote"); return on; }
+    };
+  })();
+
+  // ---------- Konfetti ----------
+  // Metallisk konfetti i guld, champagne och rosé som vänds i luften och faller långsamt.
+  var Confetti = (function () {
+    var cv = null, ctx, parts = [], raf = null, dpr = 1, W = 0, H = 0;
+    var PAL = {
+      gold:   ["#ffb38a", "#ff9fae", "#fff1e6", "#e7a7d8", "#ffd76e"],
+      warmup: ["#ffc9a6", "#ffb38a", "#fff1e6", "#ffd76e"],
+      juicy:  ["#ff9fae", "#ffc2cc", "#fff1e6", "#ffb38a"],
+      crazy:  ["#e7a7d8", "#ff9fae", "#ffd76e", "#fff1e6", "#ffb38a"]
+    };
+    function shade(hex, k) {
+      var n = parseInt(hex.slice(1), 16), r = n >> 16, g = (n >> 8) & 255, b = n & 255;
+      function c(v) { return Math.max(0, Math.min(255, Math.round(k < 0 ? v * (1 + k) : v + (255 - v) * k))); }
+      return "rgb(" + c(r) + "," + c(g) + "," + c(b) + ")";
+    }
+    function reduced() { return window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches; }
+    function ensure() {
+      if (cv) return;
+      cv = document.createElement("canvas"); cv.className = "confetti"; cv.setAttribute("aria-hidden", "true");
+      document.body.appendChild(cv); ctx = cv.getContext("2d");
+      resize(); window.addEventListener("resize", resize);
+    }
+    function resize() { dpr = Math.min(2, window.devicePixelRatio || 1); W = innerWidth; H = innerHeight; cv.width = W * dpr; cv.height = H * dpr; }
+    function emit(o) {
+      if (reduced()) return;
+      ensure();
+      var pal = PAL[o.palette || "gold"];
+      for (var i = 0; i < o.count; i++) {
+        var kind = o.kinds[Math.floor(Math.random() * o.kinds.length)];
+        var ang = o.angle + (Math.random() - 0.5) * o.spread;
+        var sp = o.speed * (0.45 + Math.random() * 0.75);
+        var col = pal[Math.floor(Math.random() * pal.length)];
+        var big = kind === "ribbon";
+        parts.push({
+          x: o.x + (o.jitterX ? (Math.random() - 0.5) * o.jitterX : 0), y: o.y,
+          vx: Math.cos(ang) * sp, vy: Math.sin(ang) * sp,
+          kind: kind, col: col, dark: shade(col, -0.38), light: shade(col, 0.55),
+          w: kind === "glitter" ? 2 + Math.random() * 2.5 : big ? 4 + Math.random() * 2 : 7 + Math.random() * 6,
+          h: big ? 13 + Math.random() * 10 : 4 + Math.random() * 4,
+          rot: Math.random() * Math.PI * 2, vr: (Math.random() - 0.5) * 0.22,
+          flip: Math.random() * Math.PI * 2, vf: 0.06 + Math.random() * 0.12,
+          sway: Math.random() * Math.PI * 2,
+          g: o.gravity, drag: o.drag || 0.982,
+          life: 0, max: (o.life || 150) + Math.random() * 70
+        });
+      }
+      if (!raf) raf = requestAnimationFrame(frame);
+    }
+    function frame() {
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.clearRect(0, 0, W, H);
+      for (var i = parts.length - 1; i >= 0; i--) {
+        var p = parts[i];
+        p.vx *= p.drag; p.vy = p.vy * p.drag + p.g;
+        p.sway += 0.06; p.flip += p.vf; p.rot += p.vr; p.life++;
+        p.x += p.vx + (p.kind === "glitter" ? 0 : Math.sin(p.sway) * 0.7);
+        p.y += p.vy;
+        if (p.life > p.max || p.y > H + 40) { parts.splice(i, 1); continue; }
+        var a = p.life > p.max - 35 ? (p.max - p.life) / 35 : 1;
+        ctx.globalAlpha = a;
+        ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rot);
+        if (p.kind === "glitter") {
+          ctx.globalAlpha = a * (0.45 + 0.55 * Math.abs(Math.sin(p.flip * 1.5)));
+          ctx.fillStyle = p.light; ctx.beginPath(); ctx.arc(0, 0, p.w, 0, 6.283); ctx.fill();
+        } else if (p.kind === "star") {
+          var r = p.w * 0.9 * (0.6 + 0.4 * Math.abs(Math.sin(p.flip)));
+          ctx.fillStyle = p.light; ctx.beginPath();
+          ctx.moveTo(0, -r); ctx.quadraticCurveTo(0, 0, r, 0); ctx.quadraticCurveTo(0, 0, 0, r); ctx.quadraticCurveTo(0, 0, -r, 0); ctx.quadraticCurveTo(0, 0, 0, -r);
+          ctx.fill();
+        } else {
+          var c = Math.cos(p.flip);
+          ctx.scale(1, Math.max(0.08, Math.abs(c)));
+          var shine = Math.abs(Math.sin(p.flip));
+          ctx.fillStyle = c < 0 ? p.dark : shine > 0.93 ? p.light : p.col;
+          if (p.kind === "ribbon") { ctx.beginPath(); ctx.roundRect ? ctx.roundRect(-p.w / 2, -p.h / 2, p.w, p.h, p.w / 2) : ctx.rect(-p.w / 2, -p.h / 2, p.w, p.h); ctx.fill(); }
+          else ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+        }
+        ctx.restore();
+      }
+      ctx.globalAlpha = 1;
+      if (parts.length) raf = requestAnimationFrame(frame);
+      else { raf = null; ctx.clearRect(0, 0, W, H); }
+    }
+    return {
+      // Litet utbrott från en nivåruta
+      pop: function (x, y, cat) {
+        var heat = HEAT[cat];
+        emit({ x: x, y: y, count: [18, 28, 44][heat - 1], angle: -Math.PI / 2, spread: Math.PI * 1.6, speed: [6, 7.5, 10][heat - 1], gravity: 0.16, palette: cat, life: 70,
+          kinds: cat === "warmup" ? ["glitter", "glitter", "star", "rect"] : cat === "juicy" ? ["rect", "ribbon", "glitter"] : ["rect", "ribbon", "star", "glitter"] });
+      },
+      // Två kanoner från nederkanten vid en match
+      match: function () {
+        var o = { count: 50, spread: 0.5, speed: 17, gravity: 0.24, palette: "gold", kinds: ["rect", "rect", "ribbon", "ribbon", "star"], life: 120 };
+        emit(Object.assign({}, o, { x: -10, y: innerHeight * 0.92, angle: -Math.PI / 3 }));
+        emit(Object.assign({}, o, { x: innerWidth + 10, y: innerHeight * 0.92, angle: -Math.PI * 2 / 3 }));
+      },
+      // Regn uppifrån plus kanoner, för vinnaren
+      celebrate: function (strength) {
+        var n = strength || 1;
+        this.match();
+        for (var k = 0; k < 3; k++) (function (k) {
+          setTimeout(function () {
+            emit({ x: innerWidth / 2, jitterX: innerWidth, y: -20, count: Math.round(45 * n), angle: Math.PI / 2, spread: 0.9, speed: 2.5, gravity: 0.07, drag: 0.99, palette: "gold", kinds: ["rect", "ribbon", "ribbon", "glitter"], life: 260 });
+          }, 250 + k * 380);
+        })(k);
+      }
+    };
+  })();
+  function byId(id) { for (var i = 0; i < state.players.length; i++) if (state.players[i].id === id) return state.players[i]; return null; }
+  function isOpen(cat) { return CATS[cat].free || state.unlocked; }
+
+  function avatarHTML(p, extraStyle) {
+    var style = "background-color:" + p.color + ";" + (p.photo ? "background-image:url(" + p.photo + ");" : "") + (extraStyle || "");
+    return '<div class="avatar ' + (p.photo ? "photo" : "initials") + '" style="' + style + '">' + (p.photo ? "" : esc(p.name.charAt(0).toUpperCase())) + "</div>";
+  }
+
+
+  var ICON = {
+    x: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>',
+    cam: '<svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor"><path d="M9 3L7.2 5H4a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-3.2L15 3H9zm3 5a4.5 4.5 0 1 1 0 9 4.5 4.5 0 0 1 0-9z"/></svg>',
+    lock: '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a5 5 0 0 0-5 5v3H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2h-1V7a5 5 0 0 0-5-5zm-3 8V7a3 3 0 1 1 6 0v3H9z"/></svg>',
+    crown: '<svg width="44" height="30" viewBox="0 0 44 30" fill="currentColor"><path d="M3 9l9 7.5L22 3l10 13.5L41 9l-3.5 18h-31z"/><circle cx="3" cy="8" r="2.4"/><circle cx="22" cy="2.6" r="2.4"/><circle cx="41" cy="8" r="2.4"/></svg>',
+    chev: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>'
+  };
+
+  // ---------- Frågekortlek ----------
+  // Går igenom alla frågor innan något upprepas. Vid ny runda läggs de senaste
+  // NO_REPEAT_WITHIN frågorna sist, så samma fråga aldrig dyker upp inom 50 frågor.
+  function nextQuestion(cat) {
+    var list = Q[cat] || [];
+    var n = list.length;
+    if (!n) return "";
+    var d = state.decks[cat];
+    if (!d || !d.order || d.order.length !== n) d = { order: shuffle(range(n)), pos: 0 };
+    if (d.pos >= n) {
+      var k = Math.min(NO_REPEAT_WITHIN, Math.floor(n / 2));
+      var old = d.order;
+      d.order = shuffle(old.slice(0, n - k)).concat(shuffle(old.slice(n - k)));
+      d.pos = 0;
+    }
+    var q = list[d.order[d.pos]];
+    d.pos++;
+    state.decks[cat] = d;
+    store.set("decks", state.decks);
+    return q;
+  }
+
+  // ---------- Rättvis parning ----------
+  // Väljer det par där spelarna har spelat minst, och undviker att någon spelar två rundor i rad.
+  function nextPair(g) {
+    var ids = state.players.map(function (p) { return p.id; });
+    var last = g.lastPair || [];
+    var best = [], bestScore = Infinity;
+    for (var i = 0; i < ids.length; i++) {
+      for (var j = i + 1; j < ids.length; j++) {
+        var a = ids[i], b = ids[j];
+        var rested = ids.length >= 4 ? (last.indexOf(a) < 0 && last.indexOf(b) < 0) : true;
+        var key = [a, b].sort().join("|");
+        // Viktigast: de som spelat minst. Sen: inte två rundor i rad. Sen: nya par före gamla.
+        var score = (g.played[a] * g.played[a] + g.played[b] * g.played[b]) * 1000 + (rested ? 0 : 100) + (g.pairCount[key] || 0) * 10;
+        if (score < bestScore) { bestScore = score; best = [[a, b]]; }
+        else if (score === bestScore) best.push([a, b]);
+      }
+    }
+    var pick = best[Math.floor(Math.random() * best.length)];
+    return Math.random() < 0.5 ? pick : [pick[1], pick[0]];
+  }
+
+  // ---------- Spellängd ----------
+  // Alla spelar exakt lika många gånger. Varje runda har två platser, så rundor = spelare x gånger / 2.
+  // Minst 7 rundor och högst 10, så att ett spel tar runt 10 minuter oavsett hur många ni är.
+  // Vid udda antal spelare måste antal gånger vara jämnt, annars går det inte jämnt ut.
+  function planRounds(n) {
+    if (n <= 2) return { total: 10, each: 10 };
+    var each = Math.ceil(14 / n);
+    if ((n * each) % 2) each++;
+    return { total: n * each / 2, each: each };
+  }
+
+  // ---------- Setup ----------
+  function renderPlayers() {
+    var el = $("players");
+    if (!state.players.length) {
+      el.innerHTML = '<div class="players-empty">Lägg till minst två spelare.<br>Tryck på en spelares bild för att ta ett foto.</div>';
+    } else {
+      el.innerHTML = state.players.map(function (p) {
+        return '<div class="chip">' +
+          '<button class="chip-avatar" data-photo="' + p.id + '" aria-label="Ta foto av ' + esc(p.name) + '">' + avatarHTML(p) +
+          '<span class="cam">' + ICON.cam + "</span></button>" +
+          '<span class="chip-name">' + esc(p.name) + "</span>" +
+          '<button class="chip-remove" data-remove="' + p.id + '" aria-label="Ta bort ' + esc(p.name) + '">' + ICON.x + "</button></div>";
+      }).join("");
+    }
+    var full = state.players.length >= MAX_PLAYERS;
+    $("name-input").disabled = full;
+    $("add-btn").disabled = full;
+    $("name-input").placeholder = full ? "Max 10 spelare" : "Skriv ett namn";
+    $("start-btn").disabled = state.players.length < 2;
+    var plan = planRounds(state.players.length);
+    $("start-btn").textContent = state.players.length < 2 ? "Minst 2 spelare" : "Kör! " + plan.total + " rundor";
+  }
+
+  // Varje nivå har en egen figur som vaknar till liv när den väljs.
+  var CAT_COLOR = { warmup: "#ffc9a6", juicy: "#ff9fae", crazy: "#e7a7d8" };
+  var HEAT = { warmup: 1, juicy: 2, crazy: 3 };
+  var FLAME = '<svg viewBox="0 0 10 13" fill="currentColor"><path d="M5 0c1 3 5 5 5 8.5A5 4.5 0 0 1 0 8.5C0 6.5 1.5 5 2.5 4c0 1.5 1 2.5 2 2.5C4.5 4.5 4 2 5 0z"/></svg>';
+  function heatHTML(k) { var h = ""; for (var i = 1; i <= 3; i++) h += FLAME.replace("<svg", '<svg class="' + (i <= HEAT[k] ? "on" : "") + '"'); return '<span class="heat" aria-hidden="true">' + h + "</span>"; }
+
+  function renderCats(animate) {
+    $("cats").innerHTML = CAT_KEYS.map(function (k) {
+      var c = CATS[k];
+      var locked = !isOpen(k);
+      return '<button class="cat' + (animate && state.cat === k ? " just" : "") + '" data-cat="' + k + '" aria-pressed="' + (state.cat === k) + '" aria-label="' + c.name + (locked ? ", låst" : "") + '">' +
+        (locked ? '<span class="lock">' + ICON.lock + "</span>" : "") +
+        (k === "warmup" && !state.unlocked ? '<span class="free">Gratis</span>' : "") +
+        '<span class="cat-name">' + c.name + "</span>" + heatHTML(k) + "</button>";
+    }).join("") +
+      // Ett pris för båda, så att ingen tror att varje nivå kostar för sig
+      (state.unlocked ? "" : '<p class="cats-note">' + ICON.lock + "Juicy och Crazy låses upp tillsammans" + (priceText() ? " för " + esc(priceText()) : "") + "</p>");
+    setAmbient(state.cat);
+    if (animate) {
+      var tile = $("cats").querySelector('[data-cat="' + state.cat + '"]');
+      if (tile) burst(tile, state.cat);
+      Sound.play("level", state.cat);
+    }
+  }
+
+  function setAmbient(cat) {
+    var a = $("ambient");
+    a.style.setProperty("--amb", CAT_COLOR[cat]);
+    a.style.opacity = { warmup: .7, juicy: .9, crazy: 1 }[cat];
+    a.classList.toggle("crazy", cat === "crazy");
+  }
+
+  // Partiklar som sprutar ut från rutan. Mer och vildare ju högre nivå.
+  function burst(el, cat) {
+    var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+    var heat = HEAT[cat];
+    buzz([[18], [18, 40, 18], [25, 25, 25, 25, 60]][heat - 1]);
+    if (reduce) return;
+    var r = el.getBoundingClientRect();
+    var cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+    for (var w = 0; w < (heat === 3 ? 2 : 1); w++) {
+      var wave = document.createElement("span");
+      wave.className = "wave";
+      wave.style.cssText = "left:" + r.left + "px;top:" + r.top + "px;width:" + r.width + "px;height:" + r.height + "px;--col:" + CAT_COLOR[cat] + ";animation-delay:" + (w * 0.15) + "s";
+      document.body.appendChild(wave);
+      setTimeout(wave.remove.bind(wave), 900);
+    }
+    Confetti.pop(cx, cy, cat);
+  }
+
+  function addPlayer(name) {
+    name = name.trim().replace(/\s+/g, " ");
+    if (!name) return;
+    if (state.players.length >= MAX_PLAYERS) return;
+    var exists = state.players.some(function (p) { return p.name.toLowerCase() === name.toLowerCase(); });
+    if (exists) { toast(name + " är redan med"); return; }
+    var used = state.players.map(function (p) { return p.color; });
+    var color = AVATAR_COLORS.filter(function (c) { return used.indexOf(c) < 0; })[0] || AVATAR_COLORS[state.players.length % AVATAR_COLORS.length];
+    state.players.push({ id: uid(), name: name, photo: null, color: color });
+    savePlayers();
+    renderPlayers();
+    Sound.play("add");
+  }
+
+  $("add-form").addEventListener("submit", function (e) {
+    e.preventDefault();
+    addPlayer($("name-input").value);
+    $("name-input").value = "";
+    $("name-input").focus();
+  });
+
+  $("players").addEventListener("click", function (e) {
+    var rm = e.target.closest("[data-remove]");
+    if (rm) {
+      state.players = state.players.filter(function (p) { return p.id !== rm.dataset.remove; });
+      savePlayers(); renderPlayers(); Sound.play("remove"); return;
+    }
+    var ph = e.target.closest("[data-photo]");
+    if (ph) { photoTarget = ph.dataset.photo; $("photo-input").click(); }
+  });
+
+  var photoTarget = null;
+  $("photo-input").addEventListener("change", function () {
+    var file = this.files && this.files[0];
+    this.value = "";
+    if (!file || !photoTarget) return;
+    var target = photoTarget;
+    var reader = new FileReader();
+    reader.onload = function () {
+      var img = new Image();
+      img.onload = function () {
+        var size = 192, c = document.createElement("canvas");
+        c.width = c.height = size;
+        var s = Math.min(img.width, img.height);
+        c.getContext("2d").drawImage(img, (img.width - s) / 2, (img.height - s) / 2, s, s, 0, 0, size, size);
+        var p = byId(target);
+        if (p) { p.photo = c.toDataURL("image/jpeg", 0.8); savePlayers(); renderPlayers(); }
+      };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
+
+  function renderSound() {
+    var onNow = Sound.isOn();
+    $("sound-btn").setAttribute("aria-pressed", onNow);
+    $("sound-btn").setAttribute("aria-label", onNow ? "Stäng av ljud" : "Sätt på ljud");
+    $("sound-btn").innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/>' +
+      (onNow ? '<path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/>' : '<path d="M17 9l5 6M22 9l-5 6"/>') + "</svg>";
+  }
+  $("sound-btn").addEventListener("click", function () { Sound.toggle(); renderSound(); buzz(10); });
+  renderSound();
+
+  // Lätt haptik på alla knappar
+  document.addEventListener("click", function (e) { if (e.target.closest(".btn, .top-btn, .cat-pill, .icon-btn, .chip-remove")) buzz(8); });
+
+  $("cats").addEventListener("click", function (e) {
+    var b = e.target.closest("[data-cat]");
+    if (!b) return;
+    chooseCat(b.dataset.cat, function () { renderCats(true); });
+  });
+
+  function chooseCat(cat, after) {
+    if (!isOpen(cat)) { openUnlock(function () { state.cat = cat; after(); }); return; }
+    state.cat = cat;
+    after();
+  }
+
+  $("start-btn").addEventListener("click", function () {
+    if ($("name-input").value.trim()) { addPlayer($("name-input").value); $("name-input").value = ""; }
+    if (state.players.length < 2) return;
+    startGame();
+  });
+
+  // ---------- Spelet ----------
+  function startGame() {
+    var n = state.players.length;
+    var g = { round: 0, total: planRounds(n).total, duo: n === 2, history: [], scores: {}, played: {}, pairCount: {}, pairMatch: {}, lastPair: null };
+    state.players.forEach(function (p) { g.scores[p.id] = 0; g.played[p.id] = 0; });
+    state.game = g;
+    show("round");
+    newRound();
+  }
+
+  function newRound() {
+    var g = state.game;
+    g.round++;
+    g.pair = nextPair(g);
+    g.lastPair = g.pair;
+    g.question = nextQuestion(state.cat);
+    g.phase = "ready";
+    g.winners = [];
+    renderRound(true);
+  }
+
+  // "Vem har …"-frågor kan sakna svar om ingen av de två har gjort saken. Då gäller "skulle" i stället.
+  function isHarQuestion(q) { return /^Vem (av er )?har /i.test(q || ""); }
+
+  function renderFighter(id, el, side) {
+    var p = byId(id), g = state.game;
+    el.className = "fighter" + (g.winners.indexOf(id) >= 0 ? " win" : "");
+    var tag = side === 0 ? "--t:var(--apricot);--tilt:-4deg" : "--t:var(--rose);--tilt:4deg";
+    el.innerHTML = '<div class="nametag" style="' + tag + '">' + avatarHTML(p) + '<span class="fighter-name' + (p.name.length > 9 ? " xlong" : p.name.length > 6 ? " long" : "") + '">' + esc(p.name) + '</span></div><div class="fighter-score">' + g.scores[id] + " p</div>";
+  }
+
+  function renderRound(fresh) {
+    var g = state.game, a = byId(g.pair[0]), b = byId(g.pair[1]);
+    var c = CATS[state.cat];
+    var colorVar = { warmup: "var(--c-warm)", juicy: "var(--c-juicy)", crazy: "var(--c-crazy)" }[state.cat];
+    $("round").style.setProperty("--c", colorVar);
+    setAmbient(state.cat);
+    $("cat-pill").innerHTML = c.name + ICON.chev;
+    renderFighter(g.pair[0], $("fA"), 0);
+    renderFighter(g.pair[1], $("fB"), 1);
+
+    var card = $("card"), actions = $("actions"), hint = $("hint");
+    var meta = '<div class="card-meta">Runda ' + g.round + " av " + g.total + "</div>";
+    var last = g.round >= g.total;
+    function nextButton() {
+      actions.innerHTML = '<button class="btn btn-primary" id="next">' + (last ? "Se resultat" : "Nästa runda") + "</button>";
+      $("next").onclick = last ? showResults : newRound;
+    }
+
+    if (g.phase === "ready" || g.phase === "counting" || g.phase === "answer") {
+      if (fresh || !card.querySelector(".question")) {
+        card.innerHTML = meta + '<p class="question in">' + esc(g.question) + "</p>";
+      }
+    }
+
+    if (g.phase === "ready") {
+      hint.textContent = isHarQuestion(g.question) ? "Har ingen av er gjort det? Säg den som mest troligt skulle."
+        : g.duo && g.round === 1 ? "Ni spelar som ett lag. Hur många matcher klarar ni av " + g.total + "?"
+        : "På noll säger ni båda ett namn högt: ditt eget eller den andras.";
+      actions.innerHTML = '<button class="btn btn-primary" id="go">Räkna ner</button>';
+      $("go").onclick = countdown;
+    } else if (g.phase === "counting") {
+      hint.textContent = "";
+      actions.innerHTML = '<button class="btn btn-primary" disabled>Räkna ner</button>';
+    } else if (g.phase === "answer") {
+      hint.textContent = "Sa ni samma namn?";
+      actions.innerHTML = '<div class="btn-row"><button class="btn btn-ghost" id="diff">Olika</button><button class="btn btn-green" id="same">Samma</button></div>';
+      $("same").onclick = onMatch;
+      $("diff").onclick = onMismatch;
+    } else if (g.phase === "match") {
+      card.innerHTML = meta + '<div class="verdict"><div class="verdict-big match">Match!</div><p class="verdict-text">Plus ett till både ' + esc(a.name) + " och " + esc(b.name) + ".</p></div>";
+      hint.textContent = "";
+      nextButton();
+    } else if (g.phase === "miss2") {
+      card.innerHTML = meta + '<div class="verdict"><div class="verdict-big miss">Mismatch!</div><p class="verdict-text">Förklara er för varandra. Ingen poäng den här gången.</p></div>';
+      hint.textContent = "";
+      nextButton();
+    } else if (g.phase === "vote") {
+      card.innerHTML = meta + '<div class="verdict"><div class="verdict-big miss">Mismatch!</div><p class="verdict-text">Ni har tio sekunder på er att förklara. Sen röstar gruppen: vem av er svarade rätt?</p></div>';
+      hint.textContent = "Tryck på den som får poängen";
+      actions.innerHTML = '<div class="btn-row" style="margin-bottom:10px"><button class="btn btn-ghost" data-vote="' + a.id + '">' + esc(a.name) + '</button><button class="btn btn-ghost" data-vote="' + b.id + '">' + esc(b.name) + '</button></div>' +
+        '<button class="top-btn" style="width:100%" data-vote="none">Ingen svarade rätt</button>';
+      actions.querySelectorAll("[data-vote]").forEach(function (el) { el.onclick = function () { onVote(el.dataset.vote); }; });
+    } else if (g.phase === "voted") {
+      var w = g.winners[0] ? byId(g.winners[0]) : null;
+      card.innerHTML = meta + '<div class="verdict"><div class="verdict-big ' + (w ? "match" : "miss") + '">' + (w ? esc(w.name) : "Ingen") + '</div><p class="verdict-text">' + (w ? "Gruppen har talat. Plus ett." : "Ingen poäng den här gången.") + "</p></div>";
+      hint.textContent = "";
+      nextButton();
+    }
+  }
+
+  var countTimer = null;
+  function countdown() {
+    var g = state.game;
+    g.phase = "counting";
+    renderRound();
+    var card = $("card");
+    var el = document.createElement("div");
+    el.className = "count";
+    card.appendChild(el);
+    var steps = ["3", "2", "1", "NU!"];
+    var i = 0;
+    (function step() {
+      el.innerHTML = "<span>" + steps[i] + "</span>";
+      el.className = "count tick" + (i === 3 ? " now" : "");
+      void el.offsetWidth;
+      buzz(i === 3 ? [40, 30, 90] : 20);
+      Sound.play(i === 3 ? "go" : "tick", i);
+      i++;
+      if (i < steps.length) countTimer = setTimeout(step, 800);
+      else countTimer = setTimeout(function () { el.remove(); g.phase = "answer"; renderRound(); }, 900);
+    })();
+  }
+
+  function pairKey(g) { return g.pair.slice().sort().join("|"); }
+  function finishPair(g, matched) {
+    var key = pairKey(g);
+    g.played[g.pair[0]]++; g.played[g.pair[1]]++;
+    g.pairCount[key] = (g.pairCount[key] || 0) + 1;
+    if (matched) g.pairMatch[key] = (g.pairMatch[key] || 0) + 1;
+  }
+
+  function onMatch() {
+    var g = state.game;
+    g.scores[g.pair[0]]++; g.scores[g.pair[1]]++;
+    g.winners = g.pair.slice();
+    finishPair(g, true);
+    g.history.push(true);
+    g.phase = "match";
+    buzz([20, 50, 20, 50, 60]);
+    Sound.play("match");
+    Confetti.match();
+    renderRound();
+  }
+  function onMismatch() {
+    var g = state.game;
+    finishPair(g, false);
+    g.history.push(false);
+    g.phase = g.duo ? "miss2" : "vote";
+    buzz([70, 90, 70]);
+    Sound.play("miss");
+    renderRound();
+  }
+  function onVote(id) {
+    var g = state.game;
+    if (id !== "none") { g.scores[id]++; g.winners = [id]; Sound.play("vote"); buzz([20, 40, 20]); }
+    else Sound.play("miss");
+    g.phase = "voted";
+    renderRound();
+  }
+
+  $("score-btn").addEventListener("click", openScores);
+  $("end-btn").addEventListener("click", function () {
+    var g = state.game;
+    if (!g || g.round <= 1 && g.phase === "ready") { clearTimeout(countTimer); show("setup"); return; }
+    sheet('<h2>Avsluta spelet?</h2><p>Ni ser resultatet direkt.</p>' +
+      '<div class="btn-row"><button class="btn btn-ghost" data-close>Spela vidare</button><button class="btn btn-primary" id="confirm-end">Visa resultat</button></div>');
+    $("confirm-end").onclick = function () { closeSheet(); clearTimeout(countTimer); showResults(); };
+  });
+  $("cat-pill").addEventListener("click", function () {
+    sheet("<h2>Byt nivå</h2><p>Gäller från nästa fråga.</p><div class=\"sheet-list\">" + CAT_KEYS.map(function (k) {
+      return '<button class="cat-option" data-cat="' + k + '" aria-pressed="' + (state.cat === k) + '"><span class="cat-name" style="font-size:20px">' + CATS[k].name + "</span>" +
+        '<span style="color:var(--muted);font-weight:700;font-size:13px;display:flex;gap:6px;align-items:center">' + (k === "warmup" && !state.unlocked ? "Gratis" : isOpen(k) ? "" : ICON.lock) + "</span></button>";
+    }).join("") + "</div>");
+    $("layer").querySelectorAll(".cat-option").forEach(function (b) {
+      b.onclick = function () {
+        closeSheet();
+        chooseCat(b.dataset.cat, function () {
+          var g = state.game;
+          if (g.phase === "ready") { g.question = nextQuestion(state.cat); renderRound(true); } else renderRound();
+          renderCats();
+        });
+      };
+    });
+  });
+
+  function sortedPlayers() {
+    var g = state.game;
+    return state.players.slice().sort(function (a, b) { return g.scores[b.id] - g.scores[a.id]; });
+  }
+
+  function openScores() {
+    var g = state.game;
+    sheet("<h2>Ställning</h2><div class=\"sheet-list\">" + sortedPlayers().map(function (p) {
+      return '<div class="score-row">' + avatarHTML(p) + '<span class="nm">' + esc(p.name) + '</span><span class="pts">' + g.scores[p.id] + "</span></div>";
+    }).join("") + '</div><div class="sound-row"><span>Ljud</span><button class="top-btn" id="sound-toggle">' + (Sound.isOn() ? "På" : "Av") + '</button></div><button class="btn btn-ghost" data-close>Stäng</button>');
+    $("sound-toggle").onclick = function () { var v = Sound.toggle(); this.textContent = v ? "På" : "Av"; renderSound(); };
+  }
+
+  // ---------- Resultat ----------
+  function showResults() {
+    var g = state.game;
+    var list = sortedPlayers();
+    var top = list.length ? g.scores[list[0].id] : 0;
+    var winners = list.filter(function (p) { return g.scores[p.id] === top; });
+    var nobody = top === 0;
+    if (nobody) winners = [];
+    var shared = winners.length > 1;
+    $("awards").hidden = g.duo;
+    $("ranking").classList.toggle("dots", g.duo);
+    if (g.duo) { showDuoResults(g); return; }
+    $("winner").innerHTML =
+      (nobody ? '<div class="winner-kicker">Inga poäng</div><h2 class="winner-title">Ingen vann</h2><div class="winner-pts">Ni känner inte varandra alls. Kör en runda till.</div>' : (
+      '<div class="winner-kicker">' + (shared ? "Delad seger" : "Kvällens vinnare") + '</div>' +
+      '<h2 class="winner-title">' + (shared ? "Tankeläsarna" : "Tankeläsaren") + "</h2>" +
+      '<div class="winner-faces"><span class="crown">' + ICON.crown + "</span>" + winners.slice(0, 3).map(function (p) { return avatarHTML(p); }).join("") + "</div>" +
+      '<div class="winner-name">' + winners.slice(0, 3).map(function (p) { return esc(p.name); }).join(" & ") + (winners.length > 3 ? " m.fl." : "") + "</div>" +
+      '<div class="winner-pts">' + top + (top === 1 ? " poäng" : " poäng") + "</div>"));
+
+    $("ranking").innerHTML = list.map(function (p, i) {
+      return '<div class="rank-row"><span class="n">' + (i + 1) + "</span>" + avatarHTML(p) + '<span class="nm">' + esc(p.name) + '</span><span class="pts">' + g.scores[p.id] + "</span></div>";
+    }).join("");
+
+    // Awards: bästa duon (flest matchningar) och mest osams duo (flest missar)
+    var bestKey = null, bestVal = 0, worstKey = null, worstVal = 0;
+    Object.keys(g.pairCount).forEach(function (k) {
+      var m = g.pairMatch[k] || 0, miss = g.pairCount[k] - m;
+      if (m > bestVal) { bestVal = m; bestKey = k; }
+      if (miss > worstVal) { worstVal = miss; worstKey = k; }
+    });
+    function duo(k) { return k.split("|").map(function (id) { return byId(id).name; }).join(" & "); }
+    $("awards").innerHTML =
+      '<div class="award" style="--c:var(--apricot)"><div class="award-k">Bästa duon</div><div class="award-v">' + (bestKey ? esc(duo(bestKey)) : "Ingen än") + '</div><div class="award-s">' + (bestKey ? bestVal + " match" + (bestVal === 1 ? "" : "er") : "Inga matcher") + "</div></div>" +
+      '<div class="award" style="--c:var(--rose)"><div class="award-k">Mest osams</div><div class="award-v">' + (worstKey ? esc(duo(worstKey)) : "Ingen") + '</div><div class="award-s">' + (worstKey ? worstVal + " miss" + (worstVal === 1 ? "" : "ar") : "Helt sams") + "</div></div>";
+
+    show("results");
+    if (!nobody) celebrate(1);
+    else Sound.play("miss");
+  }
+
+  // Två spelare: lagresultat i stället för vinnare, eftersom båda alltid har samma poäng.
+  function showDuoResults(g) {
+    var hits = g.history.filter(Boolean).length, played = g.history.length;
+    var ratio = played ? hits / played : 0;
+    var title = ratio >= 0.9 ? "Tankeläsare" : ratio >= 0.7 ? "Själsfränder" : ratio >= 0.5 ? "Bra koll" : ratio >= 0.3 ? "Ytligt bekanta" : "Främlingar";
+    var line = ratio >= 0.9 ? "Ni delar en hjärna. Lite läskigt." : ratio >= 0.7 ? "Ni känner varandra på riktigt." : ratio >= 0.5 ? "Hälften rätt. Det finns mer att upptäcka." : ratio >= 0.3 ? "Ni borde nog ses oftare." : "Har ni ens träffats förut?";
+    var duo = state.players;
+    $("winner").innerHTML =
+      '<div class="winner-kicker">Ert lagresultat</div>' +
+      '<h2 class="winner-title">' + title + "</h2>" +
+      '<div class="winner-faces">' + (ratio >= 0.7 ? '<span class="crown">' + ICON.crown + "</span>" : "") + duo.map(function (p) { return avatarHTML(p); }).join("") + "</div>" +
+      '<div class="winner-name">' + hits + " av " + played + " matcher</div>" +
+      '<div class="winner-pts">' + line + "</div>";
+    $("ranking").innerHTML = g.history.map(function (h, i) {
+      return '<div class="dot ' + (h ? "hit" : "miss") + '">' + (i + 1) + "</div>";
+    }).join("") || '<div class="dot" style="grid-column:1/-1">Inga rundor spelade</div>';
+    show("results");
+    if (ratio >= 0.5) celebrate(ratio >= 0.9 ? 1.4 : 1);
+    else Sound.play("miss");
+  }
+
+  function celebrate(strength) {
+    setTimeout(function () { Sound.play("win"); buzz([30, 60, 30, 60, 30, 60, 120]); Confetti.celebrate(strength); }, 250);
+  }
+
+  $("again-btn").addEventListener("click", startGame);
+  $("new-players-btn").addEventListener("click", function () { show("setup"); });
+
+  // ---------- Köp ----------
+  // Demo: riktiga köp kopplas in via App Store / Google Play när appen paketeras.
+  function setUnlocked(v) {
+    state.unlocked = v;
+    store.set("unlocked", v);
+    if (NPrefs) NPrefs.set({ key: "unlocked", value: v ? "1" : "0" }).catch(function () {});
+    renderCats();
+  }
+  function celebrateUnlock() {
+    toast("Upplåst. Ha så kul!");
+    Sound.play("unlock");
+    buzz([20, 40, 20, 40, 80]);
+  }
+  function ownsUnlock(purchases) {
+    return (purchases || []).some(function (p) { return p.productIdentifier === PRODUCT_ID; });
+  }
+  // Hämtar pris och tidigare köp från App Store
+  function syncStore() {
+    if (!NIAP) return Promise.resolve();
+    var price = NIAP.getProducts({ productIdentifiers: [PRODUCT_ID], productType: "inapp" }).then(function (r) {
+      var prod = r && r.products && r.products[0];
+      if (prod && prod.priceString) { storePrice = prod.priceString; renderCats(); }
+    }).catch(function () {});
+    var owned = NIAP.getPurchases({ productType: "inapp" }).then(function (r) {
+      if (ownsUnlock(r && r.purchases) && !state.unlocked) setUnlocked(true);
+    }).catch(function () {});
+    return Promise.all([price, owned]);
+  }
+
+  function restorePurchase(btn, onDone) {
+    if (!NIAP) { toast("Återställning fungerar i appen"); return; }
+    var label = btn.innerHTML;
+    btn.disabled = true; btn.textContent = "Letar …";
+    function reset() { btn.disabled = false; btn.innerHTML = label; }
+    NIAP.restorePurchases().catch(function () {}).then(function () {
+      return NIAP.getPurchases({ productType: "inapp" });
+    }).then(function (r) {
+      if (ownsUnlock(r && r.purchases)) { setUnlocked(true); closeSheet(); toast("Ditt köp är återställt"); onDone && onDone(); }
+      else { reset(); toast("Hittade inget köp på det här Apple-ID:t"); }
+    }).catch(function () { reset(); toast("Kunde inte nå App Store just nu"); });
+  }
+
+  function openUnlock(onDone) {
+    var price = priceText();
+    sheet('<h2>Lås upp Juicy och Crazy</h2>' +
+      "<p>300 frågor till, för kvällar när Warm up inte räcker. Du betalar en gång och har dem för alltid. Ingen prenumeration.</p>" +
+      (price ? '<div class="price" id="price">' + esc(price) + "<small>engångsköp</small></div>" : "") +
+      '<button class="btn btn-primary" id="buy">' + (price ? "Lås upp för " + esc(price) : "Lås upp") + "</button>" +
+      '<div class="btn-row"><button class="top-btn" data-close>Inte nu</button><button class="top-btn" id="restore">Återställ köp</button></div>' +
+      '<p class="fine">Juicy och Crazy är för dig som är 18 år eller äldre.' + (IS_NATIVE ? "" : " Testversion: knappen låser upp direkt, inget köp görs.") + "</p>");
+    var buy = $("buy");
+    buy.onclick = function () {
+      if (!NIAP) { setUnlocked(true); closeSheet(); celebrateUnlock(); onDone && onDone(); return; }
+      buy.disabled = true;
+      buy.textContent = "Öppnar App Store …";
+      NIAP.purchaseProduct({ productIdentifier: PRODUCT_ID, productType: "inapp", quantity: 1 }).then(function () {
+        setUnlocked(true); closeSheet(); celebrateUnlock(); onDone && onDone();
+      }).catch(function (err) {
+        buy.disabled = false;
+        buy.textContent = price ? "Lås upp för " + price : "Lås upp";
+        var msg = String((err && (err.message || err.code)) || err || "");
+        if (!/cancel/i.test(msg)) toast("Köpet gick inte igenom. Försök igen.");
+      });
+    };
+    $("restore").onclick = function () { restorePurchase(this, onDone); };
+    if (IS_NATIVE && !storePrice) syncStore().then(function () {
+      var p = $("price"), bb = $("buy");
+      if (storePrice && bb && !bb.disabled) { bb.textContent = "Lås upp för " + storePrice; price = storePrice; if (!p) bb.insertAdjacentHTML("beforebegin", '<div class="price" id="price">' + esc(storePrice) + "<small>engångsköp</small></div>"); }
+    });
+  }
+
+  // ---------- Meny: regler, vanliga frågor, integritet, ljud, köp ----------
+  var CONTACT_EMAIL = "support@coalbun.com";
+  var WEBSITE = "coalbun.com";
+  var APP_VERSION = "1.0";
+  var GAMES = [
+    { name: "ACT RUSH", sub: "500 frågor & charader", url: "https://apps.apple.com/se/app/act-rush-partyspel-charader/id6790179657", tile: "linear-gradient(135deg, var(--apricot), var(--rose))",
+      icon: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="14" r="7"/><path d="M12 14v-3.5M10 3h4M18.5 7.5L20 6"/></svg>' },
+    { name: "Tune Trivia", sub: "Musikquiz med vänner", url: "https://apps.apple.com/se/app/tune-trivia-musikquiz/id6770267505", tile: "linear-gradient(135deg, var(--lilac), var(--rose))",
+      icon: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3" fill="currentColor"/><circle cx="17" cy="16" r="3" fill="currentColor"/></svg>' }
+  ];
+  var CHEV = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>';
+  var BACK = '<button class="back" data-back><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>Meny</button>';
+  function wireBack() { var b = $("layer").querySelector("[data-back]"); if (b) b.onclick = openMenu; }
+
+  function openMenu() {
+    sheet("<h2>Meny</h2><div class=\"menu-list\">" +
+      '<button class="menu-row" data-go="rules">Så spelar ni' + CHEV + "</button>" +
+      '<button class="menu-row" data-go="faq">Vanliga frågor' + CHEV + "</button>" +
+      '<button class="menu-row" data-go="games">Fler spel från oss' + CHEV + "</button>" +
+      '<button class="menu-row" data-go="policy">Integritetspolicy' + CHEV + "</button>" +
+      '<button class="menu-row" id="menu-sound">Ljud<span class="val">' + (Sound.isOn() ? "På" : "Av") + "</span></button>" +
+      (state.unlocked ? "" : '<button class="menu-row" id="menu-restore">Återställ köp<span class="val">' + ICON.lock + "</span></button>") +
+      '<a class="menu-row" href="mailto:' + CONTACT_EMAIL + '" style="text-decoration:none;color:inherit">Kontakt<span class="val" style="user-select:text;-webkit-user-select:text">' + esc(CONTACT_EMAIL) + "</span></a>" +
+      '<a class="menu-row" href="https://' + WEBSITE + '" target="_blank" rel="noopener" style="text-decoration:none;color:inherit">Webbplats<span class="val">' + esc(WEBSITE) + CHEV + "</span></a>" +
+      '</div><p class="menu-foot">Synk ' + APP_VERSION + " · Coalbun Studios</p>");
+    $("layer").querySelectorAll("[data-go]").forEach(function (b) {
+      b.onclick = function () { ({ rules: openRules, faq: openFaq, games: openGames, policy: openPolicy })[b.dataset.go](); };
+    });
+    $("menu-sound").onclick = function () { var v = Sound.toggle(); this.querySelector(".val").textContent = v ? "På" : "Av"; renderSound(); };
+    if ($("menu-restore")) $("menu-restore").onclick = function () { restorePurchase(this); };
+  }
+
+  function openRules() {
+    sheet(BACK + "<h2>Så spelar ni</h2><ol class=\"rules\">" +
+      "<li><span>Skriv in 2–10 spelare och välj nivå.</span></li>" +
+      "<li><span>Varje runda möts <b>två spelare</b> och får en fråga, till exempel <i>Vem av er är smartast?</i></span></li>" +
+      "<li><span>Tryck på <b>Räkna ner</b>. På noll säger ni båda ett namn högt: ditt eget eller den andras.</span></li>" +
+      "<li><span><b>Samma namn:</b> en poäng var. <b>Olika:</b> förklara er. Gänget röstar, och den som svarade rätt får poängen.</span></li>" +
+      "<li><span>Är det en <b>har</b>-fråga och ingen av er har gjort det? Säg den som mest troligt skulle.</span></li>" +
+      "<li><span>Flest poäng efter sista rundan vinner. Är ni bara två spelar ni som ett lag och ser hur många matcher ni klarar.</span></li>" +
+      "</ol>");
+    wireBack();
+  }
+
+  function openGames() {
+    sheet(BACK + "<h2>Fler spel från oss</h2><div class=\"menu-list\">" + GAMES.map(function (g) {
+      return '<a class="game-row" href="' + g.url + '" target="_blank" rel="noopener"><span class="game-ico" style="background:' + g.tile + '">' + g.icon + '</span>' +
+        '<span class="game-txt"><b>' + esc(g.name) + "</b><small>" + esc(g.sub) + "</small></span>" + CHEV + "</a>";
+    }).join("") + '</div><p class="menu-foot">Öppnas i App Store</p>');
+    wireBack();
+  }
+
+  function openFaq() {
+    var qa = [
+      ["Kostar det något?", "Warm up med 100 frågor är gratis. Juicy och Crazy låser du upp tillsammans med ett enda köp. Det finns ingen prenumeration."],
+      ["Jag har köpt, men nivåerna är låsta", "Öppna menyn och tryck på Återställ köp. Du måste vara inloggad med samma Apple-ID som när du köpte."],
+      ["Hur lång tid tar ett spel?", "7 till 10 rundor, ungefär tio minuter. Alla spelar lika många gånger."],
+      ["Var sparas namn och bilder?", "Bara på din telefon. Inget skickas till oss eller någon annan."]
+    ];
+    sheet(BACK + "<h2>Vanliga frågor</h2><div class=\"faq scroll\">" + qa.map(function (x) {
+      return "<details><summary>" + esc(x[0]) + "</summary><p>" + esc(x[1]) + "</p></details>";
+    }).join("") + "</div>");
+    wireBack();
+  }
+
+  function openPolicy() {
+    sheet(BACK + "<h2>Integritetspolicy</h2><div class=\"policy scroll\">" +
+      "<p><b>Vi samlar inte in några uppgifter om dig.</b> Det finns ingen inloggning, ingen reklam, ingen spårning och ingen analys.</p>" +
+      "<p><b>Namn och bilder</b> på spelare sparas bara i appen på din telefon och försvinner när du tar bort dem eller appen.</p>" +
+      "<p><b>Kamera och bilder</b> används bara när du själv lägger till en profilbild.</p>" +
+      "<p><b>Köp</b> görs via Apple. Vi ser aldrig dina betalningsuppgifter.</p>" +
+      "<p><b>Juicy och Crazy</b> är för dig som är 18 år eller äldre.</p>" +
+      "<p>Frågor? Mejla " + esc(CONTACT_EMAIL) + ".</p></div>");
+    wireBack();
+  }
+  $("menu-btn").addEventListener("click", openMenu);
+
+  // Introt försvinner av sig självt, eller direkt om man trycker
+  (function () {
+    var intro = $("intro");
+    if (!intro) return;
+    function done() { if (intro.parentNode) intro.parentNode.removeChild(intro); }
+    intro.addEventListener("animationend", function (e) { if (e.animationName === "introOut") done(); });
+    intro.addEventListener("pointerdown", done);
+    setTimeout(done, 2600);
+  })();
+
+  // ---------- Sheets, toast, skärmar ----------
+  function sheet(html) {
+    $("layer").innerHTML = '<div class="scrim" data-close></div><div class="sheet" role="dialog" aria-modal="true">' + html + "</div>";
+    $("layer").querySelectorAll("[data-close]").forEach(function (el) { el.onclick = closeSheet; });
+  }
+  function closeSheet() { $("layer").innerHTML = ""; }
+
+  var toastTimer = null;
+  function toast(msg) {
+    var old = document.querySelector(".toast"); if (old) old.remove();
+    var t = document.createElement("div"); t.className = "toast"; t.textContent = msg;
+    document.body.appendChild(t);
+    clearTimeout(toastTimer); toastTimer = setTimeout(function () { t.remove(); }, 2200);
+  }
+
+  function show(id) {
+    ["setup", "round", "results"].forEach(function (s) { $(s).hidden = s !== id; });
+    if (id === "setup") { renderPlayers(); renderCats(); }
+  }
+
+  show("setup");
+
+  if (IS_NATIVE) {
+    if (NStatus) NStatus.setStyle({ style: "DARK" }).catch(function () {});
+    if (NPrefs) NPrefs.get({ key: "unlocked" }).then(function (r) { if (r && r.value === "1" && !state.unlocked) setUnlocked(true); }).catch(function () {});
+    syncStore();
+  }
+})();
+</script>
+</body>
+</html>

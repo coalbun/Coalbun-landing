@@ -1,0 +1,22 @@
+/* Samma värld som appen: Golden Hour, plommon som går över i glöd, aprikos och rosa */
+@font-face { font-family: "Outfit"; font-weight: 100 900; font-display: swap; src: url("outfit-latin.woff2") format("woff2"); unicode-range: U+0000-00FF, U+2000-206F, U+20AC, U+2122; }
+@font-face { font-family: "Outfit"; font-weight: 100 900; font-display: swap; src: url("outfit-latin-ext.woff2") format("woff2"); unicode-range: U+0100-02BA, U+1E00-1E9F; }
+:root {
+  color-scheme: dark;
+  --bg: #1c0f1e; --surface: rgba(255, 241, 230, .08); --line: rgba(255, 241, 230, .12);
+  --ink: #fff1e6; --muted: #dcb4a6; --gold: #ffb38a; --pink: #ff9fae;
+  --font: "Outfit", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+* { box-sizing: border-box; }
+html { background: #1c0f1e; }
+body { margin: 0; min-height: 100vh; background: radial-gradient(120% 40% at 50% 110%, rgba(255, 155, 107, .3), transparent 70%), linear-gradient(180deg, #1c0f1e, #281426 60%, #42202a); color: var(--ink); font-family: var(--font); line-height: 1.6; }
+main { max-width: 680px; margin: 0 auto; padding-block: 48px 72px; padding-left: max(20px, env(safe-area-inset-left, 0px)); padding-right: max(20px, env(safe-area-inset-right, 0px)); }
+.brand { display: inline-block; font-weight: 800; font-size: 26px; letter-spacing: -.02em; color: #3a1828; background: #ffb38a; padding: 4px 16px 6px; border-radius: 14px; transform: rotate(-4deg); box-shadow: 0 0 0 3px #fff1e6; text-decoration: none; }
+h1 { font-size: clamp(30px, 6vw, 42px); line-height: 1.1; letter-spacing: -.02em; margin: 24px 0 8px; text-wrap: balance; }
+h2 { font-size: 20px; margin: 36px 0 8px; letter-spacing: -.01em; }
+p, li { color: #f3dccf; font-weight: 400; }
+.meta { color: var(--muted); font-size: 14px; }
+a { color: var(--pink); }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 18px 20px; margin-top: 16px; }
+.card h2 { margin-top: 0; }
+footer { margin-top: 56px; color: var(--muted); font-size: 14px; border-top: 1px solid var(--line); padding-top: 20px; display: flex; gap: 16px; flex-wrap: wrap; }
