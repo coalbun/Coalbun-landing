@@ -1,0 +1,40 @@
+# Fyller i version 1.0 i App Store Connect (texter, bilder, bygge, åldersgräns, pris m.m.).
+# Starta: GitHub → Actions → "App Store: version" → Run workflow. Skickar aldrig in för granskning.
+name: "App Store: version"
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "kolla = visa läget, fyll = fyll i det som saknas"
+        type: choice
+        options: [kolla, fyll]
+        default: kolla
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      ASC_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+      ASC_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+      ASC_KEY: ${{ secrets.APP_STORE_CONNECT_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Förbered nyckel
+        run: |
+          ASC_KEY_ID="$(printf '%s' "$ASC_KEY_ID" | tr -d '[:space:]')"
+          ASC_ISSUER_ID="$(printf '%s' "$ASC_ISSUER_ID" | tr -d '[:space:]')"
+          { echo "ASC_KEY_ID=$ASC_KEY_ID"; echo "ASC_ISSUER_ID=$ASC_ISSUER_ID"; } >> "$GITHUB_ENV"
+          mkdir -p "$RUNNER_TEMP/keys"
+          python3 scripts/fix-asc-key.py "$RUNNER_TEMP/keys/AuthKey.p8"
+          echo "KEY_PATH=$RUNNER_TEMP/keys/AuthKey.p8" >> "$GITHUB_ENV"
+          pip install --quiet "pyjwt[crypto]"
+
+      - name: Version 1.0
+        run: python3 scripts/asc-release.py "${{ github.event.inputs.mode }}"
+
+      - name: Ta bort nyckeln
+        if: always()
+        run: rm -rf "$RUNNER_TEMP/keys"

@@ -49,6 +49,8 @@ Arbetsflödet `.github/workflows/ios-app-store.yml` bygger appen på en Mac hos 
 
 **Bygga:** GitHub → fliken **Actions** → **iOS: bygg och ladda upp** → **Run workflow**. Det tar cirka 10–15 minuter, och sedan 10–30 minuter innan bygget syns i App Store Connect. Build-numret blir körningens nummer, men du kan skriva ett eget när du startar.
 
+**Köpet:** arbetsflödet **App Store: köpet** kollar (`kolla`) eller skapar (`skapa`) köpet `com.coalbun.synk.unlock` i App Store Connect, med text, pris 59 kr, alla länder och granskningsbild. Det använder samma hemligheter och tar aldrig bort något.
+
 Knappen syns först när arbetsflödet ligger på grenen `main`. Misslyckas ett bygge finns hela Xcode-loggen under körningen som `xcode-loggar`.
 
 ## Innan du skickar in

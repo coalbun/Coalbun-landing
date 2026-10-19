@@ -13,11 +13,11 @@ Kopiera in texterna nedan i App Store Connect. Siffran inom parentes är antal t
 - **Primärt språk:** Svenska
 
 ## Version 1.0
-**Reklamtext** (141/170):
+**Reklamtext** (136/170):
 
-Två spelare, en fråga, tre sekunder. Säger ni samma namn får ni poäng. Det perfekta förfestspelet för gänget, från mysigt till riktigt galet.
+Två spelare, en fråga, tre sekunder. Säger ni samma namn får ni poäng. Det perfekta förfestspelet för gänget, från oskyldigt till galet.
 
-**Beskrivning** (1294/4000):
+**Beskrivning** (1291/4000):
 
 ```
 Två spelare. En fråga. Tre sekunder.
@@ -35,7 +35,7 @@ SÅ FUNKAR DET
 
 TRE NIVÅER, 400 FRÅGOR
 • Warm up: 100 lättsamma frågor om vardagen. Alltid gratis.
-• Juicy: 200 frågor om dejter, ex, fyllor och hemligheter.
+• Juicy: 200 frågor om dejter, ex och hemligheter.
 • Crazy: 100 frågor för när kvällen spårar ur på riktigt.
 
 Samma fråga kommer aldrig tillbaka förrän ni har spelat alla på nivån.
@@ -45,7 +45,7 @@ Juicy och Crazy låser du upp med ett enda köp. Inga abonnemang, ingen reklam o
 
 Allt sparas bara på din telefon. Synk samlar inte in några uppgifter om dig.
 
-Juicy och Crazy innehåller frågor om sex, dejting och fest och är för dig som är 18 år eller äldre.
+Juicy och Crazy innehåller vuxna frågor och är för dig som är 18 år eller äldre.
 ```
 
 **Sökord** (95/100):
