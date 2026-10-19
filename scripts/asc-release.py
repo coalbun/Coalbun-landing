@@ -121,9 +121,8 @@ def app_info_loc(info):
         failed.append("appinfo-sv")
         say(f"::error::Ingen svensk appinformation. Språk som finns: {[l['attributes']['locale'] for l in locs]}")
         return
-    say(f"  Namn: {loc['attributes'].get('name')}")
-    patch("appInfoLocalizations", loc, {"subtitle": META["subtitle"], "privacyPolicyUrl": META["privacyPolicyUrl"]},
-          "Undertitel och integritetspolicy")
+    patch("appInfoLocalizations", loc, {"name": META["name"], "subtitle": META["subtitle"],
+          "privacyPolicyUrl": META["privacyPolicyUrl"]}, "Namn, undertitel och integritetspolicy")
 
 
 def age_rating(info):

@@ -1,9 +1,9 @@
 {
   "locale": "sv",
-  "subtitle": "Säg samma namn samtidigt",
+  "subtitle": "Säg samma namn på 3 sekunder",
   "promotionalText": "2–10 spelare, alla mot alla. Två möts per runda, får en fråga och säger ett namn på tre sekunder. Samma namn ger poäng. Från oskyldigt till galet.",
   "description": "2–10 spelare, alla mot alla. Två i taget. En fråga. Tre sekunder.\n\n\"Vem av er skulle överleva längst utan mobil?\" Appen räknar ner 3, 2, 1, och på noll säger ni båda ett namn högt: ditt eget eller den andras. Säger ni samma namn får ni en poäng var. Säger ni olika får ni förklara er. Sen röstar resten av gänget om vem som svarade rätt, och den får poängen.\n\nSynk är festspelet som får hela rummet att skrika, skratta och säga \"NEJ, det är ju du!\".\n\nSÅ FUNKAR DET\n• 2 till 10 spelare. Skriv in namnen och kör på under en minut.\n• Ta en profilbild på varje spelare om ni vill.\n• Alla spelar lika många gånger, och ett spel tar runt tio minuter.\n• Kvällens vinnare koras till Tankeläsaren.\n• Är ni bara två spelar ni som ett lag och ser hur väl ni känner varandra.\n\nTRE NIVÅER, 400 FRÅGOR\n• Warm up: 100 lättsamma frågor om vardagen. Alltid gratis.\n• Juicy: 200 frågor om dejter, ex och hemligheter.\n• Crazy: 100 frågor för när kvällen spårar ur på riktigt.\n\nSamma fråga kommer aldrig tillbaka förrän ni har spelat alla på nivån.\n\nENGÅNGSKÖP, INGEN PRENUMERATION\nJuicy och Crazy låser du upp med ett enda köp. Inga abonnemang, ingen reklam och ingen inloggning.\n\nAllt sparas bara på din telefon. Synk samlar inte in några uppgifter om dig.\n\nJuicy och Crazy innehåller vuxna frågor och är för dig som är 18 år eller äldre.",
-  "keywords": "festspel,förfest,partyspel,frågespel,vänner,sällskapsspel,möhippa,tjejkväll,vem av oss,par,dejt",
+  "keywords": "festspel,förfest,frågespel,vänner,kompisar,sällskapsspel,möhippa,tjejkväll,par,dejt,gissa,quiz",
   "supportUrl": "https://coalbun.com/synk/support.html",
   "marketingUrl": "https://coalbun.com",
   "privacyPolicyUrl": "https://coalbun.com/synk/integritetspolicy.html",
@@ -22,5 +22,6 @@
     "03-rosta.jpg",
     "04-nivaer.jpg",
     "05-vinnare.jpg"
-  ]
+  ],
+  "name": "Synk: Vem av oss? Partyspel"
 }
