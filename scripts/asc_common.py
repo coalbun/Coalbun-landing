@@ -34,7 +34,14 @@ def api(method, path, body=None):
         raw = e.read().decode(errors="replace")
         try:
             errs = json.loads(raw).get("errors", [])
-            msg = "; ".join(f"{x.get('title', '')}: {x.get('detail', '')}" for x in errs) or raw
+            parts = []
+            for x in errs:
+                parts.append(f"{x.get('title', '')}: {x.get('detail', '')}")
+                # Apple lägger de egentliga orsakerna i meta.associatedErrors
+                for path, sub in ((x.get("meta") or {}).get("associatedErrors") or {}).items():
+                    for y in sub:
+                        parts.append(f"  -> {y.get('code', '')}: {y.get('detail') or y.get('title', '')}")
+            msg = "\n".join(parts) or raw
         except ValueError:
             msg = raw
         raise ApiError(f"{method} {urllib.parse.urlparse(url).path} gav {e.code}: {msg}")
