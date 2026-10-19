@@ -366,9 +366,18 @@ def submit(app_id, v):
     for iap in get_all(f"/v1/apps/{app_id}/inAppPurchasesV2?limit=50"):
         st = iap["attributes"].get("state")
         if st == "READY_TO_SUBMIT":
-            api("POST", "/v1/inAppPurchaseSubmissions", {"data": {"type": "inAppPurchaseSubmissions", "relationships": {
-                "inAppPurchaseV2": {"data": {"type": "inAppPurchases", "id": iap["id"]}}}}})
-            say(f"  lade till köpet {iap['attributes']['productId']}")
+            try:
+                api("POST", "/v1/inAppPurchaseSubmissions", {"data": {"type": "inAppPurchaseSubmissions", "relationships": {
+                    "inAppPurchaseV2": {"data": {"type": "inAppPurchases", "id": iap["id"]}}}}})
+                say(f"  lade till köpet {iap['attributes']['productId']}")
+            except ApiError as e:
+                if "FIRST_NON_CONSUMABLE_MUST_BE_SUBMITTED_ON_VERSION" not in str(e):
+                    raise
+                # Apples API kan inte koppla appens första köp till en version, det görs på webben.
+                say("  Version 1.0 ligger i en granskning, men appens första köp måste kopplas på versionssidan.")
+                say("  Gör så här i App Store Connect: versionssidan → In-App Purchases and Subscriptions → + →")
+                say("  bocka i köpet → Klar, och skicka sedan in granskningen därifrån.")
+                return
         else:
             say(f"  köpet {iap['attributes']['productId']}: {st}")
     api("PATCH", f"/v1/reviewSubmissions/{sub['id']}", {"data": {"type": "reviewSubmissions", "id": sub["id"],
