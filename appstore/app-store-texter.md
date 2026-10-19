@@ -3,8 +3,9 @@
 Kopiera in texterna nedan i App Store Connect. Siffran inom parentes är antal tecken och Apples gräns.
 
 ## Appinformation
-- **Namn** (4/30): Synk
-  - Om namnet är upptaget: **Synk: Festspel** eller **Synk – Säg samma namn**
+- **Namn** (15/30): Synk: Partyspel
+  - "Synk" var upptaget. Om även det här är upptaget: **Synk: Festspel för vänner** eller **Synk – Säg samma namn**
+  - På hemskärmen heter appen fortfarande bara **Synk**.
 - **Undertitel** (24/30): Säg samma namn samtidigt
 - **Primär kategori:** Spel. Underkategorier: Trivia och Casual
 - **Sekundär kategori:** Underhållning
