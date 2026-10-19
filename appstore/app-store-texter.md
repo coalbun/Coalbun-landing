@@ -3,10 +3,10 @@
 Kopiera in texterna nedan i App Store Connect. Siffran inom parentes är antal tecken och Apples gräns.
 
 ## Appinformation
-- **Namn** (15/30): Synk: Partyspel
-  - "Synk" var upptaget. Om även det här är upptaget: **Synk: Festspel för vänner** eller **Synk – Säg samma namn**
+- **Namn** (27/30): Synk: Vem av oss? Partyspel
   - På hemskärmen heter appen fortfarande bara **Synk**.
-- **Undertitel** (24/30): Säg samma namn samtidigt
+  - "Vem av oss" och "partyspel" står i namnet och behöver därför inte finnas bland sökorden.
+- **Undertitel** (28/30): Säg samma namn på 3 sekunder
 - **Primär kategori:** Spel. Underkategorier: Trivia och Casual
 - **Sekundär kategori:** Underhållning
 - **Paket-ID (Bundle ID):** com.coalbun.synk
@@ -48,10 +48,10 @@ Allt sparas bara på din telefon. Synk samlar inte in några uppgifter om dig.
 Juicy och Crazy innehåller vuxna frågor och är för dig som är 18 år eller äldre.
 ```
 
-**Sökord** (95/100):
+**Sökord** (94/100):
 
 ```
-festspel,förfest,partyspel,frågespel,vänner,sällskapsspel,möhippa,tjejkväll,vem av oss,par,dejt
+festspel,förfest,frågespel,vänner,kompisar,sällskapsspel,möhippa,tjejkväll,par,dejt,gissa,quiz
 ```
 
 - **Support-URL:** `https://coalbun.com/synk/support.html` (live)
