@@ -13,14 +13,14 @@ Kopiera in texterna nedan i App Store Connect. Siffran inom parentes är antal t
 - **Primärt språk:** Svenska
 
 ## Version 1.0
-**Reklamtext** (136/170):
+**Reklamtext** (146/170):
 
-Två spelare, en fråga, tre sekunder. Säger ni samma namn får ni poäng. Det perfekta förfestspelet för gänget, från oskyldigt till galet.
+2–10 spelare, alla mot alla. Två möts per runda, får en fråga och säger ett namn på tre sekunder. Samma namn ger poäng. Från oskyldigt till galet.
 
-**Beskrivning** (1291/4000):
+**Beskrivning** (1320/4000):
 
 ```
-Två spelare. En fråga. Tre sekunder.
+2–10 spelare, alla mot alla. Två i taget. En fråga. Tre sekunder.
 
 "Vem av er skulle överleva längst utan mobil?" Appen räknar ner 3, 2, 1, och på noll säger ni båda ett namn högt: ditt eget eller den andras. Säger ni samma namn får ni en poäng var. Säger ni olika får ni förklara er. Sen röstar resten av gänget om vem som svarade rätt, och den får poängen.
 
