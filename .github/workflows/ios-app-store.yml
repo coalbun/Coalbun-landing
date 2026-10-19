@@ -55,8 +55,14 @@ jobs:
         run: |
           KEY_DIR="$RUNNER_TEMP/keys"
           mkdir -p "$KEY_DIR"
-          printf '%s\n' "$ASC_KEY" > "$KEY_DIR/AuthKey_$ASC_KEY_ID.p8"
+          # Ta bort mellanslag och radbrytningar som lätt följer med när ID:n klistras in
+          ASC_KEY_ID="$(printf '%s' "$ASC_KEY_ID" | tr -d '[:space:]')"
+          ASC_ISSUER_ID="$(printf '%s' "$ASC_ISSUER_ID" | tr -d '[:space:]')"
+          TEAM_ID="$(printf '%s' "$TEAM_ID" | tr -d '[:space:]')"
+          { echo "ASC_KEY_ID=$ASC_KEY_ID"; echo "ASC_ISSUER_ID=$ASC_ISSUER_ID"; echo "TEAM_ID=$TEAM_ID"; } >> "$GITHUB_ENV"
+          python3 scripts/fix-asc-key.py "$KEY_DIR/AuthKey_$ASC_KEY_ID.p8"
           echo "KEY_PATH=$KEY_DIR/AuthKey_$ASC_KEY_ID.p8" >> "$GITHUB_ENV"
+          echo "Nyckel-ID: ${#ASC_KEY_ID} tecken, utfärdar-ID: ${#ASC_ISSUER_ID} tecken, team-ID: ${#TEAM_ID} tecken"
           BUILD="${{ github.event.inputs.build_number }}"
           [ -n "$BUILD" ] || BUILD="${{ github.run_number }}"
           echo "BUILD=$BUILD" >> "$GITHUB_ENV"
