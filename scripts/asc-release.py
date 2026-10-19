@@ -13,7 +13,7 @@ BUNDLE_ID = "com.coalbun.synk"
 VERSION = "1.0"
 SCREENSHOT_TYPE = "APP_IPHONE_67"  # 6,9- och 6,7-tumsplatsen, 1320 × 2868 går in här
 
-# Åldersfrågorna. Okända fält som Apple lagt till sätts till NONE/false, se age_rating().
+# Åldersfrågorna. Synk har frågor om dejting, ex och fest i text, inget annat.
 AGE = {
     "matureOrSuggestiveThemes": "FREQUENT_OR_INTENSE",
     "sexualContentOrNudity": "INFREQUENT_OR_MILD",
@@ -27,10 +27,20 @@ AGE = {
     "violenceRealisticProlongedGraphicOrSadistic": "NONE",
     "gamblingSimulated": "NONE",
     "contests": "NONE",
+    "gunsOrOtherWeapons": "NONE",
     "gambling": False,
     "unrestrictedWebAccess": False,
     "lootBox": False,
+    "advertising": False,
+    "ageAssurance": False,
+    "healthOrWellnessTopics": False,
+    "messagingAndChat": False,
+    "parentalControls": False,
+    "socialMedia": False,
+    "userGeneratedContent": False,
 }
+AGE_SKIP = {"kidsAgeBand", "ageRatingOverride", "ageRatingOverrideV2", "koreaAgeRatingOverride",
+            "gracRatingClassificationNumber", "developerAgeRatingInfoUrl", "socialMediaAgeRestricted"}
 
 manual = []   # saker som bara Keela kan göra
 failed = []
@@ -124,30 +134,48 @@ def age_rating(info):
         say("::error::Hittar ingen åldersdeklaration")
         return
     cur = decl["attributes"]
-    say("  nuvarande svar: " + json.dumps(cur, ensure_ascii=False))
-    want = {}
-    for k, v in cur.items():
-        if k in AGE:
-            want[k] = AGE[k]
-        elif k in ("kidsAgeBand", "ageRatingOverride", "ageRatingOverrideV2", "koreaAgeRatingOverride", "developerAgeRatingInfoUrl"):
-            continue
-        elif isinstance(v, bool) or v is None and k.startswith(("is", "has")):
-            want[k] = False
-        elif v is None or isinstance(v, str):
-            # Nya frågor från Apple som inte finns i listan ovan: svara nej/inget.
-            want[k] = "NONE" if v is None or v.isupper() else v
-    unknown = sorted(k for k in want if k not in AGE)
+    unknown = sorted(k for k in cur if k not in AGE and k not in AGE_SKIP)
     if unknown:
-        say(f"  Frågor utanför listan, satta till nej/inget: {', '.join(unknown)}")
-    patch("ageRatingDeclarations", decl, want, "Svar på åldersfrågorna")
-    for key, val in (("ageRatingOverrideV2", "EIGHTEEN_PLUS"), ("ageRatingOverride", "SEVENTEEN_PLUS")):
-        if key in cur:
-            try:
-                patch("ageRatingDeclarations", {"id": decl["id"], "attributes": cur}, {key: val}, f"Åldersgräns manuellt ({val})")
-            except ApiError as e:
-                manual.append("Åldersgräns: välj 18+ manuellt under Appinformation → Åldersgräns")
-                say(f"  kunde inte sätta {val}: {e}")
-            break
+        manual.append("Åldersgräns: kontrollera de nya frågorna " + ", ".join(unknown))
+        say(f"  okända frågor, lämnas orörda: {', '.join(unknown)}")
+    want = {k: v for k, v in AGE.items() if k in cur and cur[k] != v}
+    if not want:
+        say("  svar på åldersfrågorna: redan rätt")
+    elif MODE != "fyll":
+        say(f"  svar på åldersfrågorna: behöver ändras ({', '.join(want)})")
+    else:
+        def send(attrs):
+            api("PATCH", f"/v1/ageRatingDeclarations/{decl['id']}",
+                {"data": {"type": "ageRatingDeclarations", "id": decl["id"], "attributes": attrs}})
+        try:
+            send(want)
+            say(f"  svarade på {len(want)} åldersfrågor")
+        except ApiError as e:
+            say(f"  alla på en gång gick inte ({e}), provar en i taget")
+            for k, v in want.items():
+                alt = "NONE" if isinstance(v, bool) else (False if v == "NONE" else None)
+                for val in (v, alt):
+                    if val is None:
+                        continue
+                    try:
+                        send({k: val})
+                        break
+                    except ApiError as e2:
+                        err = e2
+                else:
+                    manual.append(f"Åldersgräns: svara på frågan '{k}' själv")
+                    say(f"  {k}: gick inte ({err})")
+    if "ageRatingOverrideV2" in cur and cur["ageRatingOverrideV2"] != "EIGHTEEN_PLUS":
+        if MODE != "fyll":
+            say("  åldersgräns 18+ manuellt: behöver ändras")
+            return
+        try:
+            api("PATCH", f"/v1/ageRatingDeclarations/{decl['id']}", {"data": {"type": "ageRatingDeclarations",
+                "id": decl["id"], "attributes": {"ageRatingOverrideV2": "EIGHTEEN_PLUS"}}})
+            say("  satte åldersgränsen till 18+")
+        except ApiError as e:
+            manual.append("Åldersgräns: välj 18+ manuellt under Appinformation → Åldersgräns")
+            say(f"  kunde inte sätta 18+: {e}")
 
 
 def find_or_create_version(app_id):
