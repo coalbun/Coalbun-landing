@@ -12,7 +12,22 @@ Kopiera in texterna nedan i App Store Connect. Siffran inom parentes är antal t
 - **Paket-ID (Bundle ID):** com.coalbun.synk
 - **Primärt språk:** Svenska
 
-## Version 1.0
+## Version 1.1
+**Nyheter i den här versionen** (409/4000):
+
+```
+Synk har fått en helt ny look!
+
+• Festfigurer: varje spelare får en egen figur. Välj själv eller få en slumpad.
+• Ny stil i svartvitt, med serietidningssmällar och färg när något händer.
+• VS-intro före varje runda.
+• Säger ni olika namn får ni tio sekunder på er att förklara er innan gänget röstar.
+• Frågan syns större.
+• Profilbilderna är borttagna, så appen behöver inte längre kameran eller dina bilder.
+```
+
+Reklamtext, beskrivning och sökord är desamma som i 1.0.
+
 **Reklamtext** (146/170):
 
 2–10 spelare, alla mot alla. Två möts per runda, får en fråga och säger ett namn på tre sekunder. Samma namn ger poäng. Från oskyldigt till galet.
@@ -95,12 +110,12 @@ Synk is a Swedish party game for 2-10 players played on one phone. No login or a
 
 How to test:
 1. Enter at least two player names on the start screen and tap "Kör!".
-2. Two players are shown. Tap "Räkna ner". On zero both players say a name out loud. Tap "Samma" (same) or "Olika" (different).
+2. A short VS animation introduces the two players (tap to skip). Tap "Räkna ner". On zero both players say a name out loud. Tap "Samma" (same) or "Olika" (different). After "Olika" a 10-second timer runs while the players explain, then the group votes for who answered right.
 3. The game ends automatically after 7-10 rounds and shows the winner. "Avsluta" ends it early.
 
 In-app purchase: the level "Warm up" is free. Tapping "Juicy" or "Crazy" opens the purchase sheet for the non-consumable product com.coalbun.synk.unlock, which unlocks both levels permanently. "Återställ köp" (Restore Purchases) is in the same sheet.
 
-The Juicy and Crazy questions are text only and refer to dating, sex and alcohol in a humorous way, which is why the app is rated for adults. There is no user-generated content shared between users and no network features. Player names and photos stay on the device.
+The Juicy and Crazy questions are text only and refer to dating, sex and alcohol in a humorous way, which is why the app is rated for adults. Two of the ten cartoon party characters hold a drink (a cocktail and a beer). The game has no drinking rules and never asks anyone to drink. There is no user-generated content shared between users and no network features. Player names stay on the device. Version 1.1 removes the profile photos, so the app no longer uses the camera or the photo library.
 ```
 
 ## Skärmbilder
@@ -108,12 +123,16 @@ Ligger i `appstore/screenshots/`, i storleken 1320 × 2868 för 6,9-tumsskärm. 
 
 | Fil | Rubrik | Visar |
 |---|---|---|
-| `01-fragan.jpg` | Säg samma namn. Samtidigt. | En runda med frågan |
-| `02-match.jpg` | Samma namn? Poäng till båda. | Match |
-| `03-rosta.jpg` | Olika namn? Gänget avgör. | Röstningen |
-| `04-nivaer.jpg` | Tre nivåer. Från oskyldigt till galet. | Startskärmen med nivåvalet |
-| `05-vinnare.jpg` | Vem känner gänget bäst? | Resultatet |
+| `01-fragan.jpg` | Säg samma namn. Samtidigt. | En runda med frågan, Ella mot Oscar |
+| `02-match.jpg` | Samma namn? Poäng till båda. | MATCH! |
+| `03-rosta.jpg` | Olika namn? Gänget avgör. | MISMATCH! med timern och röstningen |
+| `04-nivaer.jpg` | Tre nivåer. Från oskyldigt till galet. | Startskärmen med spelarna och nivåvalet |
+| `05-vinnare.jpg` | Vem känner gänget bäst? | Resultatet med vinnaren och topplistan |
 
 `iap-review.jpg` är bara för granskningen av köpet, inte för produktsidan.
 
-Tänk på inför nya skärmbilder: Apple kräver att skärmbilder passar alla åldrar (4+), även om appen har högre åldersgräns. Visa inga frågor om sex, alkohol eller nakenhet på bilderna.
+Bilderna görs av den riktiga appen med `node scripts/store/screenshots.js` (kräver Playwright). Kör det igen när appen ändras, så blir bilderna aktuella.
+
+När 1.1 skapas i App Store Connect följer bilderna från 1.0 med. Skriptet `asc-release.py` märker att de inte är de nya och ber dig ta bort dem under 6,9 tum på versionssidan. Kör sedan "fyll" igen, så laddas de nya upp.
+
+Tänk på inför nya skärmbilder: Apple kräver att skärmbilder passar alla åldrar (4+), även om appen har högre åldersgräns. Visa inga frågor om sex, alkohol eller nakenhet på bilderna, och bara figurer utan drinkar (inte `drinken`, `fulla` eller `slitna`).

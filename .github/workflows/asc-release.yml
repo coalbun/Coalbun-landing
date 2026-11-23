@@ -1,4 +1,4 @@
-# Fyller i version 1.0 i App Store Connect (texter, bilder, bygge, åldersgräns, pris m.m.).
+# Fyller i versionen (VERSION i scripts/asc-release.py) i App Store Connect (texter, bilder, bygge, åldersgräns, pris m.m.).
 # Starta: GitHub → Actions → "App Store: version" → Run workflow. Bara läget "skicka" skickar in för granskning.
 name: "App Store: version"
 
@@ -32,7 +32,7 @@ jobs:
           echo "KEY_PATH=$RUNNER_TEMP/keys/AuthKey.p8" >> "$GITHUB_ENV"
           pip install --quiet "pyjwt[crypto]"
 
-      - name: Version 1.0
+      - name: Fyll i versionen
         run: python3 scripts/asc-release.py "${{ github.event.inputs.mode }}"
 
       - name: Ta bort nyckeln

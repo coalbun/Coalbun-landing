@@ -9,7 +9,8 @@ Festspel för iPhone. Två spelare per runda får en fråga, appen räknar ner 3
 | `ios/` | Xcode-projektet för iPhone (Capacitor) |
 | `appstore/` | Texter till App Store Connect och färdiga skärmbilder |
 | `site/synk/` | Integritetspolicy och supportsida, som Apple kräver |
-| `scripts/` | Hjälpskript som kopierar typsnitt och Capacitor in i `app/` |
+| `scripts/` | Hjälpskript som kopierar typsnitt och Capacitor in i `app/`, och skripten mot App Store Connect |
+| `scripts/store/` | Gör appikonen (`icon.js`) och App Store-bilderna (`screenshots.js`) av den riktiga appen. Kräver Playwright |
 
 ## Bygga och skicka in iPhone-appen
 Det här kräver en Mac med **Xcode 26 eller senare** (Apples krav sedan april 2026).

@@ -399,8 +399,9 @@ svg text { font-family: var(--font); }
 .rank-row.first .bar { background: #e6e5e2; }
 .rank-row.first .bar i { background: var(--gold); box-shadow: inset 0 0 0 1.5px var(--black); }
 .rank-row .pts { font-weight: 800; font-size: clamp(15px, 2.3vh, 18px); font-variant-numeric: tabular-nums; text-align: right; }
-.ranking.cols { grid-template-columns: 1fr 1fr; grid-template-rows: repeat(5, minmax(0, 1fr)); grid-auto-flow: column; column-gap: 8px; max-height: 240px; }
+.ranking.cols { grid-template-columns: 1fr 1fr; grid-template-rows: repeat(5, minmax(0, 1fr)); grid-auto-flow: column; column-gap: 8px; max-height: 240px; align-content: center; }
 .ranking.cols .rank-row { grid-template-columns: 14px auto minmax(0, 1fr) 20px; gap: 6px; padding: 0 9px 0 4px; }
+.ranking.cols .rank-row .avatar { max-height: clamp(26px, 9vw, 42px); }
 .ranking.cols .bar { display: none; }
 #results.duo .stage { height: clamp(170px, 40vh, 360px); }
 .ranking.dots { grid-template-columns: repeat(5, minmax(0, 54px)); grid-auto-rows: auto; justify-content: center; align-content: center; gap: 10px; max-height: none; }
@@ -1560,7 +1561,10 @@ svg text { font-family: var(--font); }
     var shared = winners.length > 1;
     $("awards").hidden = g.duo;
     $("ranking").classList.toggle("dots", g.duo);
-    $("ranking").classList.toggle("cols", !g.duo && list.length > 5);
+    var cols = !g.duo && list.length > 5;
+    $("ranking").classList.toggle("cols", cols);
+    // Två jämna kolumner: 6 spelare blir 3 + 3, 10 spelare blir 5 + 5
+    $("ranking").style.gridTemplateRows = cols ? "repeat(" + Math.ceil(list.length / 2) + ", minmax(0, 58px))" : "";
     $("results").classList.toggle("duo", g.duo);
     if (g.duo) { showDuoResults(g); return; }
     var names = winners.slice(0, 3).map(function (p) { return p.name; }).join(" & ") + (winners.length > 3 ? " m.fl." : "");

@@ -1,0 +1,98 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<!-- Appikonen. Tre förslag: party (vald), vs och bang. Körs av icon.js. -->
+<style>
+@font-face { font-family: "Outfit"; font-weight: 100 900; src: url("../../app/fonts/outfit-latin.woff2") format("woff2"); }
+@font-face { font-family: "Outfit"; font-weight: 100 900; src: url("../../app/fonts/outfit-latin-ext.woff2") format("woff2"); unicode-range: U+0100-02BA; }
+html, body { margin: 0; background: #333; }
+.icon { width: 1024px; height: 1024px; display: block; }
+svg text { font-family: "Outfit"; }
+</style></head>
+<body>
+<script src="../../app/figures.js"></script>
+<div id="out"></div>
+<script>
+Figures.ensureDefs();
+const RED = '#d0283a', GOLD = '#f0b638', BG = '#0b0b0b';
+
+// Prickraster för smällar och bakgrund (samma som i appen, men större prickar för ikonstorlek)
+const DEFS = `<svg width="0" height="0" style="position:absolute"><defs>
+<pattern id="iB" width="22" height="22" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="22" height="22" fill="#fff"/><circle cx="11" cy="11" r="6.4" fill="#111"/></pattern>
+<pattern id="iRed" width="22" height="22" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="22" height="22" fill="${RED}"/><circle cx="11" cy="11" r="6.4" fill="#6e0d1c"/></pattern>
+<pattern id="iGold" width="22" height="22" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="22" height="22" fill="${GOLD}"/><circle cx="11" cy="11" r="6.4" fill="#8a5a10"/></pattern>
+<pattern id="iDots" width="30" height="30" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><circle cx="15" cy="15" r="5.5" fill="#fff" opacity=".16"/></pattern>
+<radialGradient id="iFade" cx="50%" cy="100%" r="75%"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+<mask id="iMask"><rect width="1024" height="1024" fill="url(#iFade)"/></mask>
+<radialGradient id="iGlow" cx="50%" cy="0%" r="80%"><stop offset="0" stop-color="#fff" stop-opacity=".16"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+</defs></svg>`;
+document.body.insertAdjacentHTML('afterbegin', DEFS);
+
+function burst(cx, cy, r, inner, pat, n = 32, rot = 0.1) {
+  const pts = [];
+  for (let i = 0; i < n; i++) {
+    const a = (Math.PI * 2 * i) / n + rot, k = i % 2 ? 0.62 : 0.92 + (i % 4 ? 0.08 : 0);
+    pts.push([k * Math.cos(a), k * Math.sin(a)]);
+  }
+  const P = (s, dx = 0, dy = 0) => 'M' + pts.map(p => (cx + p[0] * r * s + dx).toFixed(1) + ',' + (cy + p[1] * r * s + dy).toFixed(1)).join(' L') + ' Z';
+  return `<path d="${P(1, 18, 22)}" fill="#000"/><path d="${P(1)}" fill="url(#${pat})" stroke="#111" stroke-width="16" stroke-linejoin="round"/><path d="${P(0.72)}" fill="${inner}"/>`;
+}
+function lines(cx, cy, color, op, n = 40, r0 = 150) {
+  let s = '', seed = 7;
+  const rnd = () => { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; };
+  for (let i = 0; i < n; i++) {
+    const a = (Math.PI * 2 * i) / n + (rnd() - 0.5) * 0.08, dw = 0.008 + rnd() * 0.012, r1 = 1500;
+    s += `<path d="M${cx + r0 * Math.cos(a)},${cy + r0 * Math.sin(a)} L${cx + r1 * Math.cos(a - dw)},${cy + r1 * Math.sin(a - dw)} L${cx + r1 * Math.cos(a + dw)},${cy + r1 * Math.sin(a + dw)} Z" fill="${color}" opacity="${op}"/>`;
+  }
+  return s;
+}
+function word(text, x, y, size, fill, stroke, shadow, sw, off = 1) {
+  const t = `translate(${x},${y}) rotate(-5) skewX(-9)`;
+  return `<g transform="${t}"><text x="${size * .09 * off}" y="${size * .1 * off}" text-anchor="middle" font-size="${size}" font-weight="800" fill="${shadow}" stroke="${shadow}" stroke-width="${sw}" stroke-linejoin="round" letter-spacing="${-size * .03}">${text}</text>
+  <text x="0" y="0" text-anchor="middle" font-size="${size}" font-weight="800" fill="${fill}" stroke="${stroke}" stroke-width="${sw}" stroke-linejoin="round" paint-order="stroke" letter-spacing="${-size * .03}">${text}</text></g>`;
+}
+// Lägger en figur: x = mitt, y = fötternas nivå, w = bredd
+function fig(id, x, y, w, t, flip) {
+  const h = w * 720 / 580;
+  const s = Figures.full(id, t).replace('<svg class="fig"', `<svg x="${-w / 2}" y="${-h * 700 / 720}" width="${w}" height="${h}" overflow="visible"`);
+  return `<g transform="translate(${x},${y})${flip ? ' scale(-1,1)' : ''}">${s}</g>`;
+}
+function confetti(list) {
+  return list.map(([x, y, r, c, k]) => k === 'sq'
+    ? `<rect x="-14" y="-24" width="28" height="48" rx="3" fill="${c}" stroke="#111" stroke-width="5" transform="translate(${x},${y}) rotate(${r})"/>`
+    : `<g transform="translate(${x},${y}) rotate(${r}) scale(1.6)"><path d="M-26,0 q13,-18 26,0 t26,0" fill="none" stroke="#111" stroke-width="15" stroke-linecap="round"/><path d="M-26,0 q13,-18 26,0 t26,0" fill="none" stroke="${c}" stroke-width="7" stroke-linecap="round"/></g>`).join('');
+}
+function base(inner) {
+  return `<svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1024" height="1024" fill="${BG}"/><rect width="1024" height="1024" fill="url(#iGlow)"/>
+  <rect width="1024" height="1024" fill="url(#iDots)" mask="url(#iMask)"/>${inner}</svg>`;
+}
+
+const ICONS = {
+  // A: två figurer möts, VS-smäll i mitten (samma idé som gamla ikonen, ny stil)
+  vs: base(
+    lines(512, 330, '#fff', 0.09, 44) +
+    fig('partyhatt', 262, 1190, 740, 0.25) +
+    fig('dj', 776, 1215, 740, 0.02) +
+    burst(512, 255, 215, '#fff', 'iB', 28, 0.12) +
+    word('VS', 512, 312, 175, RED, '#fff', '#111', 26) +
+    confetti([[110, 120, 20, GOLD, 'sq'], [920, 110, -25, RED, 'sq'], [930, 400, 30, GOLD, 'wav'], [95, 430, -20, RED, 'sq']])
+  ),
+  // B: en festfigur, ensam och stor
+  party: base(
+    lines(512, 470, '#fff', 0.1, 44) +
+    burst(512, 470, 470, GOLD, 'iGold', 28, 0.15) +
+    fig('partyhatt', 500, 1210, 1020, 0.25) +
+    confetti([[120, 170, 20, RED, 'sq'], [900, 150, -25, '#fff', 'sq'], [905, 560, 30, RED, 'sq'], [125, 600, -20, '#fff', 'sq']])
+  ),
+  // C: bara smällen och ett utropstecken
+  bang: base(
+    lines(512, 512, '#fff', 0.1, 44, 200) +
+    burst(512, 512, 450, RED, 'iRed', 28, 0.15) +
+    word('!', 512, 700, 620, GOLD, '#111', '#111', 34, 0.45) +
+    confetti([[150, 160, 20, GOLD, 'sq'], [880, 160, -25, '#fff', 'sq'], [880, 870, 30, GOLD, 'sq'], [150, 880, -20, '#fff', 'sq']])
+  ),
+};
+const out = document.getElementById('out');
+for (const k in ICONS) { const d = document.createElement('div'); d.id = 'icon-' + k; d.style.cssText = 'width:1024px;height:1024px'; d.innerHTML = ICONS[k]; out.appendChild(d); }
+</script>
+</body></html>

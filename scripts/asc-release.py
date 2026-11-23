@@ -1,4 +1,4 @@
-# Fyller i version 1.0 av Synk i App Store Connect så att den är redo att skickas in.
+# Fyller i version 1.1 av Synk i App Store Connect så att den är redo att skickas in.
 #   python3 scripts/asc-release.py kolla  – visar läget, ändrar inget
 #   python3 scripts/asc-release.py fyll   – fyller i det som saknas eller skiljer sig
 #   python3 scripts/asc-release.py skicka – fyller i, lägger till köpet och skickar in för granskning
@@ -11,7 +11,7 @@ from asc_common import ApiError, api, get_all, get_optional, upload_asset
 ROOT = os.path.join(os.path.dirname(__file__), "..")
 META = json.load(open(os.path.join(ROOT, "appstore", "metadata.json"), encoding="utf-8"))
 BUNDLE_ID = "com.coalbun.synk"
-VERSION = "1.0"
+VERSION = "1.1"
 SCREENSHOT_TYPE = "APP_IPHONE_67"  # 6,9- och 6,7-tumsplatsen, 1320 × 2868 går in här
 
 # Åldersfrågorna. Synk har frågor om dejting, ex och fest i text, inget annat.
@@ -233,9 +233,11 @@ def version_loc(v):
                   "attributes": {"locale": META["locale"]},
                   "relationships": {"appStoreVersion": {"data": {"type": "appStoreVersions", "id": v["id"]}}}}})["data"]
         say("  skapade svensk text")
-    patch("appStoreVersionLocalizations", loc, {k: META[k] for k in
-          ("description", "keywords", "promotionalText", "supportUrl", "marketingUrl")},
-          "Beskrivning, sökord, reklamtext och länkar")
+    keys = ["description", "keywords", "promotionalText", "supportUrl", "marketingUrl"]
+    if META.get("whatsNew"):
+        keys.append("whatsNew")  # "Nyheter i den här versionen", krävs för uppdateringar
+    patch("appStoreVersionLocalizations", loc, {k: META[k] for k in keys},
+          "Beskrivning, nyheter, sökord, reklamtext och länkar")
     return loc
 
 
@@ -244,14 +246,21 @@ def screenshots(loc):
     sets = get_all(f"/v1/appStoreVersionLocalizations/{loc['id']}/appScreenshotSets")
     sset = next((s for s in sets if s["attributes"]["screenshotDisplayType"] == SCREENSHOT_TYPE), None)
     existing = get_all(f"/v1/appScreenshotSets/{sset['id']}/appScreenshots") if sset else []
-    names = [s["attributes"].get("fileName") for s in existing]
-    say(f"  uppladdade nu: {len(existing)} {names if names else ''}")
-    todo = [f for f in META["screenshots"] if f not in names]
-    if not todo:
+    say(f"  uppladdade nu: {len(existing)}")
+    # En ny version tar med sig bilderna från förra versionen, med samma filnamn.
+    # Därför jämförs innehållet (MD5), inte namnet.
+    blobs = {name: open(os.path.join(ROOT, "appstore", "screenshots", name), "rb").read() for name in META["screenshots"]}
+    sums = {name: hashlib.md5(blob).hexdigest() for name, blob in blobs.items()}
+    have = {s["attributes"].get("sourceFileChecksum") for s in existing}
+    todo = [name for name in META["screenshots"] if sums[name] not in have]
+    old = [s for s in existing if s["attributes"].get("sourceFileChecksum") not in set(sums.values())]
+    if not todo and not old:
+        say("  samma bilder som i appstore/screenshots")
         return
-    if existing and MODE == "fyll":
-        manual.append("Skärmbilder: det fanns redan andra bilder, så jag lade inte till fler. Ta bort dem och kör igen.")
-        say("  det finns redan andra bilder, lägger inte till fler")
+    if old:
+        say(f"  {len(old)} bilder på versionen är inte de nya")
+        if MODE == "fyll":
+            manual.append("Skärmbilder: versionen har kvar de gamla bilderna. Ta bort dem under 6,9 tum på versionssidan och kör igen, så laddar jag upp de nya.")
         return
     if MODE != "fyll":
         say(f"  saknas: {', '.join(todo)}")
@@ -261,13 +270,13 @@ def screenshots(loc):
                    "attributes": {"screenshotDisplayType": SCREENSHOT_TYPE},
                    "relationships": {"appStoreVersionLocalization": {"data": {"type": "appStoreVersionLocalizations", "id": loc["id"]}}}}})["data"]
     for name in todo:
-        blob = open(os.path.join(ROOT, "appstore", "screenshots", name), "rb").read()
+        blob = blobs[name]
         res = api("POST", "/v1/appScreenshots", {"data": {"type": "appScreenshots",
                   "attributes": {"fileName": name, "fileSize": len(blob)},
                   "relationships": {"appScreenshotSet": {"data": {"type": "appScreenshotSets", "id": sset["id"]}}}}})["data"]
         upload_asset(res, blob)
         api("PATCH", f"/v1/appScreenshots/{res['id']}", {"data": {"type": "appScreenshots", "id": res["id"],
-            "attributes": {"uploaded": True, "sourceFileChecksum": hashlib.md5(blob).hexdigest()}}})
+            "attributes": {"uploaded": True, "sourceFileChecksum": sums[name]}}})
         say(f"  laddade upp {name}")
     time.sleep(15)
     for s in get_all(f"/v1/appScreenshotSets/{sset['id']}/appScreenshots"):
@@ -337,9 +346,12 @@ def availability(app_id):
 
 def iap_status(app_id):
     say("\n== Köpet")
-    for x in get_all(f"/v1/apps/{app_id}/inAppPurchasesV2?limit=50"):
+    iaps = get_all(f"/v1/apps/{app_id}/inAppPurchasesV2?limit=50")
+    for x in iaps:
         say(f"  {x['attributes'].get('productId')}: {x['attributes'].get('state')}")
-    manual.append("Köpet: bocka i 'Lås upp Juicy och Crazy' under In-App Purchases and Subscriptions på versionssidan")
+    # Ett godkänt köp följer med appen. Bara ett nytt köp behöver bockas i på versionssidan.
+    if any(x["attributes"].get("state") != "APPROVED" for x in iaps):
+        manual.append("Köpet: bocka i 'Lås upp Juicy och Crazy' under In-App Purchases and Subscriptions på versionssidan")
 
 
 def submit(app_id, v):
@@ -374,7 +386,7 @@ def submit(app_id, v):
                 if "FIRST_NON_CONSUMABLE_MUST_BE_SUBMITTED_ON_VERSION" not in str(e):
                     raise
                 # Apples API kan inte koppla appens första köp till en version, det görs på webben.
-                say("  Version 1.0 ligger i en granskning, men appens första köp måste kopplas på versionssidan.")
+                say(f"  Version {VERSION} ligger i en granskning, men appens första köp måste kopplas på versionssidan.")
                 say("  Gör så här i App Store Connect: versionssidan → In-App Purchases and Subscriptions → + →")
                 say("  bocka i köpet → Klar, och skicka sedan in granskningen därifrån.")
                 return

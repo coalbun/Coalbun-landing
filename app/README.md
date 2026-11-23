@@ -6,7 +6,7 @@ Samma namn ger 1 poäng var. Olika namn: de förklarar sig och gruppen röstar o
 - `index.html`: hela appen (HTML, CSS och JS i en fil, inga beroenden)
 - `figures.js`: de tio festfigurerna, ritade som SVG i kod med en liten loop var. Figurerna har inga namn i appen.
 - `questions.js`: frågorna: Warm up 100 (gratis), Juicy 200 och Crazy 100
-- `icon.svg`, `icon-1024.png`, `icon-180.png`: appikonen (1024 för App Store och Google Play, 180 för hemskärmen)
+- `icon.svg`, `icon-1024.png`, `icon-180.png`: appikonen, festfiguren med partyhatt (1024 för App Store och Google Play, 180 för hemskärmen). Ritas av `node scripts/store/icon.js`, som också lägger den i iOS-projektet.
 
 ## Regler i koden
 - Warm up är gratis. Juicy och Crazy låses upp med ett engångsköp (produkt-ID `com.coalbun.synk.unlock`). I iPhone-appen går köpet via App Store och priset hämtas därifrån. I webbläsaren är köpet en demo som låser upp direkt.
