@@ -70,9 +70,5 @@
 	<true/>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
-	<key>NSCameraUsageDescription</key>
-	<string>Synk använder kameran om du vill ta en profilbild på en spelare. Bilden sparas bara på din telefon.</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Synk vill nå dina bilder om du vill välja en profilbild till en spelare. Bilden sparas bara på din telefon.</string>
 </dict>
 </plist>

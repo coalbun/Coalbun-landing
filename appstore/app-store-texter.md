@@ -28,7 +28,7 @@ Synk är festspelet som får hela rummet att skrika, skratta och säga "NEJ, det
 
 SÅ FUNKAR DET
 • 2 till 10 spelare. Skriv in namnen och kör på under en minut.
-• Ta en profilbild på varje spelare om ni vill.
+• Varje spelare får en egen festfigur: välj själv eller få en slumpad.
 • Alla spelar lika många gånger, och ett spel tar runt tio minuter.
 • Kvällens vinnare koras till Tankeläsaren.
 • Är ni bara två spelar ni som ett lag och ser hur väl ni känner varandra.
