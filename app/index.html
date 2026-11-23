@@ -374,9 +374,9 @@ svg text { font-family: var(--font); }
 .stage .figs.n3 > div { height: 70%; align-self: flex-end; }
 .stage .figs.n3 > div + div { margin-left: -16%; }
 .stage .figs svg { width: 100%; height: 100%; }
-.stage .crown { position: absolute; top: 0; left: 50%; height: 22%; transform: translateX(-50%) rotate(-6deg); z-index: 2; }
-.stage .name { position: absolute; bottom: -4%; left: 50%; transform: translateX(-50%); width: min(80%, 260px); z-index: 2; }
-.stage .name svg { width: 100%; height: auto; }
+/* Namnets höjd följer scenen, så att figuren syns ovanför även på små skärmar */
+.stage .name { position: absolute; bottom: -4%; left: 50%; transform: translateX(-50%); height: 44%; max-width: 80%; display: flex; justify-content: center; z-index: 2; }
+.stage .name svg { height: 100%; width: auto; max-width: 100%; }
 .winner-pts { position: relative; z-index: 2; font-weight: 800; font-size: 14px; color: var(--black); background: #fff; border-radius: 999px; padding: 2px 12px; border: 2.5px solid var(--black); box-shadow: 0 0 0 2px #fff; margin-top: clamp(4px, .8vh, 8px); }
 .winner-pts.wide { font-size: 13px; }
 
@@ -1538,9 +1538,9 @@ svg text { font-family: var(--font); }
   }
 
   // ---------- Resultat ----------
-  // Scenen: smäll, krona, figurerna i stort och namnet i guld
-  function stageHTML(figs, word, inner, pat, crown) {
-    return '<div class="stage">' + burstSVG(inner, pat) + (crown ? ICON.crown : "") +
+  // Scenen: smäll, figurerna i stort och namnet i guld. Ingen krona: figurerna har redan saker på huvudet.
+  function stageHTML(figs, word, inner, pat) {
+    return '<div class="stage">' + burstSVG(inner, pat) +
       '<div class="figs n' + figs.length + '">' + figs.map(function (f, i) { return '<div data-stage-fig="' + f + '" data-phase="' + (i * 0.33) + '"></div>'; }).join("") + "</div>" +
       '<div class="name">' + word + "</div></div>";
   }
@@ -1570,11 +1570,11 @@ svg text { font-family: var(--font); }
     var names = winners.slice(0, 3).map(function (p) { return p.name; }).join(" & ") + (winners.length > 3 ? " m.fl." : "");
     $("winner").innerHTML = nobody
       ? '<div class="winner-kicker">Inga poäng</div><h2 class="winner-title">Ingen vann</h2>' +
-        stageHTML(list.slice(0, 2).map(function (p) { return p.fig; }), wordSVG("0 poäng", "#fff", "#111", RED), "#111", "htK", false) +
+        stageHTML(list.slice(0, 2).map(function (p) { return p.fig; }), wordSVG("0 poäng", "#fff", "#111", RED), "#111", "htK") +
         '<div class="winner-pts wide">Ni känner inte varandra alls. Kör en runda till.</div>'
       : '<div class="winner-kicker">' + (shared ? "Delad seger" : "Kvällens vinnare") + "</div>" +
         '<h2 class="winner-title">' + (shared ? "Tankeläsarna" : "Tankeläsaren") + "</h2>" +
-        stageHTML(winners.slice(0, 3).map(function (p) { return p.fig; }), wordSVG(names, GOLD), RED, "htRed", true) +
+        stageHTML(winners.slice(0, 3).map(function (p) { return p.fig; }), wordSVG(names, GOLD), RED, "htRed") +
         '<div class="winner-pts">' + top + " poäng</div>";
     mountStage();
 
@@ -1613,7 +1613,7 @@ svg text { font-family: var(--font); }
     $("winner").innerHTML =
       '<div class="winner-kicker">Ert lagresultat</div>' +
       '<h2 class="winner-title">' + title + "</h2>" +
-      stageHTML(state.players.map(function (p) { return p.fig; }), wordSVG(hits + " av " + played, good ? RED : "#fff", good ? "#fff" : "#111", good ? "#111" : RED), good ? GOLD : "#111", good ? "htGold" : "htK", ratio >= 0.7) +
+      stageHTML(state.players.map(function (p) { return p.fig; }), wordSVG(hits + " av " + played, good ? RED : "#fff", good ? "#fff" : "#111", good ? "#111" : RED), good ? GOLD : "#111", good ? "htGold" : "htK") +
       '<div class="winner-pts wide">' + line + "</div>";
     mountStage();
     $("ranking").innerHTML = g.history.map(function (h, i) {

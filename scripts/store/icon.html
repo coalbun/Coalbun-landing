@@ -1,6 +1,6 @@
 <!doctype html>
 <html><head><meta charset="utf-8">
-<!-- Appikonen. Tre förslag: party (vald), vs och bang. Körs av icon.js. -->
+<!-- Appikonen. Förslag: duo (vald), duo2, vs, party och bang. Körs av icon.js. -->
 <style>
 @font-face { font-family: "Outfit"; font-weight: 100 900; src: url("../../app/fonts/outfit-latin.woff2") format("woff2"); }
 @font-face { font-family: "Outfit"; font-weight: 100 900; src: url("../../app/fonts/outfit-latin-ext.woff2") format("woff2"); unicode-range: U+0100-02BA; }
@@ -20,6 +20,7 @@ const DEFS = `<svg width="0" height="0" style="position:absolute"><defs>
 <pattern id="iB" width="22" height="22" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="22" height="22" fill="#fff"/><circle cx="11" cy="11" r="6.4" fill="#111"/></pattern>
 <pattern id="iRed" width="22" height="22" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="22" height="22" fill="${RED}"/><circle cx="11" cy="11" r="6.4" fill="#6e0d1c"/></pattern>
 <pattern id="iGold" width="22" height="22" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="22" height="22" fill="${GOLD}"/><circle cx="11" cy="11" r="6.4" fill="#8a5a10"/></pattern>
+<pattern id="iDotsK" width="30" height="30" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><circle cx="15" cy="15" r="5.5" fill="#000" opacity=".09"/></pattern>
 <pattern id="iDots" width="30" height="30" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><circle cx="15" cy="15" r="5.5" fill="#fff" opacity=".16"/></pattern>
 <radialGradient id="iFade" cx="50%" cy="100%" r="75%"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
 <mask id="iMask"><rect width="1024" height="1024" fill="url(#iFade)"/></mask>
@@ -67,7 +68,33 @@ function base(inner) {
   <rect width="1024" height="1024" fill="url(#iDots)" mask="url(#iMask)"/>${inner}</svg>`;
 }
 
+// Delad bakgrund som i VS-introt: svart till vänster, ljus till höger
+function split(cut1 = 610, cut2 = 414) {
+  return `<polygon points="${cut1},0 1024,0 1024,1024 ${cut2},1024" fill="#efeee9"/>
+  <polygon points="${cut1},0 1024,0 1024,1024 ${cut2},1024" fill="url(#iDotsK)"/>
+  <clipPath id="iRight"><polygon points="${cut1},0 1024,0 1024,1024 ${cut2},1024"/></clipPath>
+  <g clip-path="url(#iRight)">${lines(512, 600, '#111', 0.06, 40, 200)}</g>
+  <clipPath id="iLeft"><polygon points="0,0 ${cut1},0 ${cut2},1024 0,1024"/></clipPath>
+  <g clip-path="url(#iLeft)">${lines(512, 600, '#fff', 0.09, 40, 200)}</g>
+  <line x1="${cut1}" y1="-10" x2="${cut2}" y2="1034" stroke="#111" stroke-width="26"/>`;
+}
 const ICONS = {
+  // A2: samma idé som A, men figurerna fyller ikonen. Delad bakgrund som i VS-introt.
+  duo: `<svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+    <rect width="1024" height="1024" fill="${BG}"/>${split()}
+    ${fig('dansaren', 790, 1085, 1000, 0)}
+    ${fig('partyhatt', 236, 1060, 1000, 0.25)}
+    ${burst(512, 520, 80, '#fff', 'iB', 24, 0.12)}
+    ${word('VS', 512, 545, 68, RED, '#fff', '#111', 13)}
+  </svg>`,
+  // A3: samma som A2 men helsvart bakgrund
+  duo2: base(
+    lines(512, 560, '#fff', 0.09, 44, 200) +
+    fig('dansaren', 790, 1085, 1000, 0) +
+    fig('partyhatt', 236, 1060, 1000, 0.25) +
+    burst(512, 520, 80, '#fff', 'iB', 24, 0.12) +
+    word('VS', 512, 545, 68, RED, '#fff', '#111', 13)
+  ),
   // A: två figurer möts, VS-smäll i mitten (samma idé som gamla ikonen, ny stil)
   vs: base(
     lines(512, 330, '#fff', 0.09, 44) +

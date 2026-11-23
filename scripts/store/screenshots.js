@@ -164,7 +164,7 @@ async function capture(b) {
     await p.click('#next');
     await p.waitForTimeout(500);
   }
-  await p.waitForTimeout(3200); // konfettin har lagt sig
+  await p.waitForTimeout(6000); // konfettin har fallit klart, så att texten syns
   await shot(p, '05-vinnare');
   await p.close();
 
