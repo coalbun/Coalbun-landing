@@ -1,6 +1,6 @@
 // Ritar appikonen och lägger den på alla ställen där den används.
-//   node scripts/store/icon.js          -> förslaget "duo" (det som används nu)
-//   node scripts/store/icon.js duo2     -> ett av de andra förslagen: duo2, vs, party eller bang
+//   node scripts/store/icon.js          -> förslaget "duo2" (det som används nu)
+//   node scripts/store/icon.js duo      -> ett av de andra förslagen: duo, vs, party eller bang
 // Kräver Playwright med Chromium och python3 med Pillow.
 const { chromium } = require('playwright');
 const fs = require('fs');
@@ -8,7 +8,7 @@ const path = require('path');
 const { execFileSync } = require('child_process');
 
 const ROOT = path.resolve(__dirname, '../..');
-const PICK = process.argv[2] || 'duo';
+const PICK = process.argv[2] || 'duo2';
 const TMP = fs.mkdtempSync(path.join(require('os').tmpdir(), 'synk-icon-'));
 
 (async () => {
