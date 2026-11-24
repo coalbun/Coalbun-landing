@@ -133,6 +133,6 @@ Ligger i `appstore/screenshots/`, i storleken 1320 × 2868 för 6,9-tumsskärm. 
 
 Bilderna görs av den riktiga appen med `node scripts/store/screenshots.js` (kräver Playwright). Kör det igen när appen ändras, så blir bilderna aktuella.
 
-När 1.1 skapas i App Store Connect följer bilderna från 1.0 med. Skriptet `asc-release.py` märker att de inte är de nya och ber dig ta bort dem under 6,9 tum på versionssidan. Kör sedan "fyll" igen, så laddas de nya upp.
+När 1.1 skapas i App Store Connect följer bilderna från 1.0 med. Skriptet `asc-release.py` (läget "fyll") ser att de inte är de nya, tar bort dem från versionen som förbereds och laddar upp bilderna härifrån. Den version som redan ligger ute påverkas inte.
 
 Tänk på inför nya skärmbilder: Apple kräver att skärmbilder passar alla åldrar (4+), även om appen har högre åldersgräns. Visa inga frågor om sex, alkohol eller nakenhet på bilderna, och bara figurer utan drinkar (inte `drinken`, `fulla` eller `slitna`).

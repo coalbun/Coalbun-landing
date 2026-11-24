@@ -2,8 +2,8 @@
 #   python3 scripts/asc-release.py kolla  – visar läget, ändrar inget
 #   python3 scripts/asc-release.py fyll   – fyller i det som saknas eller skiljer sig
 #   python3 scripts/asc-release.py skicka – fyller i, lägger till köpet och skickar in för granskning
-# Texterna kommer från appstore/metadata.json. Bara läget "skicka" skickar in, och skriptet
-# tar aldrig bort något.
+# Texterna kommer från appstore/metadata.json. Bara läget "skicka" skickar in. Det enda skriptet
+# tar bort är gamla skärmbilder på versionen som förbereds, när de ersätts med de i appstore/screenshots.
 import hashlib, json, os, sys, time
 
 from asc_common import ApiError, api, get_all, get_optional, upload_asset
@@ -257,14 +257,16 @@ def screenshots(loc):
     if not todo and not old:
         say("  samma bilder som i appstore/screenshots")
         return
-    if old:
-        say(f"  {len(old)} bilder på versionen är inte de nya")
-        if MODE == "fyll":
-            manual.append("Skärmbilder: versionen har kvar de gamla bilderna. Ta bort dem under 6,9 tum på versionssidan och kör igen, så laddar jag upp de nya.")
-        return
     if MODE != "fyll":
+        if old:
+            say(f"  {len(old)} gamla bilder ersätts med de nya")
         say(f"  saknas: {', '.join(todo)}")
         return
+    # Gamla bilder på versionen som förbereds (till exempel de som följde med från förra versionen)
+    # tas bort, så att bara bilderna i appstore/screenshots finns kvar.
+    for s in old:
+        api("DELETE", f"/v1/appScreenshots/{s['id']}")
+        say(f"  tog bort gammal bild {s['attributes'].get('fileName')}")
     if not sset:
         sset = api("POST", "/v1/appScreenshotSets", {"data": {"type": "appScreenshotSets",
                    "attributes": {"screenshotDisplayType": SCREENSHOT_TYPE},
