@@ -538,9 +538,9 @@ svg text { font-family: var(--font); }
 .vsfx .pr::after { background: radial-gradient(ellipse 70% 80% at 55% 55%, transparent 45%, rgba(0, 0, 0, .35)); }
 .vsfx .lines { position: absolute; inset: 0; width: 100%; height: 100%; }
 .vsfx .split { position: absolute; top: 0; bottom: 0; left: 50%; width: 14px; margin-left: -7px; background: #0a0a0a; transform: skewX(-7.5deg); z-index: 1; }
-.vsfx .who { position: absolute; top: calc(env(safe-area-inset-top, 0px) + 9vh); font: 800 clamp(40px, 7vh, 64px)/1.2 var(--font); color: #fff; -webkit-text-stroke: 10px var(--black); paint-order: stroke fill; text-shadow: 5px 6px 0 #000; z-index: 3; max-width: 46%; padding: 6px 10px 12px 6px; overflow: hidden; white-space: nowrap; animation: vsDrop .4s cubic-bezier(.3, 1.6, .5, 1) .3s both; }
-.vsfx .who.a { left: 6%; }
-.vsfx .who.b { right: 6%; animation-delay: .38s; }
+.vsfx .who { position: absolute; top: calc(env(safe-area-inset-top, 0px) + 9vh); font: 800 clamp(40px, 7vh, 64px)/1.2 var(--font); color: #fff; -webkit-text-stroke: 10px var(--black); paint-order: stroke fill; text-shadow: 5px 6px 0 #000; z-index: 3; max-width: 44%; padding: 6px 9px 12px 5px; overflow: hidden; white-space: nowrap; animation: vsDrop .4s cubic-bezier(.3, 1.6, .5, 1) .3s both; }
+.vsfx .who.a { left: 3.5%; }
+.vsfx .who.b { right: 3.5%; animation-delay: .38s; }
 .vsfx .f { position: absolute; bottom: calc(env(safe-area-inset-bottom, 0px) + 6vh); height: min(40vh, 64vw); aspect-ratio: 580 / 720; z-index: 2; }
 .vsfx .f svg { width: 100%; height: 100%; }
 .vsfx .f.a { left: -3%; animation: vsFigL .5s cubic-bezier(.3, 1.4, .5, 1) .22s both; }
@@ -1372,8 +1372,24 @@ svg text { font-family: var(--font); }
       '<div class="f a" id="vs-fa"></div><div class="f b" id="vs-fb"></div>' +
       '<div class="mid">' + burstSVG("#fff", "htB") + '<div class="word">' + wordSVG("VS", "#111", "#fff", "#111") + "</div></div>" +
       '<div class="flash"></div></div><div class="skip">Tryck för att hoppa över</div></div>';
-    // Långa namn krymps så att de får plats, i stället för att kapas
-    fx.querySelectorAll(".who").forEach(function (el) { fitLine(el, 20); });
+    // Varje namn får bara plats på sin sida av diagonalen. Diagonalen lutar 7,5 grader,
+    // så vid namnens höjd ligger den till höger om mitten och högra sidan blir smalare.
+    // Långa namn krymps så att de får plats, i stället för att kapas.
+    (function () {
+      var W = fx.clientWidth || innerWidth, H = fx.clientHeight || innerHeight;
+      var tilt = Math.tan(7.5 * Math.PI / 180), gap = 7 + 5, edge = W * 0.035;
+      var names = fx.querySelectorAll(".who"), size = Infinity;
+      names.forEach(function (el) {
+        var y = el.offsetTop + el.offsetHeight / 2;
+        var lineX = W / 2 + tilt * (H / 2 - y);
+        var room = el.classList.contains("a") ? lineX - gap - edge : W - edge - lineX - gap;
+        el.style.maxWidth = Math.max(60, Math.floor(room)) + "px";
+        fitLine(el, 13);
+        size = Math.min(size, parseFloat(getComputedStyle(el).fontSize));
+      });
+      // Båda namnen lika stora, så att det ser jämnt ut
+      names.forEach(function (el) { el.style.fontSize = size + "px"; });
+    })();
     window.Figures.mount($("vs-fa"), a.fig, { phase: 0 });
     window.Figures.mount($("vs-fb"), b.fig, { phase: 0.4 });
     Sound.play("whoosh");
