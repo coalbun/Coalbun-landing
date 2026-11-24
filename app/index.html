@@ -359,7 +359,6 @@ svg text { font-family: var(--font); }
 .slam { position: relative; width: min(100%, 330px); display: grid; place-items: center; }
 .slam > svg { width: 100%; height: auto; position: relative; z-index: 1; }
 .slam .burst { position: absolute; inset: 4% 3%; width: 94%; height: 92%; }
-.slam .crown { position: absolute; top: -18%; left: 50%; width: 26%; transform: translateX(-50%) rotate(-6deg); z-index: 2; }
 .verdict-text { margin: 0; color: #333; font-weight: 700; font-size: clamp(14px, 2.1vh, 17px); line-height: 1.4; max-width: 28ch; text-wrap: balance; }
 .timer { position: absolute; top: clamp(8px, 1.4vh, 12px); right: 12px; width: 46px; height: 46px; display: grid; place-items: center; z-index: 3; }
 .timer svg { position: absolute; inset: 0; }
@@ -387,7 +386,7 @@ svg text { font-family: var(--font); }
 .winner-kicker { font-size: 12px; font-weight: 800; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); }
 .winner-title { font-weight: 800; letter-spacing: -0.02em; font-size: clamp(30px, 5.4vh, 44px); line-height: 1.05; margin: 2px 0 0; color: #fff; text-shadow: 3px 4px 0 #000; }
 .stage { position: relative; height: clamp(130px, 27vh, 280px); width: 100%; display: flex; justify-content: center; align-items: flex-end; margin-top: clamp(2px, 1vh, 10px); }
-.stage::before { content: ""; position: absolute; left: 50%; top: -10%; width: 120%; height: 120%; transform: translateX(-50%); background: radial-gradient(ellipse 45% 50% at 50% 45%, rgba(255, 255, 255, .2), transparent 70%); pointer-events: none; }
+.stage::before { content: ""; position: absolute; left: 0; top: -10%; width: 100%; height: 120%; background: radial-gradient(ellipse 54% 50% at 50% 45%, rgba(255, 255, 255, .2), transparent 70%); pointer-events: none; }
 .stage .burst { position: absolute; left: 50%; top: 4%; height: 76%; aspect-ratio: 1.35; transform: translateX(-50%); }
 .stage .figs { position: relative; height: 92%; display: flex; justify-content: center; align-items: flex-end; gap: 0; }
 .stage .figs > div { height: 100%; aspect-ratio: 580 / 720; }
@@ -436,7 +435,9 @@ svg text { font-family: var(--font); }
 .award-k i { width: 9px; height: 9px; border-radius: 50%; background: var(--c); border: 2px solid var(--black); box-shadow: 0 0 0 1.5px #fff; }
 .award-v { display: flex; align-items: center; gap: 0; margin-top: 2px; min-width: 0; }
 .award-v .avatar { --av: 30px; margin-right: -8px; margin-top: -4px; }
-.award-v span { margin-left: 14px; font-weight: 800; letter-spacing: -0.01em; font-size: 14px; line-height: 1.3; padding-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.award-v > span:not(.avatar) { margin-left: 14px; font-weight: 800; letter-spacing: -0.01em; font-size: 14px; line-height: 1.3; padding-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.award-v .duo-names { display: flex; flex-direction: column; }
+.duo-names b { font-weight: 800; font-size: 13px; line-height: 1.2; padding-bottom: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .award-s { font-size: 12px; color: var(--muted-2); font-weight: 700; }
 
 /* ---------- Ark (köp, ställning, nivåval, figurval) ---------- */
@@ -463,7 +464,12 @@ svg text { font-family: var(--font); }
 .sheet-list { display: grid; gap: 6px; }
 .score-row { display: grid; grid-template-columns: auto 1fr auto; gap: 12px; align-items: center; padding: 2px 0; height: 40px; }
 .score-row .avatar { --av: 40px; }
-.score-row .nm { font-weight: 700; }
+.score-row .nm { font-weight: 700; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.3; padding-bottom: 2px; }
+/* Många spelare: två kolumner, så att arket aldrig blir högre än skärmen */
+.sheet-list.two { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-flow: column; column-gap: 14px; gap: 4px 14px; }
+.sheet-list.two .score-row { height: 36px; gap: 8px; }
+.sheet-list.two .score-row .avatar { --av: 34px; }
+.sheet-list.two .score-row .pts { font-size: 18px; }
 .score-row .pts { font-weight: 800; font-size: 20px; font-variant-numeric: tabular-nums; }
 .cat-option { display: flex; align-items: center; justify-content: space-between; height: 58px; padding: 0 18px; border-radius: 20px; background: var(--surface); border: 2px solid var(--line); }
 .cat-option .cat-name { display: flex; align-items: center; gap: 10px; }
@@ -538,7 +544,7 @@ svg text { font-family: var(--font); }
 .vsfx .pr::after { background: radial-gradient(ellipse 70% 80% at 55% 55%, transparent 45%, rgba(0, 0, 0, .35)); }
 .vsfx .lines { position: absolute; inset: 0; width: 100%; height: 100%; }
 .vsfx .split { position: absolute; top: 0; bottom: 0; left: 50%; width: 14px; margin-left: -7px; background: #0a0a0a; transform: skewX(-7.5deg); z-index: 1; }
-.vsfx .who { position: absolute; top: calc(env(safe-area-inset-top, 0px) + 9vh); font: 800 clamp(40px, 7vh, 64px)/1.2 var(--font); color: #fff; -webkit-text-stroke: 10px var(--black); paint-order: stroke fill; text-shadow: 5px 6px 0 #000; z-index: 3; max-width: 44%; padding: 6px 9px 12px 5px; overflow: hidden; white-space: nowrap; animation: vsDrop .4s cubic-bezier(.3, 1.6, .5, 1) .3s both; }
+.vsfx .who { position: absolute; top: calc(env(safe-area-inset-top, 0px) + 9vh); font: 800 clamp(40px, 7vh, 64px)/1.2 var(--font); color: #fff; -webkit-text-stroke: 10px var(--black); paint-order: stroke fill; text-shadow: 5px 6px 0 #000; z-index: 3; max-width: 44%; padding: 6px 9px 12px 5px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; animation: vsDrop .4s cubic-bezier(.3, 1.6, .5, 1) .3s both; }
 .vsfx .who.a { left: 3.5%; }
 .vsfx .who.b { right: 3.5%; animation-delay: .38s; }
 .vsfx .f { position: absolute; bottom: calc(env(safe-area-inset-bottom, 0px) + 6vh); height: min(40vh, 64vw); aspect-ratio: 580 / 720; z-index: 2; }
@@ -998,7 +1004,6 @@ svg text { font-family: var(--font); }
   var ICON = {
     x: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>',
     lock: '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a5 5 0 0 0-5 5v3H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2h-1V7a5 5 0 0 0-5-5zm-3 8V7a3 3 0 1 1 6 0v3H9z"/></svg>',
-    crown: '<svg class="crown" viewBox="0 0 120 80" aria-hidden="true"><path d="M14 66 L8 18 L38 40 L60 8 L82 40 L112 18 L106 66 Z" fill="#f0b638" stroke="#111" stroke-width="7" stroke-linejoin="round"/><rect x="12" y="60" width="96" height="14" rx="4" fill="#f0b638" stroke="#111" stroke-width="6"/><circle cx="60" cy="46" r="7" fill="#d0283a" stroke="#111" stroke-width="3.5"/><circle cx="34" cy="52" r="5" fill="#d0283a" stroke="#111" stroke-width="3"/><circle cx="86" cy="52" r="5" fill="#d0283a" stroke="#111" stroke-width="3"/><path d="M22 30 L26 58" stroke="#fff6c8" stroke-width="4" stroke-linecap="round"/></svg>',
     chev: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>',
     dice: '<svg width="14" height="14" viewBox="0 0 16 16"><rect x="1.5" y="1.5" width="13" height="13" rx="3.5" fill="#fff" stroke="#111" stroke-width="2"/><circle cx="5" cy="5" r="1.4" fill="#111"/><circle cx="11" cy="11" r="1.4" fill="#111"/><circle cx="8" cy="8" r="1.4" fill="#111"/><circle cx="11" cy="5" r="1.4" fill="#111"/><circle cx="5" cy="11" r="1.4" fill="#111"/></svg>',
     check: '<svg width="13" height="13" viewBox="0 0 16 16"><path d="M3.5 8.5l3 3 6-7" fill="none" stroke="#111" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>'
@@ -1117,7 +1122,7 @@ svg text { font-family: var(--font); }
       el.innerHTML = state.players.map(function (p) {
         return '<div class="chip">' +
           '<button class="chip-main" data-edit="' + p.id + '" aria-label="Ändra ' + esc(p.name) + '"><span class="chip-avatar">' + avatarHTML(p) + "</span>" +
-          '<span class="chip-name' + (p.name.length > 9 ? " xlong" : p.name.length > 6 ? " long" : "") + '">' + esc(p.name) + "</span></button>" +
+          '<span class="chip-name' + (p.name.length > 9 ? " xlong" : p.name.length > 6 ? " long" : "") + '" data-fit="11">' + esc(p.name) + "</span></button>" +
           '<button class="chip-remove" data-remove="' + p.id + '" aria-label="Ta bort ' + esc(p.name) + '">' + ICON.x + "</button></div>";
       }).join("");
     }
@@ -1149,6 +1154,7 @@ svg text { font-family: var(--font); }
     var h = Math.max(28, Math.min(58, rowH()));
     el.style.setProperty("--chip-h", h + "px");
     el.style.setProperty("--chip-av", (h + 2) + "px");
+    fitNames(el);
   }
   window.addEventListener("resize", sizeChips);
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(sizeChips);
@@ -1358,6 +1364,15 @@ svg text { font-family: var(--font); }
     while (el.scrollWidth > el.clientWidth + 1 && size > min) { size -= 2; el.style.fontSize = size + "px"; }
   }
 
+  // Namn som inte får plats krymper ett steg i taget ner till data-fit (px). Först därefter blir det "…".
+  function fitNames(root) {
+    root.querySelectorAll("[data-fit]").forEach(function (el) {
+      el.style.fontSize = "";
+      var size = parseFloat(getComputedStyle(el).fontSize), min = Number(el.dataset.fit);
+      while (el.scrollWidth > el.clientWidth + 1 && size > min) { size -= 1; el.style.fontSize = size + "px"; }
+    });
+  }
+
   function reducedMotion() { return window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches; }
 
   // VS-intro: halvorna glider in, figurerna åker in, VS smäller. Cirka 2 sekunder, tryck för att hoppa över.
@@ -1384,7 +1399,7 @@ svg text { font-family: var(--font); }
         var lineX = W / 2 + tilt * (H / 2 - y);
         var room = el.classList.contains("a") ? lineX - gap - edge : W - edge - lineX - gap;
         el.style.maxWidth = Math.max(60, Math.floor(room)) + "px";
-        fitLine(el, 13);
+        fitLine(el, 10);
         size = Math.min(size, parseFloat(getComputedStyle(el).fontSize));
       });
       // Båda namnen lika stora, så att det ser jämnt ut
@@ -1413,7 +1428,7 @@ svg text { font-family: var(--font); }
     var lose = g.phase === "voted" && g.winners.length > 0 && !win;
     el.className = "fighter" + (win ? " win" : "") + (lose ? " lose" : "");
     el.innerHTML = '<div class="fbadge">' + window.Figures.badge(p.fig) + (win ? '<span class="plus">+1</span>' : "") + "</div>" +
-      '<span class="fighter-name' + (p.name.length > 9 ? " xlong" : p.name.length > 6 ? " long" : "") + '">' + esc(p.name) + "</span>" +
+      '<span class="fighter-name' + (p.name.length > 9 ? " xlong" : p.name.length > 6 ? " long" : "") + '" data-fit="12">' + esc(p.name) + "</span>" +
       '<span class="fighter-score">' + g.scores[id] + " p</span>";
   }
 
@@ -1431,7 +1446,10 @@ svg text { font-family: var(--font); }
       q.style.fontSize = mid + "px";
       if (q.scrollHeight <= availH && q.scrollWidth <= q.clientWidth + 1) lo = mid; else hi = mid;
     }
-    q.style.fontSize = Math.floor(lo) + "px";
+    // Radbrytningen ändras med storleken, så avrundningen kan få texten att ta en rad till. Kolla igen.
+    var size = Math.floor(lo);
+    q.style.fontSize = size + "px";
+    while (size > 16 && (q.scrollHeight > availH || q.scrollWidth > q.clientWidth + 1)) { size--; q.style.fontSize = size + "px"; }
     if (q.scrollWidth > q.clientWidth + 1) q.style.overflowWrap = "anywhere";
   }
   window.addEventListener("resize", fitQuestion);
@@ -1462,8 +1480,8 @@ svg text { font-family: var(--font); }
   }
 
   var RED = "#d0283a", GOLD = "#f0b638";
-  function slam(inner, pat, word, crown) {
-    return '<div class="slam">' + burstSVG(inner, pat) + (crown ? ICON.crown : "") + word + "</div>";
+  function slam(inner, pat, word) {
+    return '<div class="slam">' + burstSVG(inner, pat) + word + "</div>";
   }
 
   function renderRound(fresh) {
@@ -1474,6 +1492,7 @@ svg text { font-family: var(--font); }
     $("cat-pill").innerHTML = '<span class="dot"></span>' + c.name + ICON.chev;
     renderFighter(g.pair[0], $("fA"));
     renderFighter(g.pair[1], $("fB"));
+    fitNames($("round").querySelector(".fighters") || $("round"));
     document.querySelector("#round .vs").classList.toggle("away", g.phase === "vote" || g.phase === "miss2");
     if (g.phase !== "vote") stopVoteTimer();
 
@@ -1524,15 +1543,16 @@ svg text { font-family: var(--font); }
         '<div class="verdict">' + slam("#111", "htK", wordSVG("MISMATCH!", "#fff", "#111", RED)) +
         '<p class="verdict-text">Ni har tio sekunder på er att förklara. Sen röstar gänget: vem svarade rätt?</p></div>';
       hint.textContent = "Tryck på den som får poängen";
-      actions.innerHTML = '<div class="vote-row"><button class="vote" data-vote="' + a.id + '">' + avatarHTML(a) + "<span>" + esc(a.name) + "</span></button>" +
-        '<button class="vote" data-vote="' + b.id + '">' + avatarHTML(b) + "<span>" + esc(b.name) + "</span></button></div>" +
+      actions.innerHTML = '<div class="vote-row"><button class="vote" data-vote="' + a.id + '">' + avatarHTML(a) + '<span data-fit="13">' + esc(a.name) + "</span></button>" +
+        '<button class="vote" data-vote="' + b.id + '">' + avatarHTML(b) + '<span data-fit="13">' + esc(b.name) + "</span></button></div>" +
         '<button class="none-btn" data-vote="none">Ingen svarade rätt</button>';
       actions.querySelectorAll("[data-vote]").forEach(function (el) { el.onclick = function () { onVote(el.dataset.vote); }; });
+      fitNames(actions);
       startVoteTimer();
     } else if (g.phase === "voted") {
       var w = g.winners[0] ? byId(g.winners[0]) : null;
       card.innerHTML = (w ? linesSVG(RED, 0.3, 50, 45) : linesSVG("#111", 0.1, 50, 45)) + meta + '<div class="verdict">' +
-        (w ? slam(RED, "htRed", wordSVG(w.name, GOLD), true) : slam("#111", "htK", wordSVG("Ingen", "#fff", "#111", RED))) +
+        (w ? slam(RED, "htRed", wordSVG(w.name, GOLD)) : slam("#111", "htK", wordSVG("Ingen", "#fff", "#111", RED))) +
         '<p class="verdict-text">' + (w ? "Gänget har talat. Plus ett till " + esc(w.name) + "." : "Ingen poäng den här gången.") + "</p></div>";
       hint.innerHTML = "&nbsp;";
       nextButton();
@@ -1634,10 +1654,12 @@ svg text { font-family: var(--font); }
 
   function openScores() {
     var g = state.game;
-    sheet("<h2>Ställning</h2><div class=\"sheet-list\">" + sortedPlayers().map(function (p) {
-      return '<div class="score-row">' + avatarHTML(p) + '<span class="nm">' + esc(p.name) + '</span><span class="pts">' + g.scores[p.id] + "</span></div>";
+    var list = sortedPlayers(), two = list.length > 6;
+    sheet("<h2>Ställning</h2><div class=\"sheet-list" + (two ? " two\" style=\"grid-template-rows:repeat(" + Math.ceil(list.length / 2) + ",auto)" : "") + "\">" + list.map(function (p) {
+      return '<div class="score-row">' + avatarHTML(p) + '<span class="nm" data-fit="12">' + esc(p.name) + '</span><span class="pts">' + g.scores[p.id] + "</span></div>";
     }).join("") + '</div><div class="sound-row"><span>Ljud</span><button class="top-btn" id="sound-toggle">' + (Sound.isOn() ? "På" : "Av") + '</button></div><button class="btn btn-ghost" data-close>Stäng</button>');
     $("sound-toggle").onclick = function () { var v = Sound.toggle(); this.textContent = v ? "På" : "Av"; renderSound(); };
+    fitNames($("layer"));
   }
 
   // ---------- Resultat ----------
@@ -1671,6 +1693,7 @@ svg text { font-family: var(--font); }
     $("results").classList.toggle("duo", g.duo);
     if (g.duo) { showDuoResults(g); return; }
     var names = winners.slice(0, 3).map(function (p) { return p.name; }).join(" & ") + (winners.length > 3 ? " m.fl." : "");
+    if (names.length > 16) names = winners.length + " vinnare"; // annars blir namnen för små för att läsa
     $("winner").innerHTML = nobody
       ? '<div class="winner-kicker">Inga poäng</div><h2 class="winner-title">Ingen vann</h2>' +
         stageHTML(list.slice(0, 2).map(function (p) { return p.fig; }), wordSVG("0 poäng", "#fff", "#111", RED), "#111", "htK") +
@@ -1684,7 +1707,7 @@ svg text { font-family: var(--font); }
     var max = Math.max(1, top);
     $("ranking").innerHTML = list.map(function (p, i) {
       var first = !nobody && g.scores[p.id] === top;
-      return '<div class="rank-row' + (first ? " first" : "") + '"><span class="n">' + (i + 1) + "</span>" + avatarHTML(p) + '<span class="nm">' + esc(p.name) + "</span>" +
+      return '<div class="rank-row' + (first ? " first" : "") + '"><span class="n">' + (i + 1) + "</span>" + avatarHTML(p) + '<span class="nm" data-fit="11">' + esc(p.name) + "</span>" +
         '<span class="bar"><i style="width:' + Math.round(g.scores[p.id] / max * 100) + '%"></i></span><span class="pts">' + g.scores[p.id] + "</span></div>";
     }).join("");
 
@@ -1695,13 +1718,14 @@ svg text { font-family: var(--font); }
       if (m > bestVal) { bestVal = m; bestKey = k; }
       if (miss > worstVal) { worstVal = miss; worstKey = k; }
     });
-    function duo(k) { return k.split("|").map(function (id) { return byId(id).name; }).join(" & "); }
+    function duo(k) { var n = k.split("|").map(function (id) { return esc(byId(id).name); }); return '<span class="duo-names"><b data-fit="10">' + n[0] + ' &amp;</b><b data-fit="10">' + n[1] + "</b></span>"; }
     function faces(k) { return k.split("|").map(function (id) { return avatarHTML(byId(id)); }).join(""); }
     $("awards").innerHTML =
-      '<div class="award" style="--c:var(--gold)"><div class="award-k"><i></i>Bästa duon</div><div class="award-v">' + (bestKey ? faces(bestKey) + "<span>" + esc(duo(bestKey)) + "</span>" : '<span style="margin:0">Ingen än</span>') + '</div><div class="award-s">' + (bestKey ? bestVal + " match" + (bestVal === 1 ? "" : "er") : "Inga matcher") + "</div></div>" +
-      '<div class="award" style="--c:var(--red)"><div class="award-k"><i></i>Mest osams</div><div class="award-v">' + (worstKey ? faces(worstKey) + "<span>" + esc(duo(worstKey)) + "</span>" : '<span style="margin:0">Ingen</span>') + '</div><div class="award-s">' + (worstKey ? worstVal + " miss" + (worstVal === 1 ? "" : "ar") : "Helt sams") + "</div></div>";
+      '<div class="award" style="--c:var(--gold)"><div class="award-k"><i></i>Bästa duon</div><div class="award-v">' + (bestKey ? faces(bestKey) + duo(bestKey) : '<span style="margin:0">Ingen än</span>') + '</div><div class="award-s">' + (bestKey ? bestVal + " match" + (bestVal === 1 ? "" : "er") : "Inga matcher") + "</div></div>" +
+      '<div class="award" style="--c:var(--red)"><div class="award-k"><i></i>Mest osams</div><div class="award-v">' + (worstKey ? faces(worstKey) + duo(worstKey) : '<span style="margin:0">Ingen</span>') + '</div><div class="award-s">' + (worstKey ? worstVal + " miss" + (worstVal === 1 ? "" : "ar") : "Helt sams") + "</div></div>";
 
     show("results");
+    fitNames($("results"));
     if (!nobody) celebrate(1);
     else Sound.play("miss");
   }

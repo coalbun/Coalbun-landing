@@ -11,6 +11,7 @@ Festspel för iPhone. Två spelare per runda får en fråga, appen räknar ner 3
 | `site/synk/` | Integritetspolicy och supportsida, som Apple kräver |
 | `scripts/` | Hjälpskript som kopierar typsnitt och Capacitor in i `app/`, och skripten mot App Store Connect |
 | `scripts/store/` | Gör appikonen (`icon.js`) och App Store-bilderna (`screenshots.js`) av den riktiga appen. Kräver Playwright |
+| `scripts/webkit-test/` | Spelar igenom appen i WebKit, samma layoutmotor som Safari på iPhone, på sex iPhone-storlekar och letar kapad text, osynliga namn och sidor som går att scrolla (`./matrix.sh`) |
 
 ## Bygga och skicka in iPhone-appen
 Det här kräver en Mac med **Xcode 26 eller senare** (Apples krav sedan april 2026).
