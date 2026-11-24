@@ -640,7 +640,8 @@ function badge(id, t) {
   RID++;
   const c = 'bc_' + RID, light = !!LIGHT[id];
   return '<svg class="badge" viewBox="-230 -640 460 500" aria-hidden="true">' +
-    '<clipPath id="' + c + '"><circle cx="0" cy="-350" r="200"/><rect x="-260" y="-760" width="520" height="410"/></clipPath>' +
+    // Rekvisita (Zzz, glas, skiva, mobil, hattar) får sticka ut ovanför och bredvid huvudet
+    '<clipPath id="' + c + '"><circle cx="0" cy="-350" r="200"/><rect x="-335" y="-780" width="670" height="430"/></clipPath>' +
     '<circle cx="0" cy="-350" r="200" fill="' + (light ? '#161616' : '#ecebe8') + '" stroke="#111" stroke-width="22"/>' +
     '<circle cx="0" cy="-350" r="200" fill="url(#' + (light ? 'fdotsW' : 'fdotsK') + ')"/>' +
     '<g clip-path="url(#' + c + ')">' + draw(id, t == null ? STILL[id] : t) + '</g>' +

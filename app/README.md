@@ -17,6 +17,10 @@ Samma namn ger 1 poäng var. Olika namn: de förklarar sig och gruppen röstar o
 - Alla spelar exakt lika många gånger, även vid udda antal. Ett spel är 7–10 rundor: 2 spelare 10, 3 spelare 9, 4 spelare 8, 5 spelare 10, 6 spelare 9, 7–10 spelare lika många rundor som spelare (alla spelar två gånger). Sen visas resultatet automatiskt.
 - Två spelare: ni spelar som ett lag. Olika svar ger ingen omröstning, och resultatet är hur många matcher ni klarade.
 - Varje spelare får en egen figur. Bredvid namnfältet ligger en slumpad ledig figur, och trycker man på den väljer man själv. Samma figur kan inte användas av två spelare. Tio figurer räcker till max tio spelare.
+- Namnfältet ligger längre ner på startsidan, där tummen når. Spelarna läggs till ovanför det, och listan växer uppåt.
+- Medan tangentbordet är uppe visas bara spelarna och namnfältet, som hamnar precis ovanför tangentbordet. I appen kommer tangentbordets höjd från `@capacitor/keyboard` (inställt på `resize: none`), i webbläsaren från `visualViewport`.
+- Tryck på en spelare för att byta namn, byta figur eller ta bort spelaren. Krysset tar bort direkt.
+- Figurbrickorna har alltid fasta mått i pixlar. Safari på iPhone räknar fel på brickor som får sin storlek från procent, och då blev namnen bredvid osynliga.
 - Inga foton. Appen ber inte om kameran eller bildbiblioteket.
 - Före varje runda visas en VS-intro på cirka 2 sekunder med de två spelarnas figurer. Ett tryck hoppar över den. Med reducerad rörelse visas den inte alls.
 - Vid olika namn räknar en timer ner från 10 sekunder medan spelarna förklarar sig. Sen röstar gänget.

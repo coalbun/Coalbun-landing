@@ -16,6 +16,10 @@
       "backgroundColor": "#000000",
       "showSpinner": false,
       "launchFadeOutDuration": 0
+    },
+    "Keyboard": {
+      "resize": "none",
+      "resizeOnFullScreen": false
     }
   }
 }

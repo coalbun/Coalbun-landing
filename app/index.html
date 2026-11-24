@@ -144,13 +144,13 @@ svg text { font-family: var(--font); }
 .top-btn:active { background: rgba(255, 255, 255, .1); }
 
 /* ---------- Figurbrickor ---------- */
-.avatar { display: block; aspect-ratio: 460 / 500; height: 100%; flex-shrink: 0; position: relative; }
+.avatar { display: block; flex-shrink: 0; position: relative; height: var(--av, 44px); width: calc(var(--av, 44px) * .92); }
 .avatar svg, .fbadge svg { width: 100%; height: 100%; overflow: visible; }
 
 /* ---------- Startsidan ---------- */
 .add-row { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
-.slot { position: relative; height: clamp(50px, 7vh, 58px); aspect-ratio: 460 / 500; flex-shrink: 0; }
-.slot .avatar { height: 100%; margin-top: -3px; }
+.slot { position: relative; --av: clamp(50px, 7vh, 58px); height: var(--av); width: calc(var(--av) * .92); flex-shrink: 0; }
+.slot .avatar { margin-top: -3px; }
 .slot .dice {
   position: absolute; right: -6px; bottom: -4px; width: 24px; height: 24px; border-radius: 50%;
   background: var(--gold); border: 3px solid var(--black); box-shadow: 0 0 0 2px #fff;
@@ -186,18 +186,20 @@ svg text { font-family: var(--font); }
 .players {
   flex: 1; min-height: 0;
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-auto-rows: var(--chip-h, 48px);
+  align-content: end;
   gap: clamp(6px, 1vh, 10px);
 }
+.players.empty { grid-template-rows: 1fr; grid-auto-rows: auto; align-content: stretch; }
 .players-empty {
-  grid-column: 1 / -1; grid-row: 1 / -1;
+  grid-column: 1 / -1;
   border: 2px dashed var(--line); border-radius: var(--radius);
   display: grid; place-items: center; text-align: center;
   color: var(--muted); font-weight: 600; padding: 16px; line-height: 1.5;
 }
 .chip {
-  min-height: 0;
+  min-height: 0; min-width: 0;
   display: flex; align-items: center; gap: 8px;
   background: var(--surface);
   border: 2px solid var(--line);
@@ -205,11 +207,31 @@ svg text { font-family: var(--font); }
   padding: 2px 6px 2px 2px;
   animation: pop .35s cubic-bezier(.3, 1.5, .5, 1);
 }
-.chip-avatar { height: 100%; max-height: 60px; flex-shrink: 0; display: flex; }
+.chip-main { flex: 1; min-width: 0; height: 100%; display: flex; align-items: center; gap: 8px; text-align: left; }
+.chip-avatar { flex-shrink: 0; display: flex; --av: var(--chip-av, 44px); }
 .chip-avatar .avatar { margin-top: -4px; }
-.chip-name { flex: 1; min-width: 0; font-weight: 800; font-size: clamp(15px, 2.2vh, 18px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.chip-remove { width: 28px; height: 28px; border-radius: 50%; color: var(--muted-2); display: grid; place-items: center; flex-shrink: 0; }
+.chip-name { flex: 1; min-width: 0; font-weight: 800; font-size: clamp(15px, 2.2vh, 18px); line-height: 1.3; padding-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.chip-name.long { font-size: clamp(14px, 2vh, 16px); letter-spacing: -0.02em; }
+.chip-name.xlong { font-size: clamp(12px, 1.8vh, 14px); letter-spacing: -0.02em; }
+.chip-remove { width: 34px; height: 34px; border-radius: 50%; color: var(--muted-2); display: grid; place-items: center; flex-shrink: 0; }
 .chip-remove:active { background: var(--surface-2); }
+
+/* Medan tangentbordet är uppe: bara spelarna och namnfältet, precis ovanför tangentbordet */
+.kb .app { padding-bottom: calc(var(--kb, 0px) - env(safe-area-inset-bottom, 0px) + 10px); }
+.kb #setup .add-hint, .kb #setup .section-label, .kb #setup .cats, .kb #setup #start-btn, .kb #setup .tagline { display: none; }
+.kb .players { overflow: hidden; }
+#setup.compact .tagline { display: none; }
+.kb .toast { bottom: calc(var(--kb, 0px) + 16px); }
+.kb .sheet { padding-bottom: calc(var(--kb, 0px) + 14px); }
+.kb .sheet .pick-stage, .kb .sheet .pick-grid { display: none; }
+.sheet-input {
+  width: 100%; height: 52px; border-radius: 999px; flex-shrink: 0;
+  border: 2.5px solid rgba(255, 255, 255, .4); background: #151515; color: #fff;
+  padding: 0 20px; font: 700 18px var(--font);
+  user-select: text; -webkit-user-select: text;
+}
+.sheet-input:focus { border-color: #fff; outline: none; }
+.btn-danger { color: #ff6b7a; }
 
 /* Nivåerna: mörka rutor, den valda blir ett vitt kort med hård skugga */
 .cats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; flex-shrink: 0; padding: 6px 4px 8px; }
@@ -267,7 +289,7 @@ svg text { font-family: var(--font); }
 .fbadge { position: relative; height: clamp(58px, 12vh, 124px); aspect-ratio: 460 / 500; transition: transform .35s cubic-bezier(.3, 1.5, .5, 1); }
 .vs.away #fA .fbadge { transform: rotate(-12deg) translateX(-6px); }
 .vs.away #fB .fbadge { transform: rotate(12deg) translateX(6px); }
-.fighter-name { font-weight: 800; font-size: clamp(18px, 3vh, 25px); letter-spacing: -0.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; text-shadow: 2px 3px 0 #000; }
+.fighter-name { font-weight: 800; font-size: clamp(18px, 3vh, 25px); letter-spacing: -0.02em; line-height: 1.25; padding: 0 4px 5px 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; text-shadow: 2px 3px 0 #000; }
 .fighter-name.long { font-size: clamp(16px, 2.5vh, 21px); }
 .fighter-name.xlong { font-size: clamp(13px, 2vh, 17px); }
 .fighter-score { font-size: 13px; font-weight: 800; color: var(--black); background: #fff; border-radius: 999px; padding: 1px 10px; font-variant-numeric: tabular-nums; }
@@ -355,8 +377,8 @@ svg text { font-family: var(--font); }
   font-weight: 800; font-size: clamp(17px, 2.6vh, 21px);
 }
 .vote:active { transform: translateY(5px); box-shadow: 0 0 0 3px #fff, 0 2px 0 3px #000; }
-.vote .avatar { height: 115%; margin-top: -8px; }
-.vote span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.vote .avatar { --av: calc(var(--tap) * 1.1); margin-top: -8px; }
+.vote span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; line-height: 1.3; padding-bottom: 2px; }
 .none-btn { display: block; margin: clamp(6px, 1.4vh, 14px) auto 0; font-weight: 700; font-size: 15px; color: #d6d6d3; border: 2px solid rgba(255, 255, 255, .35); border-radius: 999px; padding: 8px 18px; }
 .none-btn:active { background: rgba(255, 255, 255, .1); }
 
@@ -392,8 +414,8 @@ svg text { font-family: var(--font); }
 .rank-row.first { background: #fff; color: var(--black); border: 3px solid var(--black); box-shadow: var(--hard-sm); }
 .rank-row .n { color: var(--muted); font-weight: 800; font-size: 13px; font-variant-numeric: tabular-nums; text-align: center; }
 .rank-row.first .n { color: var(--black); }
-.rank-row .avatar { height: 115%; max-height: 44px; margin-top: -6px; }
-.rank-row .nm { font-weight: 800; font-size: clamp(14px, 2vh, 16px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rank-row .avatar { --av: clamp(28px, 4.6vh, 42px); margin-top: -6px; }
+.rank-row .nm { font-weight: 800; font-size: clamp(14px, 2vh, 16px); line-height: 1.3; padding-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .rank-row .bar { height: 7px; border-radius: 5px; background: rgba(255, 255, 255, .12); overflow: hidden; }
 .rank-row .bar i { display: block; height: 100%; background: #fff; border-radius: 5px; }
 .rank-row.first .bar { background: #e6e5e2; }
@@ -401,7 +423,7 @@ svg text { font-family: var(--font); }
 .rank-row .pts { font-weight: 800; font-size: clamp(15px, 2.3vh, 18px); font-variant-numeric: tabular-nums; text-align: right; }
 .ranking.cols { grid-template-columns: 1fr 1fr; grid-template-rows: repeat(5, minmax(0, 1fr)); grid-auto-flow: column; column-gap: 8px; max-height: 240px; align-content: center; }
 .ranking.cols .rank-row { grid-template-columns: 14px auto minmax(0, 1fr) 20px; gap: 6px; padding: 0 9px 0 4px; }
-.ranking.cols .rank-row .avatar { max-height: clamp(26px, 9vw, 42px); }
+.ranking.cols .rank-row .avatar { --av: clamp(24px, min(8vw, 4vh), 38px); }
 .ranking.cols .bar { display: none; }
 #results.duo .stage { height: clamp(170px, 40vh, 360px); }
 .ranking.dots { grid-template-columns: repeat(5, minmax(0, 54px)); grid-auto-rows: auto; justify-content: center; align-content: center; gap: 10px; max-height: none; }
@@ -413,8 +435,8 @@ svg text { font-family: var(--font); }
 .award-k { display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
 .award-k i { width: 9px; height: 9px; border-radius: 50%; background: var(--c); border: 2px solid var(--black); box-shadow: 0 0 0 1.5px #fff; }
 .award-v { display: flex; align-items: center; gap: 0; margin-top: 2px; min-width: 0; }
-.award-v .avatar { height: 30px; margin-right: -8px; margin-top: -4px; }
-.award-v span { margin-left: 14px; font-weight: 800; letter-spacing: -0.01em; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.award-v .avatar { --av: 30px; margin-right: -8px; margin-top: -4px; }
+.award-v span { margin-left: 14px; font-weight: 800; letter-spacing: -0.01em; font-size: 14px; line-height: 1.3; padding-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
 .award-s { font-size: 12px; color: var(--muted-2); font-weight: 700; }
 
 /* ---------- Ark (köp, ställning, nivåval, figurval) ---------- */
@@ -440,7 +462,7 @@ svg text { font-family: var(--font); }
 .sheet .fine { font-size: 12px; text-align: center; }
 .sheet-list { display: grid; gap: 6px; }
 .score-row { display: grid; grid-template-columns: auto 1fr auto; gap: 12px; align-items: center; padding: 2px 0; height: 40px; }
-.score-row .avatar { height: 40px; }
+.score-row .avatar { --av: 40px; }
 .score-row .nm { font-weight: 700; }
 .score-row .pts { font-weight: 800; font-size: 20px; font-variant-numeric: tabular-nums; }
 .cat-option { display: flex; align-items: center; justify-content: space-between; height: 58px; padding: 0 18px; border-radius: 20px; background: var(--surface); border: 2px solid var(--line); }
@@ -461,7 +483,7 @@ svg text { font-family: var(--font); }
 .pick-stage svg { width: 100%; height: 100%; }
 .pick-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: clamp(8px, 1.6vh, 16px) 4px; }
 .pick { position: relative; display: grid; place-items: center; }
-.pick .avatar { height: clamp(52px, 8.4vh, 66px); }
+.pick .avatar { --av: clamp(52px, 8.4vh, 66px); }
 .pick:disabled .avatar { opacity: .32; filter: grayscale(1); }
 .pick .owner { position: absolute; left: 50%; bottom: -4px; transform: translateX(-50%); font-weight: 800; font-size: 11px; background: #fff; color: var(--black); border: 2px solid var(--black); border-radius: 999px; padding: 0 6px; max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .pick[aria-pressed="true"]::before { content: ""; position: absolute; width: clamp(50px, 8vh, 62px); aspect-ratio: 1; border-radius: 50%; top: 4%; box-shadow: 0 0 0 4px #fff, 0 0 0 7px var(--black), 0 0 0 9px #fff; }
@@ -516,7 +538,7 @@ svg text { font-family: var(--font); }
 .vsfx .pr::after { background: radial-gradient(ellipse 70% 80% at 55% 55%, transparent 45%, rgba(0, 0, 0, .35)); }
 .vsfx .lines { position: absolute; inset: 0; width: 100%; height: 100%; }
 .vsfx .split { position: absolute; top: 0; bottom: 0; left: 50%; width: 14px; margin-left: -7px; background: #0a0a0a; transform: skewX(-7.5deg); z-index: 1; }
-.vsfx .who { position: absolute; top: calc(env(safe-area-inset-top, 0px) + 9vh); font: 800 clamp(40px, 7vh, 64px)/1 var(--font); color: #fff; -webkit-text-stroke: 10px var(--black); paint-order: stroke fill; text-shadow: 5px 6px 0 #000; z-index: 3; max-width: 46%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; animation: vsDrop .4s cubic-bezier(.3, 1.6, .5, 1) .3s both; }
+.vsfx .who { position: absolute; top: calc(env(safe-area-inset-top, 0px) + 9vh); font: 800 clamp(40px, 7vh, 64px)/1.2 var(--font); color: #fff; -webkit-text-stroke: 10px var(--black); paint-order: stroke fill; text-shadow: 5px 6px 0 #000; z-index: 3; max-width: 46%; padding: 6px 10px 12px 6px; overflow: hidden; white-space: nowrap; animation: vsDrop .4s cubic-bezier(.3, 1.6, .5, 1) .3s both; }
 .vsfx .who.a { left: 6%; }
 .vsfx .who.b { right: 6%; animation-delay: .38s; }
 .vsfx .f { position: absolute; bottom: calc(env(safe-area-inset-bottom, 0px) + 6vh); height: min(40vh, 64vw); aspect-ratio: 580 / 720; z-index: 2; }
@@ -585,6 +607,8 @@ svg text { font-family: var(--font); }
       <button class="menu-btn" id="menu-btn" aria-label="Meny"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h10"/></svg></button>
     </header>
 
+    <div class="players" id="players"></div>
+
     <form class="add-row" id="add-form" autocomplete="off">
       <button class="slot" id="slot" type="button" aria-label="Välj figur till nästa spelare"></button>
       <input id="name-input" maxlength="14" placeholder="Skriv ett namn" enterkeyhint="done" aria-label="Spelarens namn">
@@ -593,8 +617,6 @@ svg text { font-family: var(--font); }
       </button>
     </form>
     <p class="add-hint" id="add-hint">Du får en slumpad figur. Tryck på den för att välja själv.</p>
-
-    <div class="players" id="players"></div>
 
     <p class="section-label">Välj nivå</p>
     <div class="cats" id="cats"></div>
@@ -1088,16 +1110,18 @@ svg text { font-family: var(--font); }
   // ---------- Setup ----------
   function renderPlayers() {
     var el = $("players");
+    el.classList.toggle("empty", !state.players.length);
     if (!state.players.length) {
       el.innerHTML = '<div class="players-empty">Lägg till minst två spelare.<br>Alla får en egen figur.</div>';
     } else {
       el.innerHTML = state.players.map(function (p) {
         return '<div class="chip">' +
-          '<button class="chip-avatar" data-fig="' + p.id + '" aria-label="Byt figur för ' + esc(p.name) + '">' + avatarHTML(p) + "</button>" +
-          '<span class="chip-name">' + esc(p.name) + "</span>" +
+          '<button class="chip-main" data-edit="' + p.id + '" aria-label="Ändra ' + esc(p.name) + '"><span class="chip-avatar">' + avatarHTML(p) + "</span>" +
+          '<span class="chip-name' + (p.name.length > 9 ? " xlong" : p.name.length > 6 ? " long" : "") + '">' + esc(p.name) + "</span></button>" +
           '<button class="chip-remove" data-remove="' + p.id + '" aria-label="Ta bort ' + esc(p.name) + '">' + ICON.x + "</button></div>";
       }).join("");
     }
+    sizeChips();
     var full = state.players.length >= MAX_PLAYERS;
     if (!full && usedFigs(null).indexOf(state.nextFig) >= 0) state.nextFig = randomFig(null);
     $("slot").innerHTML = full ? "" : avatarHTML({ fig: state.nextFig }) + '<span class="dice">' + ICON.dice + "</span>";
@@ -1112,21 +1136,56 @@ svg text { font-family: var(--font); }
     $("start-btn").textContent = state.players.length < 2 ? "Minst 2 spelare" : "Kör! " + plan.total + " rundor";
   }
 
+  // Spelarbrickornas storlek: fem rader ska alltid få plats ovanför namnfältet.
+  // Räknas ut i pixlar, eftersom Safari inte klarar procent på brickorna.
+  function sizeChips() {
+    var el = $("players");
+    if (!el || document.body.classList.contains("kb") || !el.clientHeight) return;
+    var gap = parseFloat(getComputedStyle(el).rowGap) || 8;
+    function rowH() { return Math.floor((el.clientHeight - 4 * gap) / 5); }
+    // På små skärmar med många spelare göms texten under loggan, så att alla får plats
+    $("setup").classList.remove("compact");
+    if (rowH() < 36 && state.players.length > 6) $("setup").classList.add("compact");
+    var h = Math.max(28, Math.min(58, rowH()));
+    el.style.setProperty("--chip-h", h + "px");
+    el.style.setProperty("--chip-av", (h + 2) + "px");
+  }
+  window.addEventListener("resize", sizeChips);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(sizeChips);
+
+  // Tangentbordet. I appen kommer höjden från Capacitors tangentbordstillägg, i webbläsaren från visualViewport.
+  // Medan man skriver visas bara spelarna och namnfältet, precis ovanför tangentbordet.
+  function setKeyboard(h) {
+    var open = h > 80;
+    document.documentElement.style.setProperty("--kb", (open ? Math.round(h) : 0) + "px");
+    document.body.classList.toggle("kb", open);
+    window.scrollTo(0, 0);
+    if (!open) setTimeout(sizeChips, 50);
+  }
+  window.addEventListener("keyboardWillShow", function (e) { setKeyboard(e.keyboardHeight || 0); });
+  window.addEventListener("keyboardWillHide", function () { setKeyboard(0); });
+  if (!IS_NATIVE && window.visualViewport) {
+    window.visualViewport.addEventListener("resize", function () { setKeyboard(window.innerHeight - window.visualViewport.height); });
+  }
+
   // Figurväljaren. playerId = null betyder nästa spelare som läggs till.
+  // För en spelare som redan är med går det också att byta namn och ta bort spelaren.
   function openFigPicker(playerId) {
     var p = playerId ? byId(playerId) : null;
     var who = p ? p.name : ($("name-input").value.trim() || "nästa spelare");
     var current = p ? p.fig : state.nextFig;
     var owners = {};
     state.players.forEach(function (q) { if (!p || q.id !== p.id) owners[q.fig] = q.name; });
-    sheet('<h2>Välj figur<small>till ' + esc(who) + "</small></h2>" +
+    sheet((p ? "<h2>Ändra spelare</h2>" + '<input class="sheet-input" id="edit-name" maxlength="14" enterkeyhint="done" aria-label="Namn" value="' + esc(p.name) + '">'
+        : '<h2>Välj figur<small>till ' + esc(who) + "</small></h2>") +
       '<div class="pick-stage"><div id="pick-preview"></div></div>' +
       '<div class="pick-grid" id="pick-grid">' + FIG_IDS.map(function (f) {
         var owner = owners[f];
         return '<button class="pick" data-pick="' + f + '" aria-pressed="' + (f === current) + '"' + (owner ? " disabled" : "") + ' aria-label="' + (owner ? "Tagen av " + esc(owner) : "Figur") + '">' +
           avatarHTML({ fig: f }) + (owner ? '<span class="owner">' + esc(owner) + "</span>" : "") + (f === current ? '<span class="check">' + ICON.check + "</span>" : "") + "</button>";
       }).join("") + "</div>" +
-      '<div class="btn-row"><button class="btn btn-ghost" id="pick-random">' + ICON.dice + "Slumpa</button><button class=\"btn btn-primary\" id=\"pick-done\">Klar</button></div>");
+      (p ? '<div class="btn-row"><button class="btn btn-ghost btn-danger" id="pick-remove">Ta bort</button><button class="btn btn-primary" id="pick-done">Klar</button></div>'
+         : '<div class="btn-row"><button class="btn btn-ghost" id="pick-random">' + ICON.dice + "Slumpa</button><button class=\"btn btn-primary\" id=\"pick-done\">Klar</button></div>"));
     var chosen = current;
     function select(f) {
       chosen = f;
@@ -1145,9 +1204,23 @@ svg text { font-family: var(--font); }
       if (!b || b.disabled) return;
       select(b.dataset.pick); buzz(8); Sound.play("add");
     });
-    $("pick-random").onclick = function () { select(randomFig(p ? p.id : null, chosen)); buzz(10); Sound.play("add"); };
+    if (!p) $("pick-random").onclick = function () { select(randomFig(null, chosen)); buzz(10); Sound.play("add"); };
+    if (p) {
+      $("pick-remove").onclick = function () {
+        state.players = state.players.filter(function (q) { return q.id !== p.id; });
+        savePlayers(); closeSheet(); renderPlayers(); Sound.play("remove");
+      };
+      $("edit-name").addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); $("edit-name").blur(); } });
+    }
     $("pick-done").onclick = function () {
-      if (p) { p.fig = chosen; savePlayers(); } else state.nextFig = chosen;
+      if (p) {
+        var name = $("edit-name").value.trim().replace(/\s+/g, " ");
+        if (!name) { toast("Skriv ett namn"); $("edit-name").focus(); return; }
+        var taken = state.players.some(function (q) { return q.id !== p.id && q.name.toLowerCase() === name.toLowerCase(); });
+        if (taken) { toast(name + " är redan med"); $("edit-name").focus(); return; }
+        p.name = name; p.fig = chosen; savePlayers();
+      } else state.nextFig = chosen;
+      if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
       closeSheet(); renderPlayers();
     };
   }
@@ -1222,8 +1295,8 @@ svg text { font-family: var(--font); }
       state.players = state.players.filter(function (p) { return p.id !== rm.dataset.remove; });
       savePlayers(); renderPlayers(); Sound.play("remove"); return;
     }
-    var fg = e.target.closest("[data-fig]");
-    if (fg) openFigPicker(fg.dataset.fig);
+    var ed = e.target.closest("[data-edit]");
+    if (ed) openFigPicker(ed.dataset.edit);
   });
 
   function renderSound() {
@@ -1237,7 +1310,7 @@ svg text { font-family: var(--font); }
   renderSound();
 
   // Lätt haptik på alla knappar
-  document.addEventListener("click", function (e) { if (e.target.closest(".btn, .top-btn, .cat-pill, .icon-btn, .chip-remove, .vote, .none-btn, .slot, .chip-avatar")) buzz(8); });
+  document.addEventListener("click", function (e) { if (e.target.closest(".btn, .top-btn, .cat-pill, .icon-btn, .chip-remove, .vote, .none-btn, .slot, .chip-main")) buzz(8); });
 
   $("cats").addEventListener("click", function (e) {
     var b = e.target.closest("[data-cat]");
@@ -1279,6 +1352,12 @@ svg text { font-family: var(--font); }
     playVS(byId(g.pair[0]), byId(g.pair[1]));
   }
 
+  // Krymper en rad text tills den får plats i sin bredd
+  function fitLine(el, min) {
+    var size = parseFloat(getComputedStyle(el).fontSize);
+    while (el.scrollWidth > el.clientWidth + 1 && size > min) { size -= 2; el.style.fontSize = size + "px"; }
+  }
+
   function reducedMotion() { return window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches; }
 
   // VS-intro: halvorna glider in, figurerna åker in, VS smäller. Cirka 2 sekunder, tryck för att hoppa över.
@@ -1293,6 +1372,8 @@ svg text { font-family: var(--font); }
       '<div class="f a" id="vs-fa"></div><div class="f b" id="vs-fb"></div>' +
       '<div class="mid">' + burstSVG("#fff", "htB") + '<div class="word">' + wordSVG("VS", "#111", "#fff", "#111") + "</div></div>" +
       '<div class="flash"></div></div><div class="skip">Tryck för att hoppa över</div></div>';
+    // Långa namn krymps så att de får plats, i stället för att kapas
+    fx.querySelectorAll(".who").forEach(function (el) { fitLine(el, 20); });
     window.Figures.mount($("vs-fa"), a.fig, { phase: 0 });
     window.Figures.mount($("vs-fb"), b.fig, { phase: 0.4 });
     Sound.play("whoosh");
