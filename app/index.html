@@ -707,13 +707,19 @@ svg text { font-family: var(--font); }
   }
   // Spelare från version 1.0 hade foto och färg. Nu får alla en egen figur i stället.
   (function migratePlayers() {
-    var taken = [];
+    var taken = [], changed = false;
     state.players = state.players.slice(0, 10).map(function (p) {
       var fig = FIG_IDS.indexOf(p.fig) >= 0 && taken.indexOf(p.fig) < 0 ? p.fig : null;
-      if (!fig) fig = FIG_IDS.filter(function (f) { return taken.indexOf(f) < 0; })[0];
+      if (!fig) {
+        var free = FIG_IDS.filter(function (f) { return taken.indexOf(f) < 0; });
+        fig = free[Math.floor(Math.random() * free.length)];
+      }
+      if (fig !== p.fig || Object.keys(p).length !== 3) changed = true;
       taken.push(fig);
       return { id: p.id, name: p.name, fig: fig };
     });
+    // Sparas direkt, så att profilbilder från 1.0 försvinner från telefonen
+    if (changed) store.set("players", state.players);
   })();
   state.nextFig = randomFig(null);
 
