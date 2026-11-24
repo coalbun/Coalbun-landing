@@ -11,11 +11,12 @@
   let shotN = 0;
   async function shot(name) { MH.shot.postMessage(String(++shotN).padStart(2, '0') + '-' + name); await wait(250); }
 
+  // Namn får vara högst 10 tecken. De bredaste som går: W och M.
   const CFGS = {
-    duo: ['Gyllenhjärta', 'Wilhelmina-Joy'],
+    duo: ['Gyllenhjär', 'Wilhelmina'],
     six: ['Jag', 'Pippi', 'Yggy', 'Fjolla', 'Jeppe', 'Ljungqvist'],
-    ten: ['Gyllenhjärta', 'Jag', 'Pippi', 'Yggy', 'Fjolla', 'Jeppe', 'Åsa', 'Q', 'Ljungqvist', 'Wilhelmina-Joy'],
-    wide: ['WWWWWWWWWWWWWW', 'MMMMMMMMMMMMMM', 'Wilhelmina-Joy'],
+    ten: ['Gyllenhjär', 'Jag', 'Pippi', 'Yggy', 'Fjolla', 'Jeppe', 'Åsa', 'Q', 'Ljungqvist', 'Wilhelmina'],
+    wide: ['MMMMMMMMMM', 'WWWWWWWWWW', 'Wilhelmina', 'Mohammed-M', 'Gyllenhjär', 'Maximilian', 'Annemaria', 'Bartholome', 'Wolfgangus', 'Wiktoriaaa'],
   };
   const NAMES = CFGS[T.cfg];
 
@@ -86,8 +87,12 @@
       const c = clipOf(el);
       const cs = getComputedStyle(el);
       const ell = cs.textOverflow === 'ellipsis';
-      if (tr.r > c.r + 1.5 || tr.l < c.l - 1.5) {
-        if (ell && el.scrollWidth > el.clientWidth) note(tag, `"${txt}" förkortas med … (${desc(el)})`);
+      if (ell && cs.overflowX !== 'visible') {
+        const room = el.offsetWidth ? el.getBoundingClientRect().width * el.clientWidth / el.offsetWidth * 0 + (el.offsetWidth - parseFloat(cs.borderLeftWidth) - parseFloat(cs.borderRightWidth)) * (el.getBoundingClientRect().width / el.offsetWidth) - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight) : 0;
+        const tw = tr.r - tr.l;
+        if (tw > room + 0.01) add(tag, `"${txt}" förkortas med … (${desc(el)}, ${(tw - room).toFixed(2)}px för bred)`);
+      } else if (tr.r > c.r + 1.5 || tr.l < c.l - 1.5) {
+        if (ell && el.scrollWidth > el.clientWidth) add(tag, `"${txt}" förkortas med … (${desc(el)})`);
         else add(tag, `texten "${txt}" kapas på sidan (${desc(el)}, ${(Math.max(tr.r - c.r, c.l - tr.l)).toFixed(1)}px av ${c.byR || c.byL || 'skärmen'})`);
       }
       if (tr.b > c.b + 1.5) add(tag, `texten "${txt}" kapas nertill (${desc(el)}, ${(tr.b - c.b).toFixed(1)}px av ${c.byB || 'skärmen'})`);

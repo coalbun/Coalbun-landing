@@ -211,6 +211,8 @@ svg text { font-family: var(--font); }
 .chip-avatar { flex-shrink: 0; display: flex; --av: var(--chip-av, 44px); }
 .chip-avatar .avatar { margin-top: -4px; }
 .chip-name { flex: 1; min-width: 0; font-weight: 800; font-size: clamp(15px, 2.2vh, 18px); line-height: 1.3; padding-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* Namn krymper i stället för att förkortas (fitNames i skriptet), så "…" visas aldrig */
+[data-fit] { text-overflow: clip !important; }
 .chip-name.long { font-size: clamp(14px, 2vh, 16px); letter-spacing: -0.02em; }
 .chip-name.xlong { font-size: clamp(12px, 1.8vh, 14px); letter-spacing: -0.02em; }
 .chip-remove { width: 34px; height: 34px; border-radius: 50%; color: var(--muted-2); display: grid; place-items: center; flex-shrink: 0; }
@@ -617,7 +619,7 @@ svg text { font-family: var(--font); }
 
     <form class="add-row" id="add-form" autocomplete="off">
       <button class="slot" id="slot" type="button" aria-label="Välj figur till nästa spelare"></button>
-      <input id="name-input" maxlength="14" placeholder="Skriv ett namn" enterkeyhint="done" aria-label="Spelarens namn">
+      <input id="name-input" maxlength="10" placeholder="Skriv ett namn" enterkeyhint="done" aria-label="Spelarens namn">
       <button class="icon-btn" id="add-btn" type="submit" aria-label="Lägg till spelare">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
       </button>
@@ -682,6 +684,7 @@ svg text { font-family: var(--font); }
   var PRICE = "59 kr"; // visas bara i webbversionen; i appen används priset från App Store
   function priceText() { return storePrice || (IS_NATIVE ? "" : PRICE); }
   var MAX_PLAYERS = 10;
+  var MAX_NAME = 10; // längre namn får inte plats överallt utan att kapas
   var NO_REPEAT_WITHIN = 50;
   var TIMER_SECONDS = 10; // tid att förklara sig vid olika namn
 
@@ -735,7 +738,7 @@ svg text { font-family: var(--font); }
   }
   // Spelare från version 1.0 hade foto och färg. Nu får alla en egen figur i stället.
   (function migratePlayers() {
-    var taken = [], changed = false;
+    var taken = [], names = [], changed = false;
     state.players = state.players.slice(0, 10).map(function (p) {
       var fig = FIG_IDS.indexOf(p.fig) >= 0 && taken.indexOf(p.fig) < 0 ? p.fig : null;
       if (!fig) {
@@ -744,7 +747,12 @@ svg text { font-family: var(--font); }
       }
       if (fig !== p.fig || Object.keys(p).length !== 3) changed = true;
       taken.push(fig);
-      return { id: p.id, name: p.name, fig: fig };
+      // 1.0 tillät 14 tecken. Nu är gränsen 10, så att namnen alltid får plats.
+      var name = String(p.name || "").slice(0, MAX_NAME).trim() || "Spelare";
+      for (var k = 2; names.indexOf(name.toLowerCase()) >= 0; k++) name = name.slice(0, MAX_NAME - 1).trim() + k;
+      names.push(name.toLowerCase());
+      if (name !== p.name) changed = true;
+      return { id: p.id, name: name, fig: fig };
     });
     // Sparas direkt, så att profilbilder från 1.0 försvinner från telefonen
     if (changed) store.set("players", state.players);
@@ -1182,17 +1190,18 @@ svg text { font-family: var(--font); }
     var current = p ? p.fig : state.nextFig;
     var owners = {};
     state.players.forEach(function (q) { if (!p || q.id !== p.id) owners[q.fig] = q.name; });
-    sheet((p ? "<h2>Ändra spelare</h2>" + '<input class="sheet-input" id="edit-name" maxlength="14" enterkeyhint="done" aria-label="Namn" value="' + esc(p.name) + '">'
+    sheet((p ? "<h2>Ändra spelare</h2>" + '<input class="sheet-input" id="edit-name" maxlength="10" enterkeyhint="done" aria-label="Namn" value="' + esc(p.name) + '">'
         : '<h2>Välj figur<small>till ' + esc(who) + "</small></h2>") +
       '<div class="pick-stage"><div id="pick-preview"></div></div>' +
       '<div class="pick-grid" id="pick-grid">' + FIG_IDS.map(function (f) {
         var owner = owners[f];
         return '<button class="pick" data-pick="' + f + '" aria-pressed="' + (f === current) + '"' + (owner ? " disabled" : "") + ' aria-label="' + (owner ? "Tagen av " + esc(owner) : "Figur") + '">' +
-          avatarHTML({ fig: f }) + (owner ? '<span class="owner">' + esc(owner) + "</span>" : "") + (f === current ? '<span class="check">' + ICON.check + "</span>" : "") + "</button>";
+          avatarHTML({ fig: f }) + (owner ? '<span class="owner" data-fit="8">' + esc(owner) + "</span>" : "") + (f === current ? '<span class="check">' + ICON.check + "</span>" : "") + "</button>";
       }).join("") + "</div>" +
       (p ? '<div class="btn-row"><button class="btn btn-ghost btn-danger" id="pick-remove">Ta bort</button><button class="btn btn-primary" id="pick-done">Klar</button></div>'
          : '<div class="btn-row"><button class="btn btn-ghost" id="pick-random">' + ICON.dice + "Slumpa</button><button class=\"btn btn-primary\" id=\"pick-done\">Klar</button></div>"));
     var chosen = current;
+    fitNames($("pick-grid"));
     function select(f) {
       chosen = f;
       $("pick-grid").querySelectorAll("[data-pick]").forEach(function (b) {
@@ -1220,7 +1229,7 @@ svg text { font-family: var(--font); }
     }
     $("pick-done").onclick = function () {
       if (p) {
-        var name = $("edit-name").value.trim().replace(/\s+/g, " ");
+        var name = $("edit-name").value.trim().replace(/\s+/g, " ").slice(0, MAX_NAME).trim();
         if (!name) { toast("Skriv ett namn"); $("edit-name").focus(); return; }
         var taken = state.players.some(function (q) { return q.id !== p.id && q.name.toLowerCase() === name.toLowerCase(); });
         if (taken) { toast(name + " är redan med"); $("edit-name").focus(); return; }
@@ -1275,7 +1284,7 @@ svg text { font-family: var(--font); }
   }
 
   function addPlayer(name) {
-    name = name.trim().replace(/\s+/g, " ");
+    name = name.trim().replace(/\s+/g, " ").slice(0, MAX_NAME).trim();
     if (!name) return;
     if (state.players.length >= MAX_PLAYERS) return;
     var exists = state.players.some(function (p) { return p.name.toLowerCase() === name.toLowerCase(); });
@@ -1358,19 +1367,37 @@ svg text { font-family: var(--font); }
     playVS(byId(g.pair[0]), byId(g.pair[1]));
   }
 
-  // Krymper en rad text tills den får plats i sin bredd
-  function fitLine(el, min) {
-    var size = parseFloat(getComputedStyle(el).fontSize);
-    while (el.scrollWidth > el.clientWidth + 1 && size > min) { size -= 2; el.style.fontSize = size + "px"; }
-  }
 
-  // Namn som inte får plats krymper ett steg i taget ner till data-fit (px). Först därefter blir det "…".
-  function fitNames(root) {
-    root.querySelectorAll("[data-fit]").forEach(function (el) {
-      el.style.fontSize = "";
-      var size = parseFloat(getComputedStyle(el).fontSize), min = Number(el.dataset.fit);
-      while (el.scrollWidth > el.clientWidth + 1 && size > min) { size -= 1; el.style.fontSize = size + "px"; }
+  // Namn som inte får plats krymper. Först ett steg i taget ner till data-fit (px), som är en
+  // bra läsbar storlek. Räcker inte det krymper namnet exakt så mycket som behövs. Aldrig "…".
+  // Bredden mäts exakt (Safari sätter "…" redan vid en bråkdel av en pixel) och utan pågående animationer.
+  function textWidth(el) {
+    var r = document.createRange(); r.selectNodeContents(el);
+    var box = el.getBoundingClientRect(), k = box.width ? el.offsetWidth / box.width : 1;
+    return r.getBoundingClientRect().width * k;
+  }
+  function fitOne(el, min) {
+    el.style.fontSize = "";
+    if (!el.clientWidth) return;
+    var cs = getComputedStyle(el), size = parseFloat(cs.fontSize);
+    var room = el.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight) - 1;
+    min = min || Number(el.dataset.fit) || 10;
+    while (textWidth(el) > room && size > min) { size -= 1; el.style.fontSize = size + "px"; }
+    for (var i = 0; i < 6 && textWidth(el) > room && size > 4; i++) {
+      size = Math.max(4, Math.floor(size * room / textWidth(el) * 10) / 10);
+      el.style.fontSize = size + "px";
+    }
+    el._fitW = el.clientWidth;
+  }
+  // Ändras rutans bredd efteråt (tangentbord, fler spelare, typsnitt) mäts namnet om
+  var fitObs = window.ResizeObserver ? new ResizeObserver(function (list) {
+    list.forEach(function (e) {
+      var el = e.target;
+      if (Math.abs(el.clientWidth - (el._fitW || 0)) >= 1) requestAnimationFrame(function () { fitOne(el); });
     });
+  }) : null;
+  function fitNames(root) {
+    root.querySelectorAll("[data-fit]").forEach(function (el) { fitOne(el); if (fitObs) fitObs.observe(el); });
   }
 
   function reducedMotion() { return window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches; }
@@ -1399,7 +1426,7 @@ svg text { font-family: var(--font); }
         var lineX = W / 2 + tilt * (H / 2 - y);
         var room = el.classList.contains("a") ? lineX - gap - edge : W - edge - lineX - gap;
         el.style.maxWidth = Math.max(60, Math.floor(room)) + "px";
-        fitLine(el, 10);
+        fitOne(el, 10);
         size = Math.min(size, parseFloat(getComputedStyle(el).fontSize));
       });
       // Båda namnen lika stora, så att det ser jämnt ut

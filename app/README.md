@@ -21,7 +21,8 @@ Samma namn ger 1 poäng var. Olika namn: de förklarar sig och gruppen röstar o
 - Medan tangentbordet är uppe visas bara spelarna och namnfältet, som hamnar precis ovanför tangentbordet. I appen kommer tangentbordets höjd från `@capacitor/keyboard` (inställt på `resize: none`), i webbläsaren från `visualViewport`.
 - Tryck på en spelare för att byta namn, byta figur eller ta bort spelaren. Krysset tar bort direkt.
 - Figurbrickorna har alltid fasta mått i pixlar. Safari på iPhone räknar fel på brickor som får sin storlek från procent, och då blev namnen bredvid osynliga.
-- Långa namn krymper tills de får plats (`data-fit` anger minsta storlek i pixlar), först därefter blir det "…". Ställningen visas i två kolumner när ni är fler än sex.
+- Namn får vara högst 10 tecken (längre namn från 1.0 kortas vid uppdateringen). Namn som inte får plats krymper tills de gör det (`fitNames`, `data-fit` är storleken där den exakta krympningen tar vid). "…" visas aldrig. Ställningen visas i två kolumner när ni är fler än sex.
+- `scripts/webkit-test/matrix.sh` spelar igenom appen i WebKit på sex iPhone-storlekar och räknar ett namn med "…" som ett fel.
 - Inga foton. Appen ber inte om kameran eller bildbiblioteket.
 - Före varje runda visas en VS-intro på cirka 2 sekunder med de två spelarnas figurer. Ett tryck hoppar över den. Med reducerad rörelse visas den inte alls.
 - Vid olika namn räknar en timer ner från 10 sekunder medan spelarna förklarar sig. Sen röstar gänget.
