@@ -19,7 +19,7 @@ Samma namn ger 1 poäng var. Olika namn: de förklarar sig och gruppen röstar o
 - Varje spelare får en egen figur. Bredvid namnfältet ligger en slumpad ledig figur, och trycker man på den väljer man själv. Samma figur kan inte användas av två spelare. Tio figurer räcker till max tio spelare.
 - Namnfältet ligger längre ner på startsidan, där tummen når. Spelarna läggs till ovanför det, och listan växer uppåt.
 - Medan tangentbordet är uppe visas bara spelarna och namnfältet, som hamnar precis ovanför tangentbordet. I appen kommer tangentbordets höjd från `@capacitor/keyboard` (inställt på `resize: none`), i webbläsaren från `visualViewport`.
-- Tryck på en spelare för att byta namn, byta figur eller ta bort spelaren. Krysset tar bort direkt.
+- Tryck på en spelare för att byta namn, byta figur eller ta bort spelaren. Brickorna har inget kryss, så att namnen får mer plats.
 - Figurbrickorna har alltid fasta mått i pixlar. Safari på iPhone räknar fel på brickor som får sin storlek från procent, och då blev namnen bredvid osynliga.
 - Namn får vara högst 10 tecken (längre namn från 1.0 kortas vid uppdateringen). Namn som inte får plats krymper tills de gör det (`fitNames`, `data-fit` är storleken där den exakta krympningen tar vid). "…" visas aldrig. Ställningen visas i två kolumner när ni är fler än sex.
 - `scripts/webkit-test/matrix.sh` spelar igenom appen i WebKit på sex iPhone-storlekar och räknar ett namn med "…" som ett fel.
@@ -28,7 +28,7 @@ Samma namn ger 1 poäng var. Olika namn: de förklarar sig och gruppen röstar o
 - Vid olika namn räknar en timer ner från 10 sekunder medan spelarna förklarar sig. Sen röstar gänget.
 - Stil: svartvitt med prickraster och fartlinjer. Färg bara på figurernas rekvisita och i de stora ögonblicken (frågan, NU!, MATCH!, vinnaren). Nivåfärger: Warm up grön, Juicy orange, Crazy röd.
 - Frågan görs så stor som möjligt men får aldrig gå utanför kortet.
-- Inget scrollande på någon skärmstorlek. Testat på 320×568 till 430×932.
+- Inget scrollande på någon skärmstorlek. Testat på 320×568 till 440×956, i WebKit (`scripts/webkit-test`).
 
 ## Köra lokalt
 Öppna `index.html` i en webbläsare. Typsnittet och allt annat ligger i mappen, så det fungerar utan internet. Hur iPhone-appen byggs står i README i projektets rotmapp.

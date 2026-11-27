@@ -13,13 +13,14 @@ Kopiera in texterna nedan i App Store Connect. Siffran inom parentes är antal t
 - **Primärt språk:** Svenska
 
 ## Version 1.1
-**Nyheter i den här versionen** (409/4000):
+**Nyheter i den här versionen** (476/4000):
 
 ```
 Synk har fått en helt ny look!
 
 • Festfigurer: varje spelare får en egen figur. Välj själv eller få en slumpad.
 • Ny stil i svartvitt, med serietidningssmällar och färg när något händer.
+• Tryck på en spelare för att byta namn, byta figur eller ta bort.
 • VS-intro före varje runda.
 • Säger ni olika namn får ni tio sekunder på er att förklara er innan gänget röstar.
 • Frågan syns större.

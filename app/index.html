@@ -204,7 +204,7 @@ svg text { font-family: var(--font); }
   background: var(--surface);
   border: 2px solid var(--line);
   border-radius: 999px;
-  padding: 2px 6px 2px 2px;
+  padding: 2px 12px 2px 2px;
   animation: pop .35s cubic-bezier(.3, 1.5, .5, 1);
 }
 .chip-main { flex: 1; min-width: 0; height: 100%; display: flex; align-items: center; gap: 8px; text-align: left; }
@@ -215,8 +215,6 @@ svg text { font-family: var(--font); }
 [data-fit] { text-overflow: clip !important; }
 .chip-name.long { font-size: clamp(14px, 2vh, 16px); letter-spacing: -0.02em; }
 .chip-name.xlong { font-size: clamp(12px, 1.8vh, 14px); letter-spacing: -0.02em; }
-.chip-remove { width: 34px; height: 34px; border-radius: 50%; color: var(--muted-2); display: grid; place-items: center; flex-shrink: 0; }
-.chip-remove:active { background: var(--surface-2); }
 
 /* Medan tangentbordet är uppe: bara spelarna och namnfältet, precis ovanför tangentbordet */
 .kb .app { padding-bottom: calc(var(--kb, 0px) - env(safe-area-inset-bottom, 0px) + 10px); }
@@ -1130,8 +1128,7 @@ svg text { font-family: var(--font); }
       el.innerHTML = state.players.map(function (p) {
         return '<div class="chip">' +
           '<button class="chip-main" data-edit="' + p.id + '" aria-label="Ändra ' + esc(p.name) + '"><span class="chip-avatar">' + avatarHTML(p) + "</span>" +
-          '<span class="chip-name' + (p.name.length > 9 ? " xlong" : p.name.length > 6 ? " long" : "") + '" data-fit="11">' + esc(p.name) + "</span></button>" +
-          '<button class="chip-remove" data-remove="' + p.id + '" aria-label="Ta bort ' + esc(p.name) + '">' + ICON.x + "</button></div>";
+          '<span class="chip-name' + (p.name.length > 9 ? " xlong" : p.name.length > 6 ? " long" : "") + '" data-fit="11">' + esc(p.name) + "</span></button></div>"; // ta bort och byt namn: tryck på spelaren
       }).join("");
     }
     sizeChips();
@@ -1140,7 +1137,9 @@ svg text { font-family: var(--font); }
     $("slot").innerHTML = full ? "" : avatarHTML({ fig: state.nextFig }) + '<span class="dice">' + ICON.dice + "</span>";
     $("slot").disabled = full;
     $("slot").style.visibility = full ? "hidden" : "";
-    $("add-hint").style.visibility = full ? "hidden" : "";
+    $("add-hint").style.visibility = full && !state.players.length ? "hidden" : "";
+    // Utan kryss på brickorna: berätta hur man ändrar eller tar bort en spelare
+    $("add-hint").textContent = state.players.length ? "Tryck på en spelare för att ändra eller ta bort." : "Du får en slumpad figur. Tryck på den för att välja själv.";
     $("name-input").disabled = full;
     $("add-btn").disabled = full;
     $("name-input").placeholder = full ? "Max 10 spelare" : "Skriv ett namn";
@@ -1305,11 +1304,6 @@ svg text { font-family: var(--font); }
   });
 
   $("players").addEventListener("click", function (e) {
-    var rm = e.target.closest("[data-remove]");
-    if (rm) {
-      state.players = state.players.filter(function (p) { return p.id !== rm.dataset.remove; });
-      savePlayers(); renderPlayers(); Sound.play("remove"); return;
-    }
     var ed = e.target.closest("[data-edit]");
     if (ed) openFigPicker(ed.dataset.edit);
   });
@@ -1325,7 +1319,7 @@ svg text { font-family: var(--font); }
   renderSound();
 
   // Lätt haptik på alla knappar
-  document.addEventListener("click", function (e) { if (e.target.closest(".btn, .top-btn, .cat-pill, .icon-btn, .chip-remove, .vote, .none-btn, .slot, .chip-main")) buzz(8); });
+  document.addEventListener("click", function (e) { if (e.target.closest(".btn, .top-btn, .cat-pill, .icon-btn, .vote, .none-btn, .slot, .chip-main")) buzz(8); });
 
   $("cats").addEventListener("click", function (e) {
     var b = e.target.closest("[data-cat]");
